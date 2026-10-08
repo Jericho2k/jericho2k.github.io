@@ -90,7 +90,11 @@ h1,h2,h3{font-family:var(--px);font-weight:400;letter-spacing:0;text-shadow:4px 
 .nav-links a::before{content:"▸";position:absolute;left:-14px;color:var(--amber);opacity:0}
 .nav-links a:hover{color:var(--cream)}
 .nav-links a:hover::before{opacity:1}
-@media (max-width:720px){.nav-links{display:none}.nav .pbtn{margin-left:auto}}
+.nav-cta{display:flex;gap:10px}
+.nav-cta .pbtn.ghost{background:rgba(0,0,0,.4)}
+@media (max-width:720px){.nav-links{display:none}.nav-cta{margin-left:auto}}
+.brand,.pbtn{white-space:nowrap}
+@media (max-width:420px){.nav .wrap{gap:10px}.brand{font-size:13px;gap:8px}.nav-cta{gap:8px}.nav-cta .pbtn{font-size:9px;padding:9px 8px}.nav-cta .arr{display:none}}
 
 /* ---------- hero ---------- */
 .hero{padding:clamp(48px,8vw,110px) 0 clamp(64px,8vw,110px)}
@@ -347,7 +351,10 @@ footer .dash{margin-bottom:22px}
       <a href="#stack">Стек</a>
       <a href="#contact">Контакты</a>
     </div>
-    <a class="pbtn small" href="https://t.me/rustamgasymov">Telegram</a>
+    <div class="nav-cta">
+      <a class="pbtn small ghost" href="Gasymov-CV.pdf" target="_blank" rel="noopener">CV.pdf<span class="arr"> ↗</span></a>
+      <a class="pbtn small" href="https://t.me/rustamgasymov">Telegram</a>
+    </div>
   </div>
 </nav>
 
@@ -355,8 +362,8 @@ footer .dash{margin-bottom:22px}
   <div class="wrap">
     <div class="hero-copy">
       <div class="eyebrow">Python backend · AI-системы · Москва</div>
-      <h1>Строю бэкенд, на котором LLM работает <span class="hl">как система</span>, а не как демо.</h1>
-      <p class="lede">FastAPI, PostgreSQL и pgvector: поиск по документам, <b>многоуровневая память</b>, стриминг ответов и защита от повторных операций. Учусь в магистратуре ФКН ВШЭ.</p>
+      <h1>Всё интересное начинается <span class="hl">после вызова LLM</span>.</h1>
+      <p class="lede">Строю AI-системы, где модель — только один из компонентов: поиск по документам, <b>многоуровневая память</b>, стриминг ответов, защита от повторных операций. FastAPI, PostgreSQL, pgvector. Учусь в магистратуре ФКН ВШЭ.</p>
       <div class="actions">
         <a class="pbtn" href="#projects" data-go-table>Посмотреть проекты ↓</a>
         <a class="pbtn ghost" href="https://github.com/Jericho2k">GitHub</a>
@@ -447,7 +454,7 @@ footer .dash{margin-bottom:22px}
 
 <section class="sec" id="stack">
   <div class="wrap">
-    <div class="sec-head rv"><div class="eyebrow">Стек</div><h2>С чем работаю каждый день</h2></div>
+    <div class="sec-head rv"><div class="eyebrow">Стек</div><h2>С чем работаю</h2></div>
     <div class="inv rv">
       <div class="slot"><h3>Backend</h3><ul><li>Python</li><li>FastAPI</li><li>REST</li><li>SSE-стриминг</li><li>Интеграции</li></ul></div>
       <div class="slot"><h3>Данные</h3><ul><li>PostgreSQL</li><li>SQL</li><li>Supabase</li><li>pgvector</li><li>Row Level Security</li></ul></div>
@@ -471,6 +478,7 @@ footer .dash{margin-bottom:22px}
         <li><a href="https://t.me/rustamgasymov"><span>Telegram<small>@rustamgasymov</small></span></a></li>
         <li><a href="mailto:rgasymov@outlook.com"><span>Почта<small>rgasymov@outlook.com</small></span></a></li>
         <li><a href="https://github.com/Jericho2k"><span>GitHub<small>github.com/Jericho2k</small></span></a></li>
+        <li><a href="Gasymov-CV.pdf" target="_blank" rel="noopener"><span>Резюме<small>CV.pdf · открыть ↗</small></span></a></li>
       </ul>
     </div>
     <div class="deal-row">
@@ -482,7 +490,7 @@ footer .dash{margin-bottom:22px}
   </div>
 </section>
 
-<footer><div class="wrap"><div class="dash" style="width:100%"></div><span>© 2026 Рустам Гасымов</span><span>Сделано вручную · без шаблонов</span></div></footer>
+<footer><div class="wrap"><div class="dash" style="width:100%"></div><span>© 2026 Рустам Гасымов</span><span>Сделано без шаблонов</span></div></footer>
 
 <canvas id="cascade" aria-hidden="true"></canvas>
 <div class="cascade-hint" id="cascade-hint">Нажмите или Esc, чтобы убрать карты</div>
