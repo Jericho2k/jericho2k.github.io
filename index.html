@@ -92,7 +92,7 @@ h1,h2,h3{font-family:var(--px);font-weight:400;letter-spacing:0;text-shadow:4px 
 .nav-links a:hover::before{opacity:1}
 .nav-cta{display:flex;gap:10px}
 .nav-cta .pbtn.ghost{background:rgba(0,0,0,.4)}
-@media (max-width:720px){.nav-links{display:none}.nav-cta{margin-left:auto}}
+@media (max-width:720px){.nav{position:relative}.nav-links{display:none}.nav-cta{margin-left:auto}.stage{padding-top:0}}
 .brand,.pbtn{white-space:nowrap}
 @media (max-width:420px){.nav .wrap{gap:10px}.brand{font-size:13px;gap:8px}.nav-cta{gap:8px}.nav-cta .pbtn{font-size:9px;padding:9px 8px}.nav-cta .arr{display:none}}
 
@@ -371,7 +371,7 @@ footer .dash{margin-bottom:22px}
       <a href="#contact">Контакты</a>
     </div>
     <div class="nav-cta">
-      <a class="pbtn small ghost" href="Gasymov-CV.pdf" target="_blank" rel="noopener">CV.pdf<span class="arr"> ↗</span></a>
+      <a class="pbtn small ghost" href="Gasymov-CV.pdf" target="_blank" rel="noopener">CV<span class="arr"> ↗</span></a>
       <a class="pbtn small" href="https://t.me/rustamgasymov">Telegram</a>
     </div>
   </div>
@@ -385,7 +385,7 @@ footer .dash{margin-bottom:22px}
       <p class="lede">Строю AI-системы, где модель — только один из компонентов: поиск по документам, <b>многоуровневая память</b>, стриминг ответов, защита от повторных операций. FastAPI, PostgreSQL, pgvector. Учусь в магистратуре ФКН ВШЭ.</p>
       <div class="actions">
         <a class="pbtn" href="#projects" data-go-table>Посмотреть проекты ↓</a>
-        <a class="pbtn ghost" href="https://github.com/Jericho2k">GitHub</a>
+        <a class="pbtn ghost" href="https://github.com/Jericho2k" target="_blank" rel="noopener">GitHub</a>
       </div>
     </div>
 
@@ -497,8 +497,8 @@ footer .dash{margin-bottom:22px}
       <ul class="choices">
         <li><a href="https://t.me/rustamgasymov"><span>Telegram<small>@rustamgasymov</small></span></a></li>
         <li><a href="mailto:rgasymov@outlook.com"><span>Почта<small>rgasymov@outlook.com</small></span></a></li>
-        <li><a href="https://github.com/Jericho2k"><span>GitHub<small>github.com/Jericho2k</small></span></a></li>
-        <li><a href="Gasymov-CV.pdf" target="_blank" rel="noopener"><span>Резюме<small>CV.pdf · открыть ↗</small></span></a></li>
+        <li><a href="https://github.com/Jericho2k" target="_blank" rel="noopener"><span>GitHub<small>github.com/Jericho2k</small></span></a></li>
+        <li><a href="Gasymov-CV.pdf" target="_blank" rel="noopener"><span>Резюме<small>PDF · откроется в новой вкладке</small></span></a></li>
       </ul>
     </div>
     <div class="deal-row">
@@ -689,7 +689,7 @@ function openCase(i){
   const p=P[i];
   side.innerHTML=`<div class="sheet-rank ${col(p)}">${p.r}<span class="suit" data-suit="${p.s}"></span></div>
     <h3 id="case-title">${p.name}</h3><div class="tag">${p.tag}</div><p class="one">${p.one}</p>
-    ${p.link?`<a class="link" href="${p.link[1]}">${p.link[0]} →</a>`:`<span class="tag">Код в закрытом репозитории</span>`}`;
+    ${p.link?`<a class="link" href="${p.link[1]}" target="_blank" rel="noopener">${p.link[0]} →</a>`:`<span class="tag">Код в закрытом репозитории</span>`}`;
   body.innerHTML=preview(p)+`<ul class="rows">${p.rows.map(([k,v])=>`<li><div class="k">${k}</div><div class="v"><p>${v}</p></div></li>`).join('')}
     <li><div class="k">Стек</div><div class="v tags">${p.stack.map(t=>`<span>${t}</span>`).join('')}</div></li></ul>`;
   paintSuits(side);

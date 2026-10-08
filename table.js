@@ -382,12 +382,12 @@ async function main() {
 
   /* speech */
   let speech = null;
-  function speak(text, auto = 1700) {
+  function speak(text) {
     if (speech) speech.close();
     return new Promise(res => {
       const s = { done: false, timers: [] }; speech = s;
       textbox.classList.add('on'); textbox.classList.remove('done'); tbText.textContent = '';
-      const finish = () => { s.timers.forEach(clearTimeout); tbText.textContent = text; textbox.classList.add('done'); s.done = true; s.timers = [setTimeout(close, auto)]; };
+      const finish = () => { s.timers.forEach(clearTimeout); tbText.textContent = text; textbox.classList.add('done'); s.done = true; s.timers = []; };
       const close = () => { if (speech !== s) return; s.timers.forEach(clearTimeout); textbox.classList.remove('on'); speech = null; res(); };
       s.finish = finish; s.close = close;
       if (reduced) { finish(); return; }
@@ -448,7 +448,7 @@ async function main() {
     if (played && !boardHintShown && inHand.length) { boardHintShown = true; boardHintUntil = performance.now() / 1000 + 5; }
     if (!inHand.length && !saidAll && onBoard.length) {
       saidAll = true; dealer.flare = 1;
-      await speak(LINES.all, 2200);
+      await speak(LINES.all);
       endbar.hidden = false;
     }
   });
@@ -461,7 +461,7 @@ async function main() {
       m.userData.p.copy(m.position); m.userData.r.copy(m.rotation); m.userData.s = m.scale.x;
     });
     onBoard = []; inHand = P.map((_, i) => i); saidAll = false; endbar.hidden = true;
-    syncSr(); say(-1); speak(LINES.again, 1200);
+    syncSr(); say(-1); speak(LINES.again);
   }
   $('end-reset').addEventListener('click', resetTable);
   $('end-cascade').addEventListener('click', () => G.cascade());
@@ -501,7 +501,7 @@ async function main() {
       if (ptrType === 'touch' && touchLift !== h.card) { touchLift = h.card; hover = h.card; touched = true; say(h.card); return; }
       play(h.card);
     } else if (h.board !== undefined) G.openCase(h.board);
-    else if (h.dealer) { dealer.flare = 1; speak(LINES.poke[pokes++ % LINES.poke.length], 1100); }
+    else if (h.dealer) { dealer.flare = 1; speak(LINES.poke[pokes++ % LINES.poke.length]); }
     else if (ptrType === 'touch') { touchLift = -1; hover = -1; say(-1); }
   });
 
@@ -534,7 +534,7 @@ async function main() {
     camera.lookAt(lookAt);
     handCam.position.copy(camera.position); handCam.quaternion.copy(camera.quaternion);
 
-    if (p >= .97 && !introDone && !busy) { introDone = true; dealer.flare = .6; speak(LINES.intro, 2600); }
+    if (p >= .97 && !introDone && !busy) { introDone = true; dealer.flare = .6; speak(LINES.intro); }
 
     // lamp sway + flicker, candle
     const amb = reduced ? 0 : 1;
@@ -627,17 +627,17 @@ async function main() {
     let text = '', at = null;
     if (seated && !speech && !busy && !G.dialog.open) {
       const mid = inHand[Math.floor((inHand.length - 1) / 2)];
+      // right after the first case closes, point at the table for a few seconds
+      if (t < boardHintUntil && onBoard.length && hover < 0 && touchLift < 0) {
+        const b = cards[onBoard[onBoard.length - 1]], pt = screenOf(b, camera, 0);
+        place('Сыгранные карты тоже открываются', pt.x, pt.y - 22); return;
+      }
       if (touchOnly) {
         if (touchLift >= 0 && inHand.includes(touchLift)) { text = 'Нажми ещё раз — сыграть'; at = cards[touchLift]; }
-        else if (!played && inHand.length && calm > 1.2) { text = 'Нажми на карту'; at = cards[mid]; }
+        else if (inHand.length) { text = 'Нажми на карту'; at = cards[mid]; }
       } else {
-        if (hover >= 0 && !played) { text = 'Нажми, чтобы сыграть'; at = cards[hover]; }
-        else if (!touched && inHand.length && calm > 1.2) { text = 'Выбери карту из руки'; at = cards[mid]; }
-      }
-      if (!text && t < boardHintUntil && onBoard.length) {
-        text = 'Сыгранные карты тоже открываются';
-        const b = cards[onBoard[onBoard.length - 1]], pt = screenOf(b, camera, 0);
-        place(text, pt.x, pt.y - 22); return;
+        if (hover >= 0) { text = 'Нажми, чтобы сыграть'; at = cards[hover]; }
+        else if (inHand.length) { text = 'Выбери карту из руки'; at = cards[mid]; }
       }
     }
     if (!text) { hintEl.classList.remove('on'); return; }
