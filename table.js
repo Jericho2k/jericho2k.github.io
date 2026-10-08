@@ -6,6 +6,7 @@ const G = window.__portfolio;
 const { P, isRed, reduced, touchOnly } = G;
 const $ = id => document.getElementById(id);
 const stage = $('stage'), sec = $('projects'), canvas = $('game'), label = $('hand-label');
+const hintEl = $('hint'), hintText = $('hint-text');
 const textbox = $('textbox'), tbText = $('tb-text'), tbFace = $('tb-face'), endbar = $('endbar'), srHand = $('sr-hand');
 
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -26,7 +27,7 @@ const LINES = {
   again: '* Ещё партию?',
   poke: ['* Не трогай.', '* Твой ход, не мой.', '* ...', '* Я жду.'],
 };
-const HINT = touchOnly ? 'Коснитесь карты, чтобы рассмотреть, и ещё раз — чтобы сыграть' : 'Наведите на карту и нажмите, чтобы сыграть';
+const HINT = touchOnly ? 'Коснись карты, чтобы рассмотреть, и ещё раз — чтобы сыграть' : 'Наведи на карту и нажми, чтобы сыграть';
 
 /* ---------------- sound (off until asked) ---------------- */
 const sound = {
@@ -329,6 +330,8 @@ async function main() {
     hand.add(m); return m;
   });
   let inHand = P.map((_, i) => i), onBoard = [], hover = -1, touchLift = -1, busy = false, introDone = false, saidAll = false;
+  // hint state: has the visitor touched a card yet, played one yet, and how long the table has been quiet
+  let touched = false, played = false, calm = 0, boardHintUntil = 0, boardHintShown = false, seated = false;
 
   /* post */
   const tWorld = new THREE.WebGLRenderTarget(4, 4, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
@@ -370,7 +373,7 @@ async function main() {
     srHand.innerHTML = inHand.map(i => `<button type="button" data-i="${i}">${P[i].r}${P[i].s} ${P[i].name}</button>`).join('');
     srHand.querySelectorAll('button').forEach(b => {
       const i = +b.dataset.i;
-      b.addEventListener('focus', () => { hover = i; say(i); });
+      b.addEventListener('focus', () => { hover = i; touched = true; say(i); });
       b.addEventListener('blur', () => { if (hover === i) { hover = -1; say(-1); } });
       b.addEventListener('click', () => play(i));
     });
@@ -418,7 +421,7 @@ async function main() {
   /* playing a card */
   async function play(i) {
     if (busy || !inHand.includes(i)) return;
-    busy = true; hover = -1; touchLift = -1;
+    busy = true; hover = -1; touchLift = -1; played = touched = true;
     const m = cards[i];
     inHand = inHand.filter(x => x !== i); syncSr(); say(-1);
     const slot = slots[onBoard.length]; onBoard.push(i);
@@ -442,6 +445,7 @@ async function main() {
     G.openCase(i);
   }
   G.dialog.addEventListener('close', async () => {
+    if (played && !boardHintShown && inHand.length) { boardHintShown = true; boardHintUntil = performance.now() / 1000 + 5; }
     if (!inHand.length && !saidAll && onBoard.length) {
       saidAll = true; dealer.flare = 1;
       await speak(LINES.all, 2200);
@@ -483,7 +487,7 @@ async function main() {
     if (e.pointerType === 'touch' || busy) return;
     const h = pick(e);
     const nh = h.card ?? -1;
-    if (nh !== hover) { hover = nh; say(nh); if (nh >= 0) sound.tone(620, .03, 'square', .015); }
+    if (nh !== hover) { hover = nh; say(nh); if (nh >= 0) { touched = true; sound.tone(620, .03, 'square', .015); } }
     if (h.uv) hoverUv.copy(h.uv);
     canvas.style.cursor = h.card !== undefined || h.board !== undefined || h.dealer ? 'pointer' : 'default';
   });
@@ -494,7 +498,7 @@ async function main() {
     if (busy) return;
     const h = pick(e);
     if (h.card !== undefined) {
-      if (ptrType === 'touch' && touchLift !== h.card) { touchLift = h.card; hover = h.card; say(h.card); return; }
+      if (ptrType === 'touch' && touchLift !== h.card) { touchLift = h.card; hover = h.card; touched = true; say(h.card); return; }
       play(h.card);
     } else if (h.board !== undefined) G.openCase(h.board);
     else if (h.dealer) { dealer.flare = 1; speak(LINES.poke[pokes++ % LINES.poke.length], 1100); }
@@ -516,6 +520,8 @@ async function main() {
     stage.style.setProperty('--fade', clamp(p / .22).toFixed(3));
     stage.style.setProperty('--head', clamp((p - .25) / .3).toFixed(3));
     stage.classList.toggle('seated', p > .45);
+    seated = p >= .97;
+    calm = seated && !speech && !busy && !G.dialog.open ? calm + dt : 0;
     post.uniforms.uPix.value = reduced ? 1 : lerp(22, 1, easeOut(clamp(p / .62)));
     post.uniforms.uTime.value = t;
 
@@ -577,7 +583,9 @@ async function main() {
       const m = cards[idx], u = m.userData;
       u.deal = Math.max(u.deal, reduced ? 1 : easeOut(clamp((p - .6 - k * .045) / .2)));
       const off = k - (n - 1) / 2, isH = idx === hover;
-      const ty = -hh + ch * .36 - off * off * ch * .028 - (1 - u.deal) * ch * 1.6 - dip * ch * .5 + (isH ? ch * .34 : 0);
+      let hop = 0;
+      if (amb && !touched && calm > 1) { const ph = (calm - 1) % 3.4 - k * .11; if (ph > 0 && ph < .38) hop = Math.sin(ph / .38 * Math.PI) * ch * .12; }
+      const ty = -hh + ch * .36 - off * off * ch * .028 - (1 - u.deal) * ch * 1.6 - dip * ch * .5 + (isH ? ch * .34 : 0) + hop;
       const tx = off * spacing, tz = -M.D + k * .004 + (isH ? .06 : 0);
       const trz = isH ? 0 : -off * .055;
       const ts = cw * (isH ? 1.08 : 1);
@@ -609,9 +617,43 @@ async function main() {
     renderer.setRenderTarget(tHand); renderer.setClearColor(0x000000, 0); renderer.render(handScene, handCam);
     renderer.setRenderTarget(null); renderer.render(postScene, postCam);
   }
+  const hv = new THREE.Vector3();
+  let hintKey = '';
+  function screenOf(obj, cam, localY) {
+    hv.set(0, localY, 0).applyMatrix4(obj.matrixWorld).project(cam);
+    return { x: (hv.x + 1) / 2 * W, y: (1 - hv.y) / 2 * H };
+  }
+  function updateHint(t) {
+    let text = '', at = null;
+    if (seated && !speech && !busy && !G.dialog.open) {
+      const mid = inHand[Math.floor((inHand.length - 1) / 2)];
+      if (touchOnly) {
+        if (touchLift >= 0 && inHand.includes(touchLift)) { text = 'Нажми ещё раз — сыграть'; at = cards[touchLift]; }
+        else if (!played && inHand.length && calm > 1.2) { text = 'Нажми на карту'; at = cards[mid]; }
+      } else {
+        if (hover >= 0 && !played) { text = 'Нажми, чтобы сыграть'; at = cards[hover]; }
+        else if (!touched && inHand.length && calm > 1.2) { text = 'Выбери карту из руки'; at = cards[mid]; }
+      }
+      if (!text && t < boardHintUntil && onBoard.length) {
+        text = 'Сыгранные карты тоже открываются';
+        const b = cards[onBoard[onBoard.length - 1]], pt = screenOf(b, camera, 0);
+        place(text, pt.x, pt.y - 22); return;
+      }
+    }
+    if (!text) { hintEl.classList.remove('on'); return; }
+    const pt = screenOf(at, handCam, .72);
+    place(text, pt.x, pt.y - 8);
+  }
+  function place(text, x, y) {
+    if (text !== hintKey) { hintText.textContent = text; hintKey = text; }
+    const half = hintEl.offsetWidth / 2 + 8;
+    hintEl.style.left = clamp(x, half, W - half) + 'px';
+    hintEl.style.top = Math.max(70, y) + 'px';
+    hintEl.classList.add('on');
+  }
   function loop(now) {
     const dt = Math.min(.05, (now - last) / 1000); last = now;
-    update(dt, now / 1000); render();
+    update(dt, now / 1000); render(); updateHint(now / 1000);
     if (running) requestAnimationFrame(loop);
   }
   new IntersectionObserver(([e]) => {
