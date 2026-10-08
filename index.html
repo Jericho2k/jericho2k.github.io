@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Рустам Гасымов — backend и AI-системы</title>
-<meta name="theme-color" content="#080B09">
+<meta name="theme-color" content="#050706">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -38,7 +38,8 @@
   --shadow:6px 6px 0 #000;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;background:var(--room)}
+html{scroll-behavior:smooth;background:#050706;overscroll-behavior-y:none}
+body{overscroll-behavior-y:none}
 body{margin:0;color:var(--cream);font:400 17px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
 ::selection{background:var(--amber);color:var(--ink)}
 a{color:inherit}
@@ -81,7 +82,7 @@ h1,h2,h3{font-family:var(--px);font-weight:400;letter-spacing:0;text-shadow:4px 
 .actions{display:flex;flex-wrap:wrap;gap:16px}
 
 /* ---------- nav ---------- */
-.nav{position:sticky;top:0;z-index:30;background:rgba(4,6,5,.88);border-bottom:2px solid var(--line)}
+.nav{position:sticky;top:0;z-index:30;background:#050706;border-bottom:2px solid var(--line)}
 .nav .wrap{display:flex;align-items:center;gap:28px;height:60px}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;font:600 16px/1 var(--sans)}
 .brand .suit{width:18px;height:18px;color:var(--soul)}
@@ -516,6 +517,9 @@ footer .dash{margin-bottom:22px}
 <div class="cascade-hint" id="cascade-hint">Нажмите или Esc, чтобы убрать карты</div>
 
 <script>
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+if(!location.hash) scrollTo(0,0);
+addEventListener('pageshow',e=>{ if(!e.persisted && !location.hash) scrollTo(0,0); });
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const touchOnly = matchMedia('(hover: none)').matches;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
