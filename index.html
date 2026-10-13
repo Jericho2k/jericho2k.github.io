@@ -283,6 +283,75 @@ html:has(dialog[open]){overflow:hidden}
 .pv-foot .pbtn{--b:var(--ink);color:var(--bone);box-shadow:4px 4px 0 rgba(0,0,0,.35)}
 @media (max-width:520px){ .pv-status{display:none} }
 
+/* scripted interface replays inside the preview window (made-up data, no backend) */
+.pv-view.sim-view{aspect-ratio:auto;background:var(--panel);container-type:inline-size}
+.sim{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);height:390px;color:var(--cream);font:400 13px/1.45 var(--sans)}
+.sim.instant *{transition:none !important;animation:none !important}
+.sim-main{display:flex;flex-direction:column;min-width:0;min-height:0;border-right:2px solid var(--line)}
+.sim-side{min-width:0;min-height:0;overflow:hidden;padding:12px 12px 14px;display:flex;flex-direction:column;gap:10px;background:#0B0F0D}
+.sim-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;border-bottom:2px solid var(--line);font:700 10.5px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--cream-dim)}
+.sim-top b{color:var(--cream);font-weight:700}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 7px;border:2px solid var(--line);font:700 10px/1.2 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--cream-dim);white-space:nowrap;transition:color .3s steps(3), border-color .3s steps(3), background .3s steps(3)}
+.chip.hot{color:var(--ink);background:var(--amber);border-color:var(--amber)}
+.chip.good{color:var(--ok);border-color:var(--ok)}
+.sim-log{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;gap:7px;padding:10px 12px;
+  -webkit-mask-image:linear-gradient(to bottom, transparent, #000 36px);mask-image:linear-gradient(to bottom, transparent, #000 36px)}
+.msg{max-width:86%;padding:7px 10px;background:#1A211C;border:2px solid #232B26;align-self:flex-start}
+.msg.out{align-self:flex-end;background:#1E3A2C;border-color:var(--felt)}
+.msg small{display:block;margin-top:3px;font:10px/1.3 var(--mono);color:var(--cream-dim)}
+.msg.typing{font:12px/1 var(--mono);color:var(--cream-dim);background:none;border-style:dashed}
+.pop{opacity:0;transform:translateY(6px);transition:opacity .25s steps(3), transform .25s steps(3)}
+.pop.on{opacity:1;transform:none}
+.gone{display:none}
+.sim-tray{border-top:2px solid var(--line);padding:9px 12px 11px;min-height:142px}
+.sim-label{font:700 10px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:7px;display:flex;justify-content:space-between;gap:8px}
+.sg{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;padding:5px 7px;margin-top:4px;border:2px solid transparent;font-size:12.5px;line-height:1.4}
+.sg i{font:700 9.5px/1.6 var(--mono);font-style:normal;letter-spacing:.04em;text-transform:uppercase;color:var(--amber);min-width:52px}
+.sg.pick{border-color:var(--amber);background:rgba(247,195,90,.08)}
+.side-h{font:700 10px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}
+.kv{margin:0;display:grid;gap:7px}
+.kv div{display:grid;gap:1px}
+.kv dt{font:10px/1.3 var(--mono);color:var(--cream-dim);text-transform:uppercase;letter-spacing:.05em}
+.kv dd{margin:0;font-size:12.5px}
+.new{color:var(--ink);background:var(--amber);padding:0 4px}
+.flash{animation:flash 1.2s steps(4)}
+@keyframes flash{0%,60%{background:rgba(247,195,90,.35)}100%{background:transparent}}
+.side-foot{margin-top:auto;font:10px/1.4 var(--mono);color:var(--cream-dim);border-top:2px dashed var(--line);padding-top:8px}
+.mem{display:grid;gap:5px}
+.mem-l{border:2px solid var(--line);padding:6px 8px;transition:border-color .3s steps(3), background .3s steps(3)}
+.mem-l.lit{border-color:var(--amber);background:rgba(247,195,90,.07)}
+.mem-l p{margin:2px 0 0;font-size:12px;line-height:1.4;color:var(--cream)}
+.mem-l .side-h{color:var(--cream-dim);display:flex;justify-content:space-between;gap:6px}
+.mem-l.lit .side-h{color:var(--amber)}
+.mem-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;font-size:12px;padding:3px 0;border-top:2px dotted rgba(234,224,200,.12)}
+.mem-row:first-of-type{border-top:0}
+.mem-row b{font:700 11px/1.5 var(--mono);color:var(--cream-dim)}
+.mem-row.hit b,.mem-row.hit span{color:var(--amber)}
+.mem-row .meter{grid-column:1/-1;height:4px;background:rgba(234,224,200,.08)}
+.mem-row .meter i{display:block;height:100%;width:0;background:var(--felt);transition:width .7s steps(8)}
+.mem-row.hit .meter i{background:var(--amber)}
+.bar-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;font-size:12.5px}
+.bar-row .meter{grid-column:1/-1;height:8px;background:repeating-linear-gradient(to right, rgba(234,224,200,.1) 0 6px, transparent 6px 8px)}
+.bar-row .meter i{display:block;height:100%;width:0;background:repeating-linear-gradient(to right, var(--felt) 0 6px, transparent 6px 8px);transition:width var(--t,1s) steps(14)}
+.bar-row b{font:700 11px/1.3 var(--mono);color:var(--cream-dim)}
+.bar-row.done b{color:var(--ok)}
+.docs{padding:10px 12px;display:grid;gap:12px;align-content:start;flex:1;min-height:0}
+.doc{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border:2px solid var(--line)}
+.doc .ico{width:24px;height:30px;background:var(--bone);position:relative;font:700 7px/30px var(--mono);color:var(--red);text-align:center}
+.doc .nm{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.doc .nm small{display:block;font:10px/1.3 var(--mono);color:var(--cream-dim)}
+.chunkbox{border:2px solid var(--line);padding:8px 9px;font-size:12px;line-height:1.45;background:#121815}
+.chunkbox mark{background:none;color:var(--amber)}
+.chunkbox .meta{color:var(--cream-dim);font-size:10px;margin-bottom:4px}
+.sim .caret{background:var(--cream)}
+@container (max-width:560px){
+  .sim{grid-template-columns:minmax(0,1fr);height:auto}
+  .sim-main{border-right:0;border-bottom:2px solid var(--line)}
+  .sim-log{height:190px;flex:none}
+  .docs{flex:none}
+  .sim-side .side-foot{display:none}
+}
+
 /* ---------- experience: a log ---------- */
 .log{list-style:none;margin:0;padding:0}
 .log li{display:grid;grid-template-columns:200px 1fr 1.15fr;gap:24px;padding:28px 0;position:relative}
@@ -570,7 +639,7 @@ const P = [
    ], stack:['Python','FastAPI','PostgreSQL','pgvector','OpenAI embeddings','Supabase','Railway'],
    link:['github.com/Jericho2k/rag-dispatcher-assistant','https://github.com/Jericho2k/rag-dispatcher-assistant'],
    site:{url:'https://rag-dispatcher-assistant-production.up.railway.app/', note:'Вход по приглашению · демо-доступ по запросу'},
-   screens:[{src:'shots/rag.png', label:'Экран входа'}]},
+   screens:[{sim:'rag', label:'Симуляция админки на условных данных'}]},
   {r:'K', s:'♥', name:'Cleopatra', sub:'Ассистент для операторов переписки в creator-агентствах', yr:'2025 — сейчас',
    tag:'AI-система · B2B', one:'Подсказывает три варианта ответа на каждое входящее сообщение — в голосе конкретного автора.',
    rows:[
@@ -582,14 +651,15 @@ const P = [
     ['Статус','Тестируется перед пилотом с первым агентством. Отвечаю за архитектуру, продуктовую логику и backend.'],
    ], stack:['Python','FastAPI','PostgreSQL','pgvector','LLM'], link:null,
    site:{url:'https://cleopatra-dashboard.vercel.app', note:'Рабочее место оператора · закрытый пилот'},
-   screens:[{src:'shots/cleopatra.png', label:'Экран входа'}]},
+   screens:[{sim:'cleo', label:'Симуляция рабочего места на условных данных'}]},
   {r:'Q', s:'♥', name:'Afterglow', sub:'Студия интерактивных историй с AI-персонажами', yr:'2026 — сейчас',
    tag:'AI-система · платформа', one:'Персонажи, которые помнят, что было сто сообщений назад.',
    rows:[
     ['Задача','Длинные истории разваливаются, когда модель забывает начало. Нужна память, которая переживает смену модели и сотни сообщений.'],
     ['Что сделал','Три слоя памяти: профиль персонажа, скользящее резюме сюжета и долгосрочные воспоминания с ранжированием по релевантности. SSE-стриминг, смена модели посреди разговора без потери контекста, перегенерация и откат истории.'],
     ['Данные','Мультиаккаунт на Supabase: RLS на каждой сущности, storage, миграции, экспорт и импорт данных.'],
-   ], stack:['PostgreSQL','Supabase','SSE','Embeddings','Multi-provider LLM'], link:null},
+   ], stack:['PostgreSQL','Supabase','SSE','Embeddings','Multi-provider LLM'], link:null,
+   screens:[{sim:'glow', bar:'afterglow', label:'Симуляция интерфейса на условных данных'}]},
   {r:'10', s:'♦', name:'Momentum Flip', sub:'Исследование торговой стратегии на крипто-фьючерсах', yr:'2025',
    tag:'Финансы · исследование', one:'Полный цикл: гипотеза, бэктесты, оптимизация, живая торговля и разбор провалов.',
    rows:[
@@ -661,10 +731,180 @@ document.getElementById('plist-items').addEventListener('click',e=>{ const b=e.t
 document.getElementById('plist-close').addEventListener('click',()=>plist.close());
 document.querySelectorAll('#as-list,[data-open-list]').forEach(b=>b.addEventListener('click',()=>plist.showModal()));
 
+/* ---------- case previews: scripted replays of the real interfaces on made-up data ---------- */
+let simTimers=[];
+function stopSim(){ simTimers.forEach(clearTimeout); simTimers=[]; }
+function startSim(root){
+  stopSim();
+  const S=SIMS[root.dataset.sim]; if(!S) return;
+  const cycle=()=>{
+    simTimers=[];
+    root.innerHTML=S.html;
+    root.classList.toggle('instant',reduced);
+    const $=k=>root.querySelector(`[data-k="${k}"]`);
+    // reduced motion: every step runs at once, so the preview shows the finished state
+    const at=reduced?((ms,fn)=>fn()):((ms,fn)=>simTimers.push(setTimeout(fn,ms)));
+    const len=S.run($,at);
+    if(!reduced) simTimers.push(setTimeout(cycle,len));
+  };
+  cycle();
+}
+const show$=el=>{ el.classList.remove('gone'); requestAnimationFrame(()=>el.classList.add('on')); if(reduced) el.classList.add('on'); };
+const hide$=el=>el.classList.add('gone');
+function streamTo(el,text,at,t0,ms=60){
+  const parts=text.split(/(\s+)/).filter(Boolean);
+  parts.forEach((_,k)=>at(t0+k*ms,()=>{ el.innerHTML=parts.slice(0,k+1).join('')+(k<parts.length-1?'<span class="caret"></span>':''); }));
+  return t0+parts.length*ms;
+}
+function countTo(el,to,at,t0,dur,fmt=n=>n){
+  const n=12; for(let k=0;k<=n;k++) at(t0+dur*k/n,()=>{ el.textContent=fmt(Math.round(to*k/n)); });
+}
+const fill$=(el,w='100%')=>{ const i=el.querySelector('.meter i'); if(i) i.style.width=w; };
+
+const CLEO_PICK='А я все выходные пекла чак-чак по бабушкиному рецепту. Получилось… почти) Ты там пробовал настоящий?';
+const GLOW_REPLY='Помню. Я обещала зажечь свет, если ты не вернёшься до рассвета. Ты вернулся, и с тех пор я ни разу его не зажигала.';
+
+const SIMS={
+  cleo:{
+    html:`<div class="sim-main">
+      <div class="sim-top"><span><b>Максим</b> · диалог</span><span class="chip" data-k="stage">этап: знакомство</span></div>
+      <div class="sim-log">
+        <div class="msg">Привет! Видел твоё фото с набережной, это Питер?<small>вчера 21:40</small></div>
+        <div class="msg out">Да, Новая Голландия) Люблю гулять там по утрам, пока никого нет<small>вчера 21:52</small></div>
+        <div class="msg typing pop gone" data-k="typing">Максим печатает…</div>
+        <div class="msg pop gone" data-k="in">Только вернулся из Казани, весь день ходил по центру. А у тебя как выходные?<small>сегодня 19:06</small></div>
+        <div class="msg out pop gone" data-k="out">${CLEO_PICK}<small>отправлено через 0:41 · пауза как у человека</small></div>
+      </div>
+      <div class="sim-tray">
+        <div class="sim-label"><span>Варианты ответа · голос автора</span><span data-k="state">ждём сообщение</span></div>
+        <div class="sg pop" data-k="s0"><i>вопрос</i><span>Казань! Завидую) Кул-Шариф вживую такой же нереальный, как на фото?</span></div>
+        <div class="sg pop" data-k="s1"><i>история</i><span>${CLEO_PICK}</span></div>
+        <div class="sg pop" data-k="s2"><i>забота</i><span>Весь день пешком? Надеюсь, ноги живы) Что понравилось больше всего?</span></div>
+      </div>
+    </div>
+    <aside class="sim-side">
+      <div class="side-h">Профиль собеседника</div>
+      <dl class="kv">
+        <div><dt>Интересы</dt><dd data-k="int">путешествия, архитектура</dd></div>
+        <div><dt>Тон</dt><dd>дружелюбный, без спешки</dd></div>
+        <div><dt>Что заходит</dt><dd>город, прогулки, еда</dd></div>
+        <div><dt>Сообщений</dt><dd data-k="cnt">9</dd></div>
+      </dl>
+      <div class="side-foot" data-k="foot">Профиль пересобирается каждые 10 сообщений</div>
+    </aside>`,
+    run($,at){
+      at(500,()=>show$($('typing')));
+      at(1700,()=>{ hide$($('typing')); show$($('in')); $('cnt').textContent='10'; $('state').textContent='анализ ситуации…'; });
+      at(2300,()=>{ const c=$('stage'); c.textContent='этап: разговор'; c.classList.add('hot'); });
+      ['s0','s1','s2'].forEach((k,i)=>at(2900+i*450,()=>$(k).classList.add('on')));
+      at(3900,()=>{ $('state').textContent='3 варианта'; $('stage').classList.remove('hot'); });
+      at(5200,()=>{ $('s1').classList.add('pick'); $('state').textContent='оператор выбрал'; });
+      at(6300,()=>{ show$($('out')); $('state').textContent='отправлено'; });
+      at(7200,()=>{
+        const d=$('int'); d.innerHTML='путешествия, архитектура, <span class="new">Казань</span>'; d.classList.add('flash');
+        const f=$('foot'); f.textContent='Профиль обновлён · 10 сообщений'; f.classList.add('flash');
+      });
+      return 11000;
+    }
+  },
+
+  glow:{
+    html:`<div class="sim-main">
+      <div class="sim-top"><span><b>Мира</b> · смотритель маяка</span><span class="chip" data-k="model">провайдер A</span></div>
+      <div class="sim-log">
+        <div class="msg">Шторм стихает. Ты так и будешь стоять в дверях?<small>#132</small></div>
+        <div class="msg out">Я нашёл ключ от нижней двери.<small>#133</small></div>
+        <div class="msg typing pop gone" data-k="sys">модель сменена: A → B · история и память на месте</div>
+        <div class="msg out pop gone" data-k="ask">Ты ведь помнишь, что обещала мне у маяка в первую ночь?<small>#134</small></div>
+        <div class="msg typing pop gone" data-k="typing">Мира печатает…</div>
+        <div class="msg pop gone" data-k="reply"><span data-k="replytext"></span><small>#135</small></div>
+      </div>
+      <div class="sim-tray">
+        <div class="sim-label"><span>Сборка контекста</span><span data-k="ctx">—</span></div>
+        <div class="bar-row pop" data-k="c0"><span>Профиль персонажа</span><b>340 ток.</b></div>
+        <div class="bar-row pop" data-k="c1"><span>Резюме сюжета</span><b>610 ток.</b></div>
+        <div class="bar-row pop" data-k="c2"><span>Воспоминания · 2 из 3</span><b>260 ток.</b></div>
+        <div class="bar-row pop" data-k="c3"><span>Последние сообщения</span><b>20 шт.</b></div>
+      </div>
+    </div>
+    <aside class="sim-side">
+      <div class="side-h">Память персонажа</div>
+      <div class="mem">
+        <div class="mem-l"><div class="side-h"><span>Профиль</span></div><p>Мира, смотритель маяка. Говорит коротко, обещаниями не бросается.</p></div>
+        <div class="mem-l" data-k="sum"><div class="side-h"><span>Резюме сюжета</span><span data-k="sumat">#120</span></div><p data-k="sumtext">Герой ищет пропавшего брата. Мира прячет ключ от нижней двери.</p></div>
+        <div class="mem-l" data-k="mem"><div class="side-h"><span>Воспоминания</span><span data-k="memq">поиск</span></div>
+          <div class="mem-row" data-k="m0"><span>Обещание у маяка</span><b>#7 · 0,91</b><span class="meter"><i data-w="91%"></i></span></div>
+          <div class="mem-row" data-k="m1"><span>Ключ от нижней двери</span><b>#88 · 0,74</b><span class="meter"><i data-w="74%"></i></span></div>
+          <div class="mem-row" data-k="m2"><span>Ссора на пристани</span><b>#41 · 0,38</b><span class="meter"><i data-w="38%"></i></span></div>
+        </div>
+      </div>
+    </aside>`,
+    run($,at){
+      at(300,()=>{ show$($('sys')); const c=$('model'); c.textContent='провайдер B'; c.classList.add('hot'); });
+      at(1300,()=>{ show$($('ask')); $('model').classList.remove('hot'); });
+      at(1900,()=>{
+        $('mem').classList.add('lit'); $('memq').textContent='top-3';
+        ['m0','m1','m2'].forEach(k=>{ const i=$(k).querySelector('.meter i'); i.style.width=i.dataset.w; });
+      });
+      at(2700,()=>{ $('m0').classList.add('hit'); $('m1').classList.add('hit'); });
+      ['c0','c1','c2','c3'].forEach((k,i)=>at(3200+i*300,()=>$(k).classList.add('on')));
+      at(4400,()=>{ $('ctx').textContent='≈ 2 100 ток.'; $('mem').classList.remove('lit'); show$($('typing')); });
+      at(5200,()=>{ hide$($('typing')); show$($('reply')); });
+      const end=streamTo($('replytext'),GLOW_REPLY,at,5300,70);
+      at(end+800,()=>{
+        $('sum').classList.add('lit'); $('sumat').textContent='#135';
+        const p=$('sumtext'); p.innerHTML='Герой ищет пропавшего брата. Мира прячет ключ от нижней двери. <span class="new">Герой напомнил об обещании у маяка.</span>'; p.classList.add('flash');
+      });
+      return end+5000;
+    }
+  },
+
+  rag:{
+    html:`<div class="sim-main">
+      <div class="sim-top"><span><b>Документы</b> · администратор</span><span class="chip">RLS включён</span></div>
+      <div class="docs">
+        <div class="doc"><span class="ico">PDF</span><span class="nm">Инструкция по эксплуатации С-1.pdf<small>64 стр. · 211 чанков</small></span><span class="chip good">готов</span></div>
+        <div class="doc pop" data-k="doc"><span class="ico">PDF</span><span class="nm">Регламент пуска установки.pdf<small data-k="docmeta">загрузка…</small></span><span class="chip" data-k="docst">в работе</span></div>
+        <div class="bar-row pop" data-k="b0" style="--t:.9s"><span>Загрузка в Storage</span><b data-k="b0v">0 МБ</b><span class="meter"><i></i></span></div>
+        <div class="bar-row pop" data-k="b1" style="--t:1.6s"><span>Разбор PDF и нарезка на чанки</span><b data-k="b1v">0</b><span class="meter"><i></i></span></div>
+        <div class="bar-row pop" data-k="b2" style="--t:1.8s"><span>Embeddings · text-embedding-3-small</span><b data-k="b2v">0 / 742</b><span class="meter"><i></i></span></div>
+        <div class="bar-row pop" data-k="b3" style="--t:.6s"><span>Запись векторов в pgvector</span><b data-k="b3v">—</b><span class="meter"><i></i></span></div>
+      </div>
+    </div>
+    <aside class="sim-side">
+      <div class="side-h" data-k="chh">Чанк —</div>
+      <div class="chunkbox pop" data-k="chunk"><div class="meta">стр. 41 · п. 4.2.1 · 486 токенов</div>4.2.1. Давление на входе в сепаратор С-1 при пуске поднимают ступенями, не выше <mark>2,5 МПа</mark> до выхода установки на режим…</div>
+      <dl class="kv">
+        <div><dt>Доступ</dt><dd>роль user, все смены</dd></div>
+        <div><dt>Поиск</dt><dd>cosine, top-k 3</dd></div>
+      </dl>
+      <div class="side-foot" data-k="foot">После индексации документ сразу доступен ассистенту</div>
+    </aside>`,
+    run($,at){
+      at(300,()=>{ $('doc').classList.add('on'); ['b0','b1','b2','b3'].forEach(k=>$(k).classList.add('on')); });
+      at(700,()=>fill$($('b0')));
+      countTo($('b0v'),24,at,700,900,n=>(n/10).toFixed(1).replace('.',',')+' МБ');
+      at(1700,()=>{ $('b0').classList.add('done'); $('docmeta').textContent='186 стр. · разбор'; fill$($('b1')); });
+      countTo($('b1v'),742,at,1700,1600);
+      at(3400,()=>{ $('b1').classList.add('done'); fill$($('b2')); $('chh').textContent='Чанк 318 из 742'; $('chunk').classList.add('on'); });
+      countTo($('b2v'),742,at,3400,1800,n=>`${n} / 742`);
+      at(5300,()=>{ $('b2').classList.add('done'); fill$($('b3')); $('b3v').textContent='запись…'; });
+      at(6000,()=>{
+        $('b3').classList.add('done'); $('b3v').textContent='742';
+        $('docmeta').textContent='186 стр. · 742 чанка';
+        const s=$('docst'); s.textContent='готов'; s.classList.add('good');
+        $('foot').classList.add('flash');
+      });
+      return 10000;
+    }
+  }
+};
+
 /* ---------- case dialog ---------- */
 const dlg=document.getElementById('case'), side=document.getElementById('sheet-side'), body=document.getElementById('sheet-body');
 const host=u=>new URL(u).host;
 function screenHTML(sc){
+  if(sc.sim) return `<div class="sim" data-sim="${sc.sim}"></div>`;
   if(sc.video) return `<video src="${sc.video}" muted loop playsinline ${reduced?'controls':'autoplay'} preload="metadata"></video>`;
   return `<img src="${sc.src}" alt="${sc.label}" onload="this.parentNode.classList.toggle('tall',this.naturalHeight/this.naturalWidth>.75)">`;
 }
@@ -673,11 +913,11 @@ function preview(p){
   const sc=p.screens[0], url=p.site?.url;
   return `<figure class="pv"><div class="pv-win">
       <div class="pv-bar"><span class="pv-dots"><i></i><i></i><i></i></span>
-        <span class="pv-url">${url?host(url):(p.link?p.link[0]:'github.com/Jericho2k')}</span>
+        <span class="pv-url">${url?host(url):sc.bar||(p.link?p.link[0]:'github.com/Jericho2k')}</span>
         ${url?`<span class="pv-status" data-ping="${url}">проверяю…</span>`:''}</div>
-      <div class="pv-view">${screenHTML(sc)}${p.site?.note?`<span class="pv-note">${p.site.note}</span>`:''}</div>
+      <div class="pv-view${sc.sim?' sim-view':''}">${screenHTML(sc)}${p.site?.note&&!sc.sim?`<span class="pv-note">${p.site.note}</span>`:''}</div>
     </div>
-    <figcaption class="pv-foot"><span>${sc.label}</span>
+    <figcaption class="pv-foot"><span>${sc.label}${sc.sim&&p.site?.note?`<br>${p.site.note}`:''}</span>
       ${url?`<a class="pbtn small" href="${url}" target="_blank" rel="noopener">Открыть сайт ↗</a>`:''}</figcaption></figure>`;
 }
 const pings={};
@@ -704,11 +944,13 @@ function openCase(i){
     <li><div class="k">Стек</div><div class="v tags">${p.stack.map(t=>`<span>${t}</span>`).join('')}</div></li></ul>`;
   paintSuits(side);
   body.querySelectorAll('[data-ping]').forEach(ping);
+  const simEl=body.querySelector('[data-sim]'); if(simEl) startSim(simEl);
   dlg.querySelector('.sheet').scrollTop=0;
   dlg.showModal();
 }
 dlg.addEventListener('close',()=>{
   body.querySelectorAll('video').forEach(v=>v.pause());
+  stopSim();
   // keyboard users get focus back on their cards; mouse and touch users get a clean table
   if(!usingKeys) return;
   document.querySelector('#sr-hand button')?.focus({preventScroll:true});
