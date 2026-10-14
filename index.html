@@ -278,7 +278,9 @@ html:has(dialog[open]){overflow:hidden}
 .pv-view{position:relative;aspect-ratio:16/10;overflow:hidden}
 .pv-view img,.pv-view video{width:100%;height:100%;object-fit:cover;object-position:50% 0;display:block;transition:object-position 6s ease-in-out}
 .pv-view.tall:hover img{object-position:50% 100%}
-.pv-note{position:absolute;left:10px;bottom:10px;font:700 11px/1.3 var(--mono);color:var(--cream);background:rgba(0,0,0,.85);border:2px solid var(--cream-dim);padding:6px 9px}
+.pv-note{position:absolute;left:10px;bottom:10px;font:700 11px/1.3 var(--mono);color:var(--cream);background:rgba(0,0,0,.85);border:2px solid var(--cream-dim);padding:6px 9px;pointer-events:none;z-index:2}
+.pv-iframe{background:#000}
+.pv-iframe iframe{width:100%;height:100%;border:0;display:block}
 .pv-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;font:12px/1.4 var(--mono);color:var(--ink-soft)}
 .pv-foot .pbtn{--b:var(--ink);color:var(--bone);box-shadow:4px 4px 0 rgba(0,0,0,.35)}
 @media (max-width:520px){ .pv-status{display:none} }
@@ -569,8 +571,7 @@ const P = [
     ['Где работает','Railway и Supabase Cloud.'],
    ], stack:['Python','FastAPI','PostgreSQL','pgvector','OpenAI embeddings','Supabase','Railway'],
    link:['github.com/Jericho2k/rag-dispatcher-assistant','https://github.com/Jericho2k/rag-dispatcher-assistant'],
-   site:{url:'https://rag-dispatcher-assistant-production.up.railway.app/', note:'Вход по приглашению · демо-доступ по запросу'},
-   screens:[{src:'shots/rag.png', label:'Экран входа'}]},
+   site:{url:'demo/gps/', note:'Демо без регистрации · приложение по приглашению', demo:true}},
   {r:'K', s:'♥', name:'Cleopatra', sub:'Ассистент для операторов переписки в creator-агентствах', yr:'2025 — сейчас',
    tag:'AI-система · B2B', one:'Подсказывает три варианта ответа на каждое входящее сообщение — в голосе конкретного автора.',
    rows:[
@@ -581,15 +582,15 @@ const P = [
     ['Тесты','Около 3 000 автотестов в CI: контрактные, интеграционные и сценарные прогоны диалогов через симулятор.'],
     ['Статус','Тестируется перед пилотом с первым агентством. Отвечаю за архитектуру, продуктовую логику и backend.'],
    ], stack:['Python','FastAPI','PostgreSQL','pgvector','LLM'], link:null,
-   site:{url:'https://cleopatra-dashboard.vercel.app', note:'Рабочее место оператора · закрытый пилот'},
-   screens:[{src:'shots/cleopatra.png', label:'Экран входа'}]},
+   site:{url:'demo/cleopatra/', note:'Демо без регистрации · закрытый пилот', demo:true}},
   {r:'Q', s:'♥', name:'Afterglow', sub:'Студия интерактивных историй с AI-персонажами', yr:'2026 — сейчас',
    tag:'AI-система · платформа', one:'Персонажи, которые помнят, что было сто сообщений назад.',
    rows:[
     ['Задача','Длинные истории разваливаются, когда модель забывает начало. Нужна память, которая переживает смену модели и сотни сообщений.'],
     ['Что сделал','Три слоя памяти: профиль персонажа, скользящее резюме сюжета и долгосрочные воспоминания с ранжированием по релевантности. SSE-стриминг, смена модели посреди разговора без потери контекста, перегенерация и откат истории.'],
     ['Данные','Мультиаккаунт на Supabase: RLS на каждой сущности, storage, миграции, экспорт и импорт данных.'],
-   ], stack:['PostgreSQL','Supabase','SSE','Embeddings','Multi-provider LLM'], link:null},
+   ], stack:['PostgreSQL','Supabase','SSE','Embeddings','Multi-provider LLM'], link:null,
+   site:{url:'demo/afterglow/', note:'Демо без регистрации', demo:true}},
   {r:'10', s:'♦', name:'Momentum Flip', sub:'Исследование торговой стратегии на крипто-фьючерсах', yr:'2025',
    tag:'Финансы · исследование', one:'Полный цикл: гипотеза, бэктесты, оптимизация, живая торговля и разбор провалов.',
    rows:[
@@ -662,14 +663,27 @@ document.querySelectorAll('#as-list,[data-open-list]').forEach(b=>b.addEventList
 
 /* ---------- case dialog ---------- */
 const dlg=document.getElementById('case'), side=document.getElementById('sheet-side'), body=document.getElementById('sheet-body');
-const host=u=>new URL(u).host;
+const host=u=>new URL(u, location.href).host;
 function screenHTML(sc){
   if(sc.video) return `<video src="${sc.video}" muted loop playsinline ${reduced?'controls':'autoplay'} preload="metadata"></video>`;
   return `<img src="${sc.src}" alt="${sc.label}" onload="this.parentNode.classList.toggle('tall',this.naturalHeight/this.naturalWidth>.75)">`;
 }
 function preview(p){
+  const url=p.site?.url;
+  // демо-страницы встраиваем живым iframe — посетитель может тыкаться прямо в карточке
+  if(p.site?.demo && url){
+    return `<figure class="pv"><div class="pv-win">
+        <div class="pv-bar"><span class="pv-dots"><i></i><i></i><i></i></span>
+          <span class="pv-url">${host(url)}</span>
+          <span class="pv-status" data-ping="${url}">проверяю…</span></div>
+        <div class="pv-view pv-iframe">${p.site.note?`<span class="pv-note">${p.site.note}</span>`:''}
+          <iframe src="${url}" title="${p.name} — интерактивное демо" loading="lazy"></iframe></div>
+      </div>
+      <figcaption class="pv-foot"><span>Интерактивное демо · данные вымышленные</span>
+        <a class="pbtn small" href="${url}" target="_blank" rel="noopener">Открыть демо ↗</a></figcaption></figure>`;
+  }
   if(!p.screens) return '';
-  const sc=p.screens[0], url=p.site?.url;
+  const sc=p.screens[0];
   return `<figure class="pv"><div class="pv-win">
       <div class="pv-bar"><span class="pv-dots"><i></i><i></i><i></i></span>
         <span class="pv-url">${url?host(url):(p.link?p.link[0]:'github.com/Jericho2k')}</span>
@@ -694,6 +708,18 @@ function ping(el){
 let usingKeys=false;
 addEventListener('keydown',e=>{ if(e.key==='Tab'||e.key==='Enter'||e.key===' '||e.key==='Escape') usingKeys=true; },true);
 addEventListener('pointerdown',()=>{ usingKeys=false; },true);
+/* демо-страницы показываем в десктопной раскладке: если окно карточки уже
+   (телефон), ставим iframe шириной 1280px и визуально сжимаем transform:scale */
+function fitDesk(wrap){
+  const f=wrap.querySelector('iframe'); if(!f) return;
+  const W=wrap.clientWidth,H=wrap.clientHeight;
+  if(W>=1024){ f.style.cssText=''; return; }
+  const k=W/1280;
+  f.style.width='1280px'; f.style.height=Math.round(H/k)+'px';
+  f.style.transformOrigin='0 0'; f.style.transform=`scale(${k})`;
+}
+function fitDesks(){ document.querySelectorAll('.pv-iframe').forEach(fitDesk); }
+addEventListener('resize',fitDesks);
 function openCase(i){
   const p=P[i];
   side.innerHTML=`<div class="sheet-rank ${col(p)}">${p.r}<span class="suit" data-suit="${p.s}"></span></div>
@@ -705,6 +731,7 @@ function openCase(i){
   body.querySelectorAll('[data-ping]').forEach(ping);
   dlg.querySelector('.sheet').scrollTop=0;
   dlg.showModal();
+  fitDesks();
 }
 dlg.addEventListener('close',()=>{
   body.querySelectorAll('video').forEach(v=>v.pause());

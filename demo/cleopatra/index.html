@@ -1,0 +1,3028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Cleopatra AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+/* =============================================================================
+   Ported verbatim from app/globals.css — design tokens, fonts, scrollbar,
+   .silver-text gradient.
+   ========================================================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-base: #0a0a0b;
+  --bg-surface: #0d0d0e;
+  --bg-elevated: #141414;
+  --bg-hover: #1a1a1a;
+  --border: #1e1e1e;
+  --border-subtle: #161616;
+  --border-strong: #3a3a3a;
+  --text-primary: #e8e4dc;
+  --text-secondary: #b0aca4;
+  --text-muted: #555;
+  --text-faint: #444;
+  --silver: #c8c8c8;
+  --silver-bright: #f0f0f0;
+  --silver-dim: #a0a0a0;
+  --green: #4caf82;
+  --purple: #9b8fd4;
+  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
+
+  /* From app/responsive.css */
+  --cleo-safe-top: env(safe-area-inset-top, 0px);
+  --cleo-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --cleo-safe-left: env(safe-area-inset-left, 0px);
+  --cleo-safe-right: env(safe-area-inset-right, 0px);
+  --cleo-kb-inset: 0px;
+  --cleo-topbar-h: 0px;
+  --cleo-page-pad: 32px;
+  --cleo-page-pad-y: 32px;
+}
+
+html {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 100%;
+  overflow: hidden;
+  overscroll-behavior-y: none;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
+
+input, button, textarea, select {
+  font-family: var(--font-body);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes tabpulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.silver-text {
+  background: linear-gradient(135deg, var(--silver) 0%, var(--silver-bright) 50%, var(--silver-dim) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* =============================================================================
+   Ported verbatim from app/responsive.css — the .cleo-* responsive layer.
+   ========================================================================== */
+.cleo-shell {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - var(--cleo-kb-inset));
+  height: calc(100dvh - var(--cleo-kb-inset));
+  overflow: hidden;
+}
+
+.cleo-main {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding-top: var(--cleo-topbar-h);
+}
+
+.cleo-topbar {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1300;
+  align-items: center;
+  gap: 10px;
+  height: var(--cleo-topbar-h);
+  padding: var(--cleo-safe-top) calc(12px + var(--cleo-safe-right)) 0
+    calc(8px + var(--cleo-safe-left));
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.cleo-topbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.cleo-topbar-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--silver);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cleo-nav-scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1350;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.cleo-nav-drawer-head {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 6px 10px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.cleo-nav[data-expanded='false'] .cleo-nav-label {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --cleo-topbar-h: calc(52px + var(--cleo-safe-top));
+    --cleo-page-pad: 16px;
+    --cleo-page-pad-y: 18px;
+  }
+
+  .cleo-topbar {
+    display: flex;
+  }
+
+  .cleo-nav {
+    position: fixed !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1400;
+    width: min(84vw, 288px) !important;
+    padding: calc(14px + var(--cleo-safe-top)) 8px
+      calc(14px + var(--cleo-safe-bottom)) calc(8px + var(--cleo-safe-left)) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    transform: translateX(-102%);
+    transition: transform 0.22s ease;
+  }
+
+  .cleo-nav[data-open='true'] {
+    transform: translateX(0);
+    box-shadow: 0 0 48px rgba(0, 0, 0, 0.65);
+  }
+
+  .cleo-nav-scrim[data-open='true'] {
+    display: block;
+  }
+
+  .cleo-nav .cleo-nav-label {
+    display: inline !important;
+  }
+
+  .cleo-nav-hamburger {
+    display: none !important;
+  }
+
+  .cleo-nav-drawer-head {
+    display: flex;
+  }
+
+  .cleo-nav .nav-item,
+  .cleo-nav .cleo-nav-signout {
+    height: 46px !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --cleo-page-pad: 22px;
+    --cleo-page-pad-y: 24px;
+  }
+}
+
+.cleo-only-phone {
+  display: none !important;
+}
+
+.cleo-only-compact {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .cleo-only-phone {
+    display: inline-flex !important;
+  }
+  .cleo-hide-phone {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .cleo-only-compact {
+    display: inline-flex !important;
+  }
+  .cleo-hide-compact {
+    display: none !important;
+  }
+}
+
+.cleo-panes {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  overflow: hidden;
+}
+
+.cleo-panes > .cleo-pane {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cleo-panes > .cleo-pane-chat {
+  display: flex;
+  flex-direction: column;
+}
+
+.cleo-panes > .cleo-pane-list,
+.cleo-panes > .cleo-pane-state {
+  display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.cleo-panes > .cleo-pane-fan {
+  display: block;
+}
+
+.cleo-panes-chat {
+  grid-template-columns: 280px minmax(0, 1fr) 280px;
+}
+
+.cleo-panes-chat > .cleo-pane-list {
+  overflow: hidden;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .cleo-panes-chat {
+    grid-template-columns: 244px minmax(0, 1fr);
+  }
+  .cleo-panes-chat > .cleo-pane-fan {
+    display: none;
+  }
+  .cleo-panes-chat[data-pane='fan'] > .cleo-pane-chat {
+    display: none;
+  }
+  .cleo-panes-chat[data-pane='fan'] > .cleo-pane-fan {
+    display: block;
+  }
+}
+
+@media (max-width: 767px) {
+  .cleo-panes {
+    display: block;
+    grid-template-columns: none;
+  }
+  .cleo-panes > .cleo-pane {
+    display: none;
+  }
+  .cleo-panes[data-pane='chat'] > .cleo-pane-chat {
+    display: flex;
+  }
+  .cleo-panes[data-pane='list'] > .cleo-pane-list,
+  .cleo-panes[data-pane='fan'] > .cleo-pane-fan,
+  .cleo-panes[data-pane='state'] > .cleo-pane-state {
+    display: block;
+  }
+}
+
+.cleo-pane-back {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  margin-right: 2px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .cleo-pane-back {
+    display: inline-flex;
+  }
+}
+
+.cleo-page {
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--cleo-page-pad-y) calc(var(--cleo-page-pad) + var(--cleo-safe-right))
+    calc(var(--cleo-page-pad-y) + var(--cleo-safe-bottom))
+    calc(var(--cleo-page-pad) + var(--cleo-safe-left));
+}
+
+.cleo-page-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cleo-page-inner {
+  box-sizing: border-box;
+  padding: 32px calc(28px + var(--cleo-safe-right)) 80px
+    calc(28px + var(--cleo-safe-left));
+}
+
+@media (max-width: 767px) {
+  .cleo-page-inner {
+    padding: 18px calc(16px + var(--cleo-safe-right))
+      calc(56px + var(--cleo-safe-bottom)) calc(16px + var(--cleo-safe-left));
+  }
+}
+
+.cleo-page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+@media (min-width: 768px) {
+  .cleo-page-head--center {
+    align-items: center;
+  }
+}
+
+.cleo-page-head > .cleo-page-head-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .cleo-page-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .cleo-page-head > .cleo-page-head-actions {
+    width: 100%;
+  }
+  .cleo-page-head > .cleo-page-head-actions > * {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.cleo-actionbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cleo-grid-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cleo-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cleo-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 1023px) {
+  .cleo-grid-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .cleo-grid-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .cleo-grid-3,
+  .cleo-grid-2 {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+}
+
+.cleo-field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 767px) {
+  .cleo-field-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.cleo-card {
+  padding: 20px;
+}
+
+@media (max-width: 767px) {
+  .cleo-card {
+    padding: 15px 13px;
+  }
+}
+
+.cleo-scroll-x {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.cleo-tabstrip {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.cleo-tabstrip::-webkit-scrollbar {
+  display: none;
+}
+
+.cleo-tabstrip > * {
+  flex-shrink: 0;
+}
+
+.cleo-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.cleo-modal-card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--cleo-modal-w, 480px);
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767px) {
+  .cleo-modal {
+    align-items: flex-end;
+    padding: calc(12px + var(--cleo-safe-top)) calc(10px + var(--cleo-safe-right))
+      calc(10px + var(--cleo-safe-bottom)) calc(10px + var(--cleo-safe-left));
+  }
+  .cleo-modal-card {
+    max-width: 100%;
+    max-height: calc(100dvh - var(--cleo-safe-top) - var(--cleo-safe-bottom) - 22px);
+  }
+}
+
+.cleo-lightbox-close {
+  top: calc(16px + var(--cleo-safe-top)) !important;
+  right: calc(16px + var(--cleo-safe-right)) !important;
+}
+
+@media (max-width: 767px) {
+  .cleo-composer {
+    padding: 10px calc(12px + var(--cleo-safe-right))
+      calc(10px + var(--cleo-safe-bottom)) calc(12px + var(--cleo-safe-left)) !important;
+    max-height: 46dvh;
+    overflow-y: auto;
+  }
+  #aiPanel {
+    max-height: 24dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cleo-messages {
+    padding: 14px calc(12px + var(--cleo-safe-right)) 14px
+      calc(12px + var(--cleo-safe-left)) !important;
+  }
+  .cleo-chat-header {
+    padding: 10px calc(12px + var(--cleo-safe-right)) 10px
+      calc(12px + var(--cleo-safe-left)) !important;
+    gap: 8px !important;
+  }
+
+  .cleo-chat-header > .cleo-chat-id {
+    flex: 1 1 100% !important;
+  }
+
+  .cleo-chat-header > .cleo-chat-auto {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 1023px) {
+  .cleo-chat-header {
+    flex-wrap: wrap !important;
+  }
+}
+
+.cleo-toast {
+  bottom: calc(24px + var(--cleo-safe-bottom)) !important;
+}
+
+@media (max-width: 767px) {
+  .cleo-toast {
+    left: calc(12px + var(--cleo-safe-left)) !important;
+    right: calc(12px + var(--cleo-safe-right)) !important;
+    transform: none !important;
+    text-align: center;
+  }
+}
+
+/* =============================================================================
+   Component styles lifted from the TSX files' inline <style> blocks.
+   ========================================================================== */
+.nav-item:hover { background: var(--bg-hover) !important; }
+.nav-btn:hover {
+  text-shadow: 0 0 12px rgba(200, 200, 200, 0.8);
+  color: var(--silver) !important;
+}
+.nav-btn:hover svg rect {
+  filter: drop-shadow(0 0 4px rgba(200, 200, 200, 0.6));
+}
+
+@keyframes sidebar-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.sidebar-row-actions { display: none; }
+.sidebar-row:hover .sidebar-row-actions,
+.sidebar-row:focus-within .sidebar-row-actions { display: flex; }
+@media (hover: none) {
+  .sidebar-row-actions { display: flex; }
+  .sidebar-row > button { padding-right: 60px !important; }
+}
+
+/* Toast (cleo-toast) */
+.cleo-toast {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 2600;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--text-primary);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  animation: fadeIn 0.15s ease;
+  max-width: 340px;
+}
+
+/* Demo badge */
+.demo-chip {
+  position: fixed;
+  right: 14px;
+  bottom: 12px;
+  z-index: 3000;
+  pointer-events: none;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+  background: rgba(13, 13, 14, 0.82);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 11px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Fake PPV media tiles (stand-ins for vault thumbnails — no external assets) */
+.ppv-tile {
+  background: linear-gradient(140deg, #241f38 0%, #3a2f55 45%, #191423 100%);
+}
+.ppv-tile-2 { background: linear-gradient(140deg, #2a1f2c 0%, #4a2f42 50%, #1c1218 100%); }
+.ppv-tile-3 { background: linear-gradient(140deg, #1f2a2a 0%, #2f4a44 50%, #121c1a 100%); }
+.ppv-tile-4 { background: linear-gradient(140deg, #2b2a1f 0%, #4a452f 50%, #1c1b12 100%); }
+
+textarea::placeholder,
+input::placeholder {
+  color: var(--text-faint);
+}
+</style>
+</head>
+<body>
+
+<!-- Phone top bar (AppShell.tsx) — mobile only, flipped on by the media query -->
+<header class="cleo-topbar">
+  <button type="button" class="cleo-topbar-btn" id="topbarMenu" aria-label="Open navigation">
+    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <rect y="2" width="16" height="1.5" rx="0.75" fill="currentColor" />
+      <rect y="7.25" width="16" height="1.5" rx="0.75" fill="currentColor" />
+      <rect y="12.5" width="16" height="1.5" rx="0.75" fill="currentColor" />
+    </svg>
+  </button>
+  <span class="cleo-topbar-title">CLEOPATRA AI</span>
+</header>
+
+<div class="cleo-shell">
+  <!-- Left icon rail / phone drawer -->
+  <nav class="cleo-nav" id="nav" data-expanded="false" data-open="false"
+       style="width:48px;background:var(--bg-surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:12px 4px;gap:2px;flex-shrink:0;transition:width 0.2s ease;overflow:hidden">
+    <div class="cleo-nav-drawer-head">
+      <span style="font-size:13px;font-weight:600;color:var(--silver);font-family:var(--font-display);white-space:nowrap;padding-left:6px">CLEOPATRA AI</span>
+      <button type="button" id="drawerClose" aria-label="Close navigation"
+              style="width:38px;height:38px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);font-size:20px;line-height:1;cursor:pointer">&times;</button>
+    </div>
+
+    <button type="button" class="nav-btn cleo-nav-hamburger" id="navHamburger" aria-label="Expand navigation"
+            style="width:100%;height:40px;border-radius:8px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:0 10px;margin-bottom:8px;color:var(--text-secondary)">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0">
+        <rect y="2" width="16" height="1.5" rx="0.75" fill="currentColor" />
+        <rect y="7.25" width="16" height="1.5" rx="0.75" fill="currentColor" />
+        <rect y="12.5" width="16" height="1.5" rx="0.75" fill="currentColor" />
+      </svg>
+      <span class="cleo-nav-label" style="font-size:13px;font-weight:600;color:var(--silver);font-family:var(--font-display);white-space:nowrap">CLEOPATRA AI</span>
+    </button>
+
+    <a href="#/" class="nav-item" data-route="#/" style="width:100%;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:0 10px;text-decoration:none;color:var(--text-muted);background:transparent;white-space:nowrap;flex-shrink:0">
+      <span style="display:flex;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 2h12a1 1 0 011 1v7a1 1 0 01-1 1H5l-3 3V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        </svg>
+      </span>
+      <span class="cleo-nav-label" style="font-size:13px">Chats</span>
+    </a>
+    <a href="#/analytics" class="nav-item" data-route="#/analytics" style="width:100%;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:0 10px;text-decoration:none;color:var(--text-muted);background:transparent;white-space:nowrap;flex-shrink:0">
+      <span style="display:flex;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="9" width="3" height="6" rx="0.75" fill="currentColor" />
+          <rect x="6" y="5" width="3" height="10" rx="0.75" fill="currentColor" />
+          <rect x="11" y="1" width="3" height="14" rx="0.75" fill="currentColor" />
+        </svg>
+      </span>
+      <span class="cleo-nav-label" style="font-size:13px">Overview</span>
+    </a>
+    <a href="#/scripts" class="nav-item" data-route="#/scripts" style="width:100%;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:0 10px;text-decoration:none;color:var(--text-muted);background:transparent;white-space:nowrap;flex-shrink:0">
+      <span style="display:flex;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="3" width="12" height="1.5" rx="0.75" fill="currentColor" />
+          <rect x="2" y="7" width="8" height="1.5" rx="0.75" fill="currentColor" />
+          <rect x="2" y="11" width="10" height="1.5" rx="0.75" fill="currentColor" />
+        </svg>
+      </span>
+      <span class="cleo-nav-label" style="font-size:13px">Sets</span>
+    </a>
+    <a href="#/vault" class="nav-item" data-route="#/vault" style="width:100%;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:0 10px;text-decoration:none;color:var(--text-muted);background:transparent;white-space:nowrap;flex-shrink:0">
+      <span style="display:flex;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+          <circle cx="8" cy="8" r="2.25" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M8 8h2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      </span>
+      <span class="cleo-nav-label" style="font-size:13px">Vault</span>
+    </a>
+    <a href="#/monetization" class="nav-item" data-route="#/monetization" style="width:100%;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:0 10px;text-decoration:none;color:var(--text-muted);background:transparent;white-space:nowrap;flex-shrink:0">
+      <span style="display:flex;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" rx="6.25" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M10.4 5.2c-.55-.45-1.3-.7-2.18-.7-1.28 0-2.22.62-2.22 1.55 0 2.3 4.45 1.05 4.45 3.35 0 .98-.94 1.65-2.35 1.65-.94 0-1.82-.3-2.5-.88M8 3.3v9.4" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
+        </svg>
+      </span>
+      <span class="cleo-nav-label" style="font-size:13px">Monetization</span>
+    </a>
+    <a href="#/settings" class="nav-item" data-route="#/settings" style="width:100%;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:0 10px;text-decoration:none;color:var(--text-muted);background:transparent;white-space:nowrap;flex-shrink:0">
+      <span style="display:flex;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M8 1v1.5M8 13.5V15M15 8h-1.5M2.5 8H1M12.95 3.05l-1.06 1.06M4.11 11.89l-1.06 1.06M12.95 12.95l-1.06-1.06M4.11 4.11L3.05 3.05" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      </span>
+      <span class="cleo-nav-label" style="font-size:13px">Settings</span>
+    </a>
+
+    <div style="margin-top:auto;padding-bottom:8px">
+      <button type="button" class="cleo-nav-signout" id="signOutBtn" title="Sign out"
+              style="width:100%;height:40px;border-radius:8px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:0 10px;color:var(--text-muted)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0">
+          <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <span class="cleo-nav-label" style="font-size:13px;white-space:nowrap">Sign out</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="cleo-nav-scrim" id="navScrim" aria-hidden="true"></div>
+
+  <div class="cleo-main">
+    <!-- ======================= CHATS WORKSPACE ======================= -->
+    <div id="view-chats" style="height:100%;display:flex;flex-direction:column;overflow:hidden;background:var(--bg-base)">
+      <!-- Creator tabs bar (app/page.tsx) -->
+      <div style="display:flex;align-items:center;background:var(--bg-surface);border-bottom:1px solid var(--border);padding:0 8px;height:40px;flex-shrink:0;gap:2px;position:relative">
+        <div class="cleo-tabstrip" style="display:flex;align-items:center;gap:2px;flex:1;min-width:0">
+          <div id="tabChip" style="display:flex;align-items:center;gap:6px;padding:0 10px;height:32px;border-radius:6px;cursor:grab;background:var(--bg-elevated);border:1px solid var(--border);font-size:12px;color:var(--text-primary);flex-shrink:0;user-select:none">
+            <span id="tabChipName">Aurora Vale</span>
+            <span id="tabChipAuto" style="display:none;font-size:9px;padding:2px 6px;border-radius:999px;background:rgba(76,175,130,0.2);color:var(--green);border:1px solid rgba(76,175,130,0.4);animation:tabpulse 2s infinite;letter-spacing:0.05em">&#9679; AUTO</span>
+            <span id="tabChipFan" style="display:none;color:var(--text-muted);font-size:11px"></span>
+          </div>
+        </div>
+        <div style="position:relative;flex-shrink:0">
+          <button type="button" id="newTabBtn"
+                  style="width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;margin-left:4px">+</button>
+        </div>
+      </div>
+
+      <!-- Three panes: Inbox / thread / fan profile -->
+      <div class="cleo-panes cleo-panes-chat" id="panes" data-pane="list">
+        <div class="cleo-pane cleo-pane-list"><aside id="sidebar" style="height:100%;width:100%;background:var(--bg-surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden"></aside></div>
+
+        <div class="cleo-pane cleo-pane-chat" id="chatPane">
+          <div id="chatEmpty" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;text-align:center;color:var(--text-muted);font-size:14px">
+            Select a conversation to start chatting.
+            <button type="button" class="cleo-only-phone" data-pane-to="list"
+                    style="padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg-elevated);color:var(--text-secondary);font-size:13px;cursor:pointer">&lsaquo; Conversations</button>
+          </div>
+
+          <div id="chatWrap" style="display:none;flex-direction:column;height:100%;background:var(--bg-base)">
+            <div class="cleo-chat-header" id="chatHeader"
+                 style="flex-shrink:0;padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--bg-surface)"></div>
+
+            <div class="cleo-messages" id="messages"
+                 style="position:relative;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:24px;display:flex;flex-direction:column;gap:12px"></div>
+
+            <div class="cleo-composer" id="composer"
+                 style="flex-shrink:0;padding:16px;border-top:1px solid var(--border);background:var(--bg-surface)">
+              <div id="aiBlock">
+                <div id="aiToggle"
+                     style="display:flex;align-items:center;justify-content:space-between;padding:0 0 10px 0;cursor:pointer">
+                  <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted)">AI Suggestions</div>
+                  <svg id="aiChevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);transform:rotate(0deg);transition:transform 0.2s ease">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </div>
+                <div id="aiPanel">
+                  <div id="suggestionList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px"></div>
+                  <div class="cleo-actionbar" style="margin-bottom:12px">
+                    <button type="button" id="regenerateBtn"
+                            style="background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:6px;color:var(--text-secondary);font-size:12px;cursor:pointer;padding:5px 12px">Regenerate</button>
+                    <button type="button" id="scriptsBtn"
+                            style="background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:6px;color:var(--text-secondary);font-size:12px;cursor:pointer;padding:5px 12px">Scripts</button>
+                    <div style="margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                      <button type="button" id="chooseSetBtn"
+                              style="padding:6px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border-strong);background:var(--bg-elevated);color:var(--text-secondary);font-size:12px">Choose a set</button>
+                      <button type="button" id="buildPpvBtn"
+                              style="padding:6px 10px;border-radius:6px;cursor:pointer;border:1px solid rgba(155,143,212,0.4);background:rgba(155,143,212,0.1);color:var(--purple);font-size:12px">Build locked PPV</button>
+                    </div>
+                  </div>
+                  <div id="scriptsPanel" style="display:none;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;overflow:hidden"></div>
+                </div>
+              </div>
+
+              <div style="height:1px;background:var(--border);margin-bottom:12px"></div>
+              <div id="queueRow"></div>
+              <textarea id="composerInput" rows="1" placeholder="type your own reply..."
+                        style="width:100%;padding:10px 14px;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);font-size:14px;line-height:1.45;resize:none;overflow:hidden;min-height:40px;display:block"></textarea>
+              <div id="replyError" style="color:#e57689;font-size:11px;margin-top:6px"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cleo-pane cleo-pane-fan" id="fanPane"><aside id="fanPanel"></aside></div>
+      </div>
+    </div>
+
+    <!-- ======================= OVERVIEW (analytics) ======================= -->
+    <main id="view-analytics" class="cleo-page-scroll" style="background:var(--bg-base);color:var(--text-primary);display:none"></main>
+
+    <!-- ============ PLACEHOLDER ROUTES (Sets/Vault/Monetization/Settings) ============ -->
+    <main id="view-placeholder" class="cleo-page-scroll" style="background:var(--bg-base);color:var(--text-primary);display:none"></main>
+  </div>
+</div>
+
+<div class="demo-chip">DEMO &middot; fictional data</div>
+
+<script>
+'use strict';
+/* ============================================================================
+   Cleopatra AI — static portfolio replica.
+   All data below is fictional. No network calls other than Google Fonts.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Fake data — two creators (Overview), one open creator (Chats workspace).
+   --------------------------------------------------------------------------- */
+var CREATORS = [
+  { id: 'c1', name: 'Aurora Vale', autoMode: false, reconciled: '10/13/2026, 9:42:11 AM' },
+  { id: 'c2', name: 'Luna Marceau', autoMode: true, reconciled: '10/13/2026, 9:38:04 AM' }
+];
+
+var CREATOR_ID = 'c1';
+
+var MODEL_LEGEND =
+  'Name: Aurora Vale\n' +
+  'From: Reykjavík, Iceland\n' +
+  'Age: 26\n' +
+  'Job: Photographer\n' +
+  'Background: Digital artist turned full-time creator. Loves night skies, thunderstorms and terrible puns. Fluent in English, passable Icelandic.\n' +
+  'Other: Cat mom to a grey tabby named Odin; always awake at 2am.';
+
+var SCRIPTS = [
+  { category: 'greeting', title: 'Warm welcome', content: 'hi sweetheart!! so happy you finally made it here 💕 what was it that finally brought you over?' },
+  { category: 'greeting', title: 'New sub check-in', content: 'hey you! thanks for subscribing 🖤 let me know if there is anything you want to see first...' },
+  { category: 'upsell', title: 'Tease the vault', content: 'you have no idea what i just finished shooting 😈 want a tiny sneak peek before anyone else?' },
+  { category: 'upsell', title: 'PPV nudge', content: 'sooo i put together something really special for you... should i send it? it is 🔒 but totally worth it' },
+  { category: 'reengagement', title: 'Miss you ping', content: 'i noticed you have been quiet lately 🥺 did i do something? i saved something for you...' },
+  { category: 'reengagement', title: 'Payday nudge', content: 'hope work has been treating you well 🖤 a little something is waiting whenever you are ready...' }
+];
+
+/* Fans. `minutesAgo` seeds last_message_time so relative times read naturally. */
+var FANS = [
+  { id: 'f1', name: 'Ruby Sinclair', spent: 4820, tier: 'whale', minutesAgo: 5, unread: 3, auto: null,
+    preview: 'omg the new set is unreal 😍 do you have more?' },
+  { id: 'f2', name: 'Marcus Vale', spent: 1340, tier: 'active', minutesAgo: 22, unread: 0, auto: true,
+    preview: 'thanks for last nights drop, worth every cent' },
+  { id: 'f3', name: 'Tessa Bloom', spent: 6120, tier: 'whale', minutesAgo: 64, unread: 1, auto: true,
+    preview: 'can we do the couples theme next weekend?' },
+  { id: 'f4', name: 'Dmitri Kane', spent: 410, tier: 'casual', minutesAgo: 190, unread: 0, auto: false,
+    preview: 'hey, is the friday bundle still available?' },
+  { id: 'f5', name: 'Harper Quinn', spent: 2180, tier: 'active', minutesAgo: 245, unread: 2, auto: null,
+    preview: 'i told my friend about you, she subscribed!' },
+  { id: 'f6', name: 'Jonah Pierce', spent: 45, tier: 'cold', minutesAgo: 2880, unread: 0, auto: false,
+    preview: 'sorry, been buried at work. back next week' },
+  { id: 'f7', name: 'Celeste Moreau', spent: 7450, tier: 'whale', minutesAgo: 310, unread: 0, auto: true,
+    preview: 'just tipped, check your notifications 💌' },
+  { id: 'f8', name: "Finn O'Leary", spent: 320, tier: 'casual', minutesAgo: 1500, unread: 1, auto: null,
+    preview: 'any chance of a custom vid?' },
+  { id: 'f9', name: 'Nadia Frost', spent: 1905, tier: 'active', minutesAgo: 4320, unread: 0, auto: false,
+    preview: 'payday friday, save me something good 😈' }
+];
+
+var FAN_LISTS = [
+  { id: 'l1', name: 'VIP Regulars', color: '#9b8fd4', excludeFromAuto: false, members: ['f1', 'f3', 'f7'] },
+  { id: 'l2', name: 'Re-engage', color: '#f0a500', excludeFromAuto: true, members: ['f6', 'f9'] }
+];
+
+var LIST_COLORS = ['#9b8fd4', '#4caf82', '#ff6b6b', '#f0a500', '#4fc3f7', '#f48fb1', '#aaa', '#fff'];
+
+/* Fake message threads. role: 'fan' | 'creator'. PPV cards via media_context. */
+var THREADS = {
+  f1: [
+    { id: 'm1', role: 'fan', content: 'hi!! just subscribed, i have been lurking for weeks 😅' },
+    { id: 'm2', role: 'creator', content: 'welcome!! so happy you are finally here 💕 what brought you over in the end?' },
+    { id: 'm3', role: 'fan', content: 'the rooftop teaser reel. i was done for immediately' },
+    { id: 'm4', role: 'creator', content: 'a girl of taste 😌 that shoot was so much fun, the light was perfect' },
+    { id: 'm5', role: 'fan', content: 'ugh you are killing me. is the full set out??' },
+    { id: 'm6', role: 'creator', content: 'just for you...', ppv: { price: 45, count: 4, title: 'Rooftop Set' } },
+    { id: 'm7', role: 'fan', content: 'omg the new set is unreal 😍 do you have more?' }
+  ],
+  f2: [
+    { id: 'm1', role: 'fan', content: 'hey Aurora, just woke up to your message haha' },
+    { id: 'm2', role: 'creator', content: 'morning! or 3am, knowing you 😌 did you see what i sent last night?' },
+    { id: 'm3', role: 'fan', content: 'i did. buying it right now' },
+    { id: 'm4', role: 'fan', content: 'thanks for last nights drop, worth every cent' }
+  ],
+  f3: [
+    { id: 'm1', role: 'creator', content: 'good morning gorgeous 🌤️ how is your week going?' },
+    { id: 'm2', role: 'fan', content: 'hectic but good! counting down to the weekend' },
+    { id: 'm3', role: 'creator', content: 'same here, i have something planned for saturday that you are going to love...' },
+    { id: 'm4', role: 'fan', content: 'can we do the couples theme next weekend?' }
+  ],
+  f4: [
+    { id: 'm1', role: 'fan', content: 'hey, is the friday bundle still available?' },
+    { id: 'm2', role: 'creator', content: 'it is! i can hold a copy for you until tonight if you want 💜' },
+    { id: 'm3', role: 'fan', content: 'please do, payday is tomorrow' }
+  ],
+  f5: [
+    { id: 'm1', role: 'fan', content: 'i told my friend about you, she subscribed!' },
+    { id: 'm2', role: 'creator', content: 'omg stop!! that is so sweet of you 🥺 tell her i said hi' },
+    { id: 'm3', role: 'fan', content: 'she says hi back 😂 she already bought the beach set' },
+    { id: 'm4', role: 'creator', content: 'a woman of culture 🖤 thank you both, this genuinely makes my day' }
+  ],
+  f6: [
+    { id: 'm1', role: 'fan', content: 'sorry, been buried at work. back next week' },
+    { id: 'm2', role: 'creator', content: 'no apologies ever 💙 work comes first, i will be right here' }
+  ],
+  f7: [
+    { id: 'm1', role: 'fan', content: 'just tipped, check your notifications 💌' },
+    { id: 'm2', role: 'creator', content: 'seen 😌 you spoil me, Celeste. what did you want to see tonight?' },
+    { id: 'm3', role: 'fan', content: 'whatever you want to send. i trust you' }
+  ],
+  f8: [
+    { id: 'm1', role: 'fan', content: 'any chance of a custom vid?' },
+    { id: 'm2', role: 'creator', content: 'always 💜 tell me the theme and i will quote you a price' }
+  ],
+  f9: [
+    { id: 'm1', role: 'fan', content: 'payday friday, save me something good 😈' },
+    { id: 'm2', role: 'creator', content: 'already setting something aside for you 🔥 see you friday' }
+  ]
+};
+
+/* Suggestion pools. ' | ' separates queued follow-up parts, exactly like the
+   real suggester returns. The first set is what getLatestSuggestions would
+   have cached; Regenerate cycles through the pool. */
+var SUGGESTION_POOL = {
+  f1: [
+    ['omg right?? the rooftop set was just the teaser 😈 | want the extended cut?',
+     'i knew you would love it 😌 there is a whole vault waiting tbh',
+     'say less 🖤 i put together something exclusive for my top fans...'],
+    ['a girl of taste AND patience 😏 the full version is three times longer',
+     'i was hoping you would ask 💕 it just went live, go look',
+     'careful, i do love an enthusiastic one 😈 guess i get to spoil you']
+  ],
+  f2: [
+    ['that is what i like to hear 😌 you have been so good this month',
+     'new drop lands friday, want a sneak peek before anyone else? 👀',
+     'and it is only getting better, trust me 🖤'],
+    ['you always say the sweetest things 🥺 sending you a little bonus tonight',
+     'the extended cut is uploading as we speak...',
+     'how about i make tonight extra special for my favorite night owl?']
+  ],
+  f3: [
+    ['couples theme?? say no more 😈 i have the perfect outfits picked already',
+     'saturday works great, i will block the evening out for us 🖤',
+     'want me to send a mood board first so you can veto anything?'],
+    ['i love where your head is at 😌 saturday is going to be very fun',
+     'i already have three setups shot for it, no pressure though!',
+     'dress code: whatever makes you feel most confident 💜']
+  ],
+  f4: [
+    ['it is still available 💜 want me to hold one for you until tonight?',
+     'no rush at all, payday timing is completely understood 😌',
+     'if you want, i can send a 30 second preview first?'],
+    ['of course! it has been our most popular bundle this month 😌',
+     'i can do a small discount if you take it before midnight 🖤',
+     'just say the word and it is yours']
+  ],
+  f5: [
+    ['omg stop!! that is so sweet of you 🥺 tell her i said hi',
+     'you two are going to enable each other 😂🖤',
+     'sending you both a little something later as a thank you 💜'],
+    ['this genuinely made my day 🥺 you are the best',
+     'new set this weekend by the way, do not say i never warn you 😌',
+     'friends who shop together stay together 😇']
+  ],
+  f6: [
+    ['no apologies ever 💙 work comes first, i will be right here',
+     'i will save the good stuff for your comeback week 😌',
+     'go crush it, then come tell me all about it 🖤'],
+    ['missed you around here 🥺 but genuinely, no pressure at all',
+     'there is a little something waiting in your inbox when you are back',
+     'rest up and i will see you soon 💜']
+  ],
+  f7: [
+    ['seen 😌 you spoil me, Celeste. what did you want to see tonight?',
+     'i have a brand new set that has your name written all over it 🖤',
+     'or i can just surprise you, you always like those best 😏'],
+    ['your tip just made my whole evening 🥺 let me return the favor',
+     'sending you something from this morning shoot, it is unreal',
+     'beach or rooftop tonight? your call 💜']
+  ],
+  f8: [
+    ['always 💜 tell me the theme and i will quote you a price',
+     'customs start at $120 and i include two outfit changes 😌',
+     'no idea is too silly, i have shot some very creative ones 😇'],
+    ['love a custom request 😏 what are you thinking?',
+     'give me a week and i will make it extra special for you',
+     'i will even send behind the scenes clips as a bonus 🖤']
+  ],
+  f9: [
+    ['already setting something aside for you 🔥 see you friday',
+     'no rush though, it will keep until your payday lands 😌',
+     'want it themed or should i surprise you? 😈'],
+    ['friday cannot come fast enough 🖤 i have three things shortlisted for you',
+     'i will send the menu thursday so you can pick in advance 😏',
+     'payday you say? say less 😇']
+  ]
+};
+
+var CANNED_REPLIES = {
+  f1: ['ok ok i am looking RIGHT now 😍', 'you are going to bankrupt me lol', 'sent you a tip as thanks 🖤'],
+  f2: ['appreciate you fr 🖤', 'haha you know me too well', 'see you tonight'],
+  f3: ['yesss saturday it is 😍', 'omg a mood board, of course', 'you always get me'],
+  f4: ['hold one for me please 🙏', 'payday tomorrow, i promise', 'preview would be great actually'],
+  f5: ['told you she would love you 😇', 'a thank you?? stop it 🥺', 'see you both this weekend'],
+  f6: ['back next week for real, i promise 🖤', 'missed you too 🥺', 'see you soon'],
+  f7: ['surprise me 😏', 'you are the sweetest 🥺', 'rooftop tonight then 🔥'],
+  f8: ['thinking something winter themed?', '120 works for me 🖤', 'you are a legend, thank you'],
+  f9: ['thursday works 😍', 'surprise me obviously 😈', 'friday cannot come soon enough']
+};
+/* Per-fan FanPanel data: notes, AI summary, sales, full-auto state. */
+var FAN_EXTRA = {
+  f1: {
+    notes: 'VIP since day one. Loves rooftop/editorial sets, hates being rushed. Tip twice already this month.',
+    memberNote: 'Tier: whale since June 2026\nAlways tips before buying\nPrefers voice notes over text\nBest reach: 10pm-1am local\nGifts: birthday Oct 24',
+    ai: {
+      summary: 'Long-time lurker turned whale. Responds strongly to exclusivity and early access, and usually purchases within twenty minutes of a tease. Night owl — most spending happens after 11pm.',
+      emotionalType: 'Validation-seeking romantic',
+      spending: 'Impulse buyer, high ceiling',
+      location: 'Portland, OR (self-reported)',
+      occupation: 'Nurse (self-reported)',
+      payday: 'Every other Friday',
+      relationship: 'Single',
+      kinks: ['Cosplay', 'Roleplay', 'Slow burn'],
+      reengagement: 'Payday mentions and new set drops',
+      risk: 'None recorded'
+    },
+    prefs: ['rooftop sets', 'voice notes', 'slow burn', 'behind the scenes'],
+    details: { age: '27', payday: 'Every other Friday', hobbies: 'Hiking, film photography', rel: 'Single' },
+    sales: [
+      { date: '10/08/2026', item: 'Rooftop Set', amount: 45, chatter: 'Aurora' },
+      { date: '09/28/2026', item: 'Custom Greeting Clip', amount: 120, chatter: 'Aurora' },
+      { date: '09/14/2026', item: 'VIP Monthly', amount: 60, chatter: 'Auto' }
+    ],
+    notSold: [
+      { date: '09/20/2026', item: 'Backstage Bundle', amount: 80, chatter: 'Aurora', reason: 'No response after 48h' }
+    ],
+    auto: { status: 'idle', paymentState: '', pending: null, followup: null },
+    history: { pages: 3, imported: 41, fully: true }
+  },
+  f2: {
+    notes: 'Reliable buyer, works nights. Confirmed purchase on every PPV since August.',
+    memberNote: 'Tier: active\nWorks night shifts, awake 8pm-6am\nNever negotiates prices\nPrefers video over photo sets',
+    ai: {
+      summary: 'Steady, low-friction buyer who purchases on first offer. Values consistency over novelty and replies fastest to direct, no-fluff messages.',
+      emotionalType: 'Loyal regular',
+      spending: 'Steady, price-insensitive',
+      location: 'Chicago, IL (self-reported)',
+      occupation: 'Warehouse supervisor',
+      payday: '1st and 15th',
+      relationship: 'Married (openly)',
+      kinks: ['Video', 'Cosplay'],
+      reengagement: 'Direct mentions of new videos',
+      risk: 'None recorded'
+    },
+    prefs: ['video sets', 'direct messages'],
+    details: { age: '34', payday: '1st and 15th', hobbies: 'Basketball, grilling', rel: 'Married' },
+    sales: [
+      { date: '10/12/2026', item: 'Late Night Drop', amount: 35, chatter: 'Auto' },
+      { date: '09/30/2026', item: 'Office Theme Set', amount: 55, chatter: 'Aurora' }
+    ],
+    notSold: [],
+    auto: { status: 'awaiting_payment', paymentState: 'payment_pending', pending: { price: 35, expires: '2026-10-15T18:00:00', checks: 3 }, followup: null },
+    history: { pages: 2, imported: 18, fully: true }
+  },
+  f3: {
+    notes: 'Highest lifetime spend this quarter. Plans themed shoots in advance — always books Saturdays.',
+    memberNote: 'Tier: whale\nBooks themed sessions 1-2 weeks ahead\nLoves couples/fantasy themes\nAnniversary: Feb 14',
+    ai: {
+      summary: 'Planner rather than impulse buyer. Discusses purchases days ahead and pays promptly once the theme is agreed. Treats the creator-fan relationship as an ongoing story.',
+      emotionalType: 'Committed storyteller',
+      spending: 'Planned, high value',
+      location: 'Austin, TX (self-reported)',
+      occupation: 'Graphic designer',
+      payday: 'Last day of month',
+      relationship: 'Single',
+      kinks: ['Fantasy', 'Couples theme', 'Lingerie'],
+      reengagement: 'Theme announcements',
+      risk: 'None recorded'
+    },
+    prefs: ['themed shoots', 'saturday sessions', 'fantasy'],
+    details: { age: '29', payday: 'Last day of month', hobbies: 'Dungeons & Dragons, ceramics', rel: 'Single' },
+    sales: [
+      { date: '10/05/2026', item: 'Fantasy Set Vol. 1', amount: 65, chatter: 'Aurora' },
+      { date: '09/12/2026', item: 'VIP Monthly', amount: 60, chatter: 'Auto' }
+    ],
+    notSold: [
+      { date: '09/18/2026', item: 'Custom Roleplay Clip', amount: 150, chatter: 'Aurora', reason: 'Price declined — countered $90' }
+    ],
+    auto: { status: 'followup_scheduled', paymentState: '', pending: null, followup: { type: 'theme_confirmation', at: '2026-10-14T17:00:00' } },
+    history: { pages: 4, imported: 63, fully: true }
+  },
+  f4: {
+    notes: 'Budget-conscious but consistent. Always asks for previews before buying.',
+    memberNote: 'Tier: casual\nAlways asks for a preview\nPayday: 14th\nPrefers bundles over singles',
+    ai: {
+      summary: 'Price-sensitive but repeat buyer. Purchases after previews and responds well to small, time-limited discounts rather than full-price offers.',
+      emotionalType: 'Cautious value-seeker',
+      spending: 'Deal-driven',
+      location: 'Denver, CO (self-reported)',
+      occupation: 'Grad student',
+      payday: '14th of month',
+      relationship: 'Single',
+      kinks: ['Bundles', 'Previews'],
+      reengagement: 'Discounts and bundle deals',
+      risk: 'None recorded'
+    },
+    prefs: ['bundles', 'previews', 'discounts'],
+    details: { age: '24', payday: '14th of month', hobbies: 'Rock climbing, gaming', rel: 'Single' },
+    sales: [
+      { date: '09/14/2026', item: 'Friday Bundle', amount: 40, chatter: 'Aurora' }
+    ],
+    notSold: [
+      { date: '10/02/2026', item: 'Deluxe Bundle', amount: 90, chatter: 'Auto', reason: 'Abandoned after 72h' }
+    ],
+    auto: { status: 'idle', paymentState: '', pending: null, followup: null },
+    history: { pages: 1, imported: 9, fully: true }
+  },
+  f5: {
+    notes: 'Referred a new subscriber in October. Very social — boosts every announcement post.',
+    memberNote: 'Tier: active\nReferrer (1 confirmed sub)\nLoves beach/nature sets\nFast responder, daytime',
+    ai: {
+      summary: 'Social amplifier: engages with every post and brings referrals. Spending is moderate but influence on new-sub acquisition is high. Reward with early access rather than discounts.',
+      emotionalType: 'Community builder',
+      spending: 'Moderate, consistent',
+      location: 'Miami, FL (self-reported)',
+      occupation: 'Elementary teacher',
+      payday: 'Monthly, 20th',
+      relationship: 'Engaged',
+      kinks: ['Beach sets', 'Nature'],
+      reengagement: 'Shoutouts and early access',
+      risk: 'None recorded'
+    },
+    prefs: ['beach sets', 'early access', 'shoutouts'],
+    details: { age: '31', payday: 'Monthly, 20th', hobbies: 'Surfing, watercolor', rel: 'Engaged' },
+    sales: [
+      { date: '10/01/2026', item: 'Beach Set', amount: 45, chatter: 'Aurora' },
+      { date: '09/22/2026', item: 'VIP Monthly', amount: 60, chatter: 'Auto' }
+    ],
+    notSold: [],
+    auto: { status: 'upsell_window', paymentState: '', pending: null, followup: { type: 'referral_thank_you', at: '2026-10-14T15:00:00' } },
+    history: { pages: 2, imported: 22, fully: true }
+  },
+  f6: {
+    notes: 'Went quiet after an August purchase. Keep for monthly re-engagement only.',
+    memberNote: '',
+    ai: {
+      summary: 'Previously casual buyer, currently dormant due to work. Single purchase to date. Re-engage once monthly with low-pressure check-ins; do not send offers while inactive.',
+      emotionalType: 'Reserved',
+      spending: 'Dormant',
+      location: 'Unknown (not self-reported)',
+      occupation: 'Unknown (mentions long work hours)',
+      payday: '',
+      relationship: 'Unknown',
+      kinks: [],
+      reengagement: 'Low-key personal check-ins only',
+      risk: 'None recorded'
+    },
+    prefs: [],
+    details: { age: '', payday: '', hobbies: '', rel: '' },
+    sales: [
+      { date: '08/19/2026', item: 'Summer Teaser', amount: 25, chatter: 'Aurora' }
+    ],
+    notSold: [],
+    auto: { status: 'idle', paymentState: '', pending: null, followup: null },
+    history: { pages: 1, imported: 6, fully: true }
+  },
+  f7: {
+    notes: 'Top spender this quarter. Tips between purchases — treat as VIP-plus.',
+    memberNote: 'Tier: whale\nTips before purchases\nAvailable most evenings after 9pm\nLoves rooftop + beach mixes',
+    ai: {
+      summary: 'Highest lifetime value in the current roster. Tipping behaviour before purchases indicates strong trust; pricing sensitivity is effectively zero. Prefers being surprised over choosing.',
+      emotionalType: 'Devoted patron',
+      spending: 'Ultra high, unresistant',
+      location: 'Montréal, QC (self-reported)',
+      occupation: 'Restaurant owner',
+      payday: 'Weekly (Thursday)',
+      relationship: 'Single',
+      kinks: ['Surprises', 'Rooftop', 'Lingerie'],
+      reengagement: 'Surprise drops',
+      risk: 'None recorded'
+    },
+    prefs: ['surprise drops', 'rooftop', 'lingerie'],
+    details: { age: '33', payday: 'Weekly (Thursday)', hobbies: 'Wine tasting, sailing', rel: 'Single' },
+    sales: [
+      { date: '10/12/2026', item: 'Golden Hour Set', amount: 75, chatter: 'Auto' },
+      { date: '10/03/2026', item: 'Rooftop Set', amount: 45, chatter: 'Aurora' },
+      { date: '09/25/2026', item: 'VIP Monthly', amount: 60, chatter: 'Auto' }
+    ],
+    notSold: [],
+    auto: { status: 'awaiting_payment', paymentState: 'payment_pending', pending: { price: 75, expires: '2026-10-14T22:00:00', checks: 2 }, followup: null },
+    history: { pages: 5, imported: 88, fully: true }
+  },
+  f8: {
+    notes: 'Asked twice about customs. Potential upsell if quoted clearly.',
+    memberNote: '',
+    ai: {
+      summary: 'Curious about customs but has never purchased one. Quoted price was acknowledged positively. Send one clear offer with a deadline rather than repeated nudges.',
+      emotionalType: 'Hesitant explorer',
+      spending: 'Low, customs-curious',
+      location: 'Dublin, Ireland (self-reported)',
+      occupation: 'Barista',
+      payday: 'Every Friday',
+      relationship: 'Single',
+      kinks: ['Customs', 'Winter themes'],
+      reengagement: 'Clear, single-offer quotes',
+      risk: 'None recorded'
+    },
+    prefs: ['customs', 'winter themes'],
+    details: { age: '25', payday: 'Every Friday', hobbies: 'Guitar, running', rel: 'Single' },
+    sales: [
+      { date: '09/05/2026', item: 'Starter Set', amount: 20, chatter: 'Aurora' }
+    ],
+    notSold: [
+      { date: '09/27/2026', item: 'Winter Custom Clip', amount: 120, chatter: 'Aurora', reason: 'No response after quote' }
+    ],
+    auto: { status: 'idle', paymentState: '', pending: null, followup: null },
+    history: { pages: 1, imported: 8, fully: true }
+  },
+  f9: {
+    notes: 'Payday buyer — converts every other Friday. Never buys outside payday window.',
+    memberNote: 'Tier: active\nPayday: every other Friday\nNever buys outside payday window\nLoves themed surprises',
+    ai: {
+      summary: 'Highly predictable payday buyer. Converts on Friday evenings and ignores mid-week offers entirely. Time all sends to her stated payday rhythm.',
+      emotionalType: 'Ritual spender',
+      spending: 'Payday-clustered',
+      location: 'Seattle, WA (self-reported)',
+      occupation: 'Bookkeeper',
+      payday: 'Alternate Fridays',
+      relationship: 'Single',
+      kinks: ['Themed surprises', 'Nightwear'],
+      reengagement: 'Payday-timed sends only',
+      risk: 'None recorded'
+    },
+    prefs: ['payday drops', 'nightwear', 'themed surprises'],
+    details: { age: '30', payday: 'Alternate Fridays', hobbies: 'Baking, true crime podcasts', rel: 'Single' },
+    sales: [
+      { date: '10/02/2026', item: 'Autumn Set', amount: 50, chatter: 'Auto' },
+      { date: '09/18/2026', item: 'Nightwear Set', amount: 40, chatter: 'Aurora' }
+    ],
+    notSold: [
+      { date: '09/25/2026', item: 'Deluxe Bundle', amount: 90, chatter: 'Auto', reason: 'Sent outside payday window — no response' }
+    ],
+    auto: { status: 'followup_scheduled', paymentState: '', pending: null, followup: { type: 'payday_reengagement', at: '2026-10-16T18:00:00' } },
+    history: { pages: 2, imported: 25, fully: true }
+  }
+};
+/* ---------------------------------------------------------------------------
+   Runtime state
+   --------------------------------------------------------------------------- */
+var NOW = Date.now();
+
+var state = {
+  route: '#/',
+  navExpanded: false,
+  drawerOpen: false,
+  pane: 'list',                 // phone/tablet pane: list | chat | fan
+  globalAutoMode: false,
+  syncingChats: false,
+  activeFanId: 'f1',
+  activeFilter: 'all',          // all | unread | whale | active | casual | cold | auto_on | auto_off
+  activeListId: null,
+  conversations: [],
+  messages: {},                 // fanId -> [message]
+  suggestions: {},              // fanId -> [3 strings]
+  suggestionIndex: {},          // fanId -> pool index
+  suggestionsLoading: false,
+  suggestionsOpen: true,
+  showScripts: false,
+  queue: [],                    // queued follow-up parts from a picked suggestion
+  picked: null,                 // { index, text } — provenance for the pick
+  replySending: false,
+  listDropdownFanId: null,
+  fanTab: 'profile',
+  showMember: false,
+  showModel: false,
+  showAi: false,
+  loadingHistoryFan: null,
+  historyLines: {},             // fanId -> per-fan Load History line
+  replyIdx: {},                 // fanId -> canned-reply cursor
+  analyticsCreator: 'c2',
+  analyticsLoading: false,
+  approvals: [],
+  approvalsResolved: {}
+};
+
+/* Seed conversations + message threads from the fake data. */
+(function seed() {
+  FANS.forEach(function (fan) {
+    var msgs = (THREADS[fan.id] || []).map(function (m) {
+      return { id: m.id, role: m.role, content: m.content, ppv: m.ppv || null };
+    });
+    state.messages[fan.id] = msgs;
+    var lastFanMsg = '';
+    for (var i = msgs.length - 1; i >= 0; i--) {
+      if (msgs[i].role === 'fan') { lastFanMsg = msgs[i].content; break; }
+    }
+    state.conversations.push({
+      fan: {
+        id: fan.id, display_name: fan.name, total_spent: fan.spent,
+        spend_tier: fan.tier, auto_mode: fan.auto
+      },
+      last_message: lastFanMsg || fan.preview,
+      last_message_time: new Date(NOW - fan.minutesAgo * 60000),
+      unread: fan.unread > 0,
+      unread_count: fan.unread
+    });
+    state.suggestionIndex[fan.id] = 0;
+    state.suggestions[fan.id] = (SUGGESTION_POOL[fan.id] || [])[0].slice();
+    state.replyIdx[fan.id] = 0;
+  });
+})();
+
+/* ---------------------------------------------------------------------------
+   Small helpers (ports of lib/relativeTime.ts and friends)
+   --------------------------------------------------------------------------- */
+function esc(text) {
+  return String(text == null ? '' : text)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function formatRelativeTime(value, now) {
+  var diff = now - value.getTime();
+  var minute = 60 * 1000;
+  var hour = 60 * minute;
+  var day = 24 * hour;
+  if (diff >= 7 * day) return value.toLocaleDateString();
+  if (diff >= day) return Math.floor(diff / day) + 'd';
+  if (diff >= hour) return Math.floor(diff / hour) + 'h';
+  if (diff >= minute) return Math.floor(diff / minute) + 'm';
+  return 'now';
+}
+
+function formatOperationalTime(value) {
+  if (!value) return 'unknown';
+  var parsed = new Date(value);
+  return isNaN(parsed.getTime()) ? value : parsed.toLocaleString();
+}
+
+function plural(count, noun) {
+  return count + ' ' + noun + (count === 1 ? '' : 's');
+}
+
+function getInitials(displayName) {
+  var parts = displayName.trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return displayName.slice(0, 2).toUpperCase() || '?';
+}
+
+function fanById(id) {
+  for (var i = 0; i < state.conversations.length; i++) {
+    if (state.conversations[i].fan.id === id) return state.conversations[i].fan;
+  }
+  return null;
+}
+
+function convById(id) {
+  for (var i = 0; i < state.conversations.length; i++) {
+    if (state.conversations[i].fan.id === id) return state.conversations[i];
+  }
+  return null;
+}
+
+function activeFan() {
+  return state.activeFanId ? fanById(state.activeFanId) : null;
+}
+
+function tierBadgeStyle(tier) {
+  if (tier === 'whale') return 'border:1px solid var(--silver);color:var(--silver)';
+  if (tier === 'active') return 'border:1px solid var(--green);color:var(--green)';
+  if (tier === 'casual') return 'border:1px solid var(--purple);color:var(--purple)';
+  return 'border:1px solid var(--text-faint);color:var(--text-faint)';
+}
+
+function toast(message) {
+  var el = document.createElement('div');
+  el.className = 'cleo-toast';
+  el.textContent = message;
+  document.body.appendChild(el);
+  setTimeout(function () {
+    if (el.parentNode) el.parentNode.removeChild(el);
+  }, 3200);
+}
+
+/* ---------------------------------------------------------------------------
+   Router (hash) + navigation rail
+   --------------------------------------------------------------------------- */
+var ROUTE_VIEWS = {
+  '#/': 'view-chats',
+  '#/analytics': 'view-analytics',
+  '#/scripts': 'view-placeholder',
+  '#/vault': 'view-placeholder',
+  '#/monetization': 'view-placeholder',
+  '#/settings': 'view-placeholder'
+};
+
+var PLACEHOLDERS = {
+  '#/scripts': { title: 'Sets', sub: 'Approved content sets and their pricing.' },
+  '#/vault': { title: 'Vault', sub: 'Media library, albums, and locked PPV inventory.' },
+  '#/monetization': { title: 'Monetization', sub: 'Auto-audience rules, pricing policy, and follow-ups.' },
+  '#/settings': { title: 'Settings', sub: 'Creator profile, team access, and automation policy.' }
+};
+
+function currentRoute() {
+  var hash = window.location.hash || '#/';
+  return ROUTE_VIEWS[hash] ? hash : '#/';
+}
+
+function applyRoute() {
+  state.route = currentRoute();
+  var viewId = ROUTE_VIEWS[state.route];
+  ['view-chats', 'view-analytics', 'view-placeholder'].forEach(function (id) {
+    document.getElementById(id).style.display = (id === viewId) ? 'flex' : 'none';
+  });
+  if (state.route === '#/analytics') renderAnalytics();
+  if (viewId === 'view-placeholder') renderPlaceholder();
+
+  var items = document.querySelectorAll('.nav-item');
+  for (var i = 0; i < items.length; i++) {
+    var active = items[i].getAttribute('data-route') === state.route;
+    items[i].style.color = active ? 'var(--silver)' : 'var(--text-muted)';
+    items[i].style.background = active ? 'var(--bg-hover)' : 'transparent';
+    if (active) items[i].setAttribute('aria-current', 'page');
+    else items[i].removeAttribute('aria-current');
+  }
+  closeDrawer();
+}
+
+function closeDrawer() {
+  state.drawerOpen = false;
+  document.getElementById('nav').setAttribute('data-open', 'false');
+  document.getElementById('navScrim').setAttribute('data-open', 'false');
+}
+
+function setNavExpanded(next) {
+  state.navExpanded = next;
+  try { localStorage.setItem('nav-expanded', String(next)); } catch (e) { /* private mode */ }
+  var nav = document.getElementById('nav');
+  nav.setAttribute('data-expanded', next ? 'true' : 'false');
+  nav.style.width = next ? '180px' : '48px';
+  document.getElementById('navHamburger').setAttribute(
+    'aria-label', next ? 'Collapse navigation' : 'Expand navigation');
+}
+
+function setPane(pane) {
+  state.pane = pane;
+  document.getElementById('panes').setAttribute('data-pane', pane);
+}
+
+/* ---------------------------------------------------------------------------
+   Tabs bar (single open creator)
+   --------------------------------------------------------------------------- */
+function renderTabChip() {
+  var fan = activeFan();
+  document.getElementById('tabChipName').textContent = CREATORS[0].name;
+  var autoEl = document.getElementById('tabChipAuto');
+  autoEl.style.display = state.globalAutoMode ? 'inline-block' : 'none';
+  var fanEl = document.getElementById('tabChipFan');
+  if (fan) {
+    fanEl.style.display = 'inline';
+    fanEl.textContent = '· ' + fan.display_name;
+  } else {
+    fanEl.style.display = 'none';
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Sidebar (components/Sidebar.tsx)
+   --------------------------------------------------------------------------- */
+var FILTER_OPTIONS = [
+  { id: 'all', label: 'all' },
+  { id: 'unread', label: 'unread' },
+  { id: 'whale', label: 'whale' },
+  { id: 'active', label: 'active' },
+  { id: 'casual', label: 'casual' },
+  { id: 'cold', label: 'cold' },
+  { id: 'auto_on', label: 'Auto On' },
+  { id: 'auto_off', label: 'Auto Off' }
+];
+
+function filteredConversations() {
+  var members = null;
+  if (state.activeListId) {
+    for (var i = 0; i < FAN_LISTS.length; i++) {
+      if (FAN_LISTS[i].id === state.activeListId) members = FAN_LISTS[i].members;
+    }
+  }
+  return state.conversations.filter(function (c) {
+    if (members && members.indexOf(c.fan.id) === -1) return false;
+    if (state.activeFilter === 'unread') return c.unread;
+    if (state.activeFilter === 'all') return true;
+    if (state.activeFilter === 'auto_on') {
+      return c.fan.auto_mode === true ||
+        (state.globalAutoMode && c.fan.auto_mode !== false);
+    }
+    if (state.activeFilter === 'auto_off') return c.fan.auto_mode === false;
+    return c.fan.spend_tier === state.activeFilter;
+  });
+}
+
+function renderSidebar() {
+  var autoOn = state.globalAutoMode;
+  var html = '';
+
+  html += '<div style="padding:16px 16px 12px;border-bottom:1px solid var(--border-subtle);margin-bottom:8px;flex-shrink:0">';
+  html += '<div style="padding:8px 16px 4px">';
+  html += '<div style="display:flex;align-items:center;gap:8px;width:100%">';
+  html += '<span style="font-family:var(--font-display);font-size:20px;font-weight:700;letter-spacing:0.02em;color:var(--silver)">Inbox</span>';
+  html += '<div style="flex:1;min-width:0;display:flex;justify-content:flex-end">';
+  html += '<div style="display:flex;flex-direction:column;gap:6px;width:max-content;max-width:100%;align-items:stretch;margin-left:auto">';
+  html += '<div style="display:flex;gap:6px;align-items:center;width:100%">';
+  html += '<button type="button" data-action="toggle-auto" style="margin-left:auto;font-size:11px;padding:6px 10px;border-radius:4px;cursor:pointer;line-height:1.2;box-sizing:border-box;min-height:28px;' +
+    (autoOn
+      ? 'background:rgba(76,175,130,0.15);color:var(--green);border:1px solid rgba(76,175,130,0.4)'
+      : 'background:transparent;color:var(--text-muted);border:1px solid var(--border)') +
+    ';letter-spacing:0.04em;text-transform:uppercase">' + (autoOn ? '&#9679; Auto' : 'Auto') + '</button>';
+  html += '<button type="button" data-action="sync-chats"' + (state.syncingChats ? ' disabled' : '') +
+    ' style="font-size:11px;padding:6px 10px;border-radius:4px;cursor:pointer;line-height:1.2;box-sizing:border-box;min-height:28px;background:transparent;border:1px solid var(--border);color:var(--text-muted);opacity:' +
+    (state.syncingChats ? 0.5 : 1) + '">' + (state.syncingChats ? 'Syncing...' : '&#8635; Sync') + '</button>';
+  html += '</div>';
+  html += '<button type="button" data-action="mark-all-read" style="width:100%;font-size:11px;padding:6px 10px;border-radius:4px;cursor:pointer;line-height:1.2;box-sizing:border-box;min-height:28px;background:transparent;border:1px solid var(--border);color:var(--text-muted)">&#10003; Mark all read</button>';
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
+  html += '<div style="font-size:11px;color:var(--text-muted);margin-top:2px">' +
+    state.conversations.length + ' conversation' + (state.conversations.length !== 1 ? 's' : '') + '</div>';
+  html += '</div>';
+  html += '</div>';
+
+  /* Lists bar */
+  html += '<div style="padding:8px 12px 0;display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0;align-items:center">';
+  html += '<button type="button" data-action="select-list" data-list="" style="font-size:10px;padding:3px 10px;border-radius:999px;cursor:pointer;background:' +
+    (state.activeListId === null ? 'var(--silver)' : 'transparent') + ';color:' +
+    (state.activeListId === null ? '#000' : 'var(--text-muted)') + ';border:1px solid var(--border)">All</button>';
+  FAN_LISTS.forEach(function (list) {
+    var active = state.activeListId === list.id;
+    html += '<button type="button" data-action="select-list" data-list="' + list.id + '" style="font-size:10px;padding:3px 10px;border-radius:999px;cursor:pointer;background:' +
+      (active ? list.color : 'transparent') + ';color:' + (active ? '#000' : 'var(--text-muted)') +
+      ';border:1px solid ' + list.color + '">' + esc(list.name) + '</button>';
+  });
+  html += '<button type="button" data-action="manage-lists" style="font-size:10px;padding:3px 8px;border-radius:999px;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--text-muted)">Edit Lists</button>';
+  html += '</div>';
+
+  /* Filter chips */
+  html += '<div style="padding:8px 8px 0;flex-shrink:0"><div style="display:flex;flex-wrap:wrap;gap:4px;padding-bottom:8px">';
+  FILTER_OPTIONS.forEach(function (opt) {
+    var active = state.activeFilter === opt.id;
+    html += '<button type="button" data-action="set-filter" data-filter="' + opt.id + '" style="flex-shrink:0;font-size:10px;text-transform:uppercase;letter-spacing:0.04em;padding:3px 8px;border-radius:4px;cursor:pointer;background:' +
+      (active ? 'rgba(200,200,200,0.1)' : 'transparent') + ';border:1px solid ' +
+      (active ? 'var(--silver)' : 'var(--border)') + ';color:' +
+      (active ? 'var(--silver)' : 'var(--text-muted)') + '">' + opt.label + '</button>';
+  });
+  html += '</div></div>';
+
+  /* Conversation rows */
+  html += '<ul style="flex:1;overflow:auto;list-style:none;padding:0 8px 16px">';
+  var rows = filteredConversations();
+  if (rows.length === 0) {
+    html += '<li style="padding:16px 6px;font-size:12px;color:var(--text-muted)">No conversations match this filter.</li>';
+  }
+  rows.forEach(function (c) {
+    var isActive = c.fan.id === state.activeFanId;
+    var preview = c.last_message.length > 40 ? c.last_message.slice(0, 40) + '…' : c.last_message;
+    var showAuto = c.fan.auto_mode === true || (state.globalAutoMode && c.fan.auto_mode !== false);
+    var showOff = c.fan.auto_mode === false;
+    html += '<li style="position:relative"><div class="sidebar-row" style="position:relative">';
+    html += '<button type="button" data-action="select-fan" data-fan="' + c.fan.id + '" style="width:100%;text-align:left;padding:12px 10px;margin-bottom:4px;background:' +
+      (isActive ? 'var(--bg-hover)' : 'transparent') + ';border:none;border-left:' +
+      (isActive ? '3px solid var(--silver)' : '3px solid transparent') +
+      ';border-radius:6px;cursor:pointer;color:inherit">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+    html += '<div style="display:flex;align-items:center;gap:6px">';
+    if (c.unread) {
+      html += '<span style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0"></span>';
+    }
+    html += '<span style="font-weight:500;color:var(--text-primary)">' + esc(c.fan.display_name) + '</span>';
+    html += '</div>';
+    html += '<div style="display:flex;align-items:center;gap:6px">';
+    if (showAuto) {
+      html += '<span style="font-size:9px;padding:1px 5px;border-radius:999px;background:rgba(76,175,130,0.2);color:var(--green);border:1px solid rgba(76,175,130,0.4);margin-left:auto;flex-shrink:0">AUTO</span>';
+    }
+    if (showOff) {
+      html += '<span style="font-size:9px;padding:1px 5px;border-radius:999px;background:rgba(255,80,80,0.1);color:#ff6b6b;border:1px solid rgba(255,80,80,0.3);margin-left:auto;flex-shrink:0">OFF</span>';
+    }
+    html += '<span style="font-size:11px;color:var(--green);font-family:var(--font-display)">$' + c.fan.total_spent + '</span>';
+    html += '<span style="font-size:11px;color:var(--text-muted)">' + esc(formatRelativeTime(c.last_message_time, NOW)) + '</span>';
+    html += '</div></div>';
+    html += '<div style="font-size:12px;color:' + (c.unread ? 'var(--text-primary)' : 'var(--text-secondary)') + ';font-weight:' + (c.unread ? 600 : 400) +
+      ';margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(preview) + '</div>';
+    html += '<span style="font-size:10px;text-transform:uppercase;letter-spacing:0.04em;padding:2px 6px;border-radius:4px;' + tierBadgeStyle(c.fan.spend_tier) + '">' + c.fan.spend_tier + '</span>';
+    if (c.unread && (c.unread_count || 0) > 0) {
+      html += '<span style="margin-left:4px;font-size:10px;padding:1px 6px;border-radius:999px;background:var(--green);color:#000;font-weight:700;min-width:18px;text-align:center">' + c.unread_count + '</span>';
+    }
+    html += '</button>';
+
+    /* Hover "+ list" action + dropdown */
+    if (FAN_LISTS.length > 0) {
+      html += '<div class="sidebar-row-actions" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);gap:4px">';
+      html += '<button type="button" data-action="list-dropdown" data-fan="' + c.fan.id + '" style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:10px;color:var(--text-muted);cursor:pointer">+ list</button>';
+      html += '</div>';
+    }
+    if (state.listDropdownFanId === c.fan.id) {
+      html += '<div style="position:absolute;right:8px;top:100%;z-index:50;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:4px;min-width:140px;max-height:50dvh;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.4)">';
+      FAN_LISTS.forEach(function (list) {
+        var isMember = list.members.indexOf(c.fan.id) !== -1;
+        html += '<button type="button" data-action="toggle-list-member" data-fan="' + c.fan.id + '" data-list="' + list.id + '" style="width:100%;text-align:left;padding:6px 10px;background:transparent;border:none;border-radius:6px;color:' +
+          (isMember ? list.color : 'var(--text-primary)') + ';font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px">' +
+          '<span style="width:8px;height:8px;border-radius:50%;background:' + list.color + ';flex-shrink:0"></span>' + esc(list.name) +
+          (isMember ? '<span style="margin-left:auto;font-size:10px">&#10003;</span>' : '') + '</button>';
+      });
+      html += '</div>';
+    }
+    html += '</div></li>';
+  });
+  html += '</ul>';
+
+  document.getElementById('sidebar').innerHTML = html;
+}
+/* ---------------------------------------------------------------------------
+   Conversation view (components/ConversationView.tsx)
+   --------------------------------------------------------------------------- */
+function ppvCardHtml(pbv) {
+  var ppv = pbv;
+  var tiles = '';
+  for (var i = 0; i < ppv.count; i++) {
+    tiles += '<div class="ppv-tile ppv-tile-' + ((i % 4) + 1) + '" style="position:relative;width:32.7%;max-width:220px;aspect-ratio:3/4;overflow:hidden;border-radius:4px">' +
+      '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.25)"><span style="font-size:18px">&#128274;</span></div></div>';
+  }
+  return '<div style="margin-top:8px;background:rgba(155,143,212,0.1);border:1px solid rgba(155,143,212,0.3);border-radius:8px;overflow:hidden">' +
+    '<div style="display:flex;flex-wrap:wrap;gap:2px;line-height:0">' + tiles + '</div>' +
+    '<div style="padding:8px 12px"><div style="font-size:12px;color:var(--purple);font-weight:600">&#128142; PPV Sent — $' + ppv.price +
+    (ppv.count > 1 ? ' · ' + ppv.count + ' pcs' : '') + '</div></div></div>';
+}
+
+function renderChatHeader() {
+  var fan = activeFan();
+  var header = document.getElementById('chatHeader');
+  var auto = FAN_EXTRA[fan.id].auto;
+  var buttonLabel = fan.auto_mode === true ? '● Auto' : fan.auto_mode === false ? '○ Off' : 'Auto';
+  var buttonColor = fan.auto_mode === true ? 'var(--green)' : fan.auto_mode === false ? '#ff6b6b' : 'var(--text-muted)';
+  var buttonBg = fan.auto_mode === true ? 'rgba(76,175,130,0.15)' : fan.auto_mode === false ? 'rgba(255,80,80,0.1)' : 'transparent';
+  var buttonBorder = fan.auto_mode === true ? '1px solid rgba(76,175,130,0.4)' : fan.auto_mode === false ? '1px solid rgba(255,80,80,0.3)' : '1px solid var(--border)';
+
+  var html = '';
+  html += '<div class="cleo-chat-id" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">';
+  html += '<button type="button" class="cleo-pane-back" data-pane-to="list" aria-label="Back to conversations">&lsaquo;</button>';
+  html += '<div style="width:40px;height:40px;border-radius:50%;flex-shrink:0;background:var(--bg-elevated);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--text-secondary)">' + esc(getInitials(fan.display_name)) + '</div>';
+  html += '<span style="font-weight:600;color:var(--text-primary);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(fan.display_name) + '</span>';
+  html += '<button type="button" class="cleo-only-compact" data-pane-to="fan" style="margin-left:auto;flex-shrink:0;align-items:center;justify-content:center;min-height:34px;padding:0 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-elevated);color:var(--text-secondary);font-size:12px;cursor:pointer">Profile &rsaquo;</button>';
+  html += '</div>';
+  html += '<div class="cleo-chat-auto" style="display:flex;align-items:center;gap:8px;flex-shrink:0">';
+  html += '<span class="cleo-hide-compact" style="font-size:11px;color:var(--text-muted)">Auto mode for this fan</span>';
+  var autoTitle = fan.auto_mode === false ? 'Cycles Auto: off → on → inherit' : 'Toggle auto mode for this fan';
+  html += '<button type="button" data-action="toggle-fan-auto" title="' + autoTitle +
+    '" style="font-size:11px;padding:4px 10px;border-radius:4px;cursor:pointer;background:' + buttonBg + ';color:' + buttonColor +
+    ';border:' + buttonBorder + ';letter-spacing:0.04em;text-transform:uppercase">' + buttonLabel + '</button>';
+  html += '</div>';
+  var stage = auto.status === 'idle' ? 'READY' : auto.status === 'awaiting_payment' ? 'MONITORING PPV' : 'READY';
+  html += '<span style="font-size:11px;text-transform:uppercase;letter-spacing:0.04em;padding:4px 10px;border-radius:4px;flex-shrink:0;background:rgba(76, 175, 130, 0.15);color:var(--green);border:1px solid rgba(76, 175, 130, 0.3)">' + stage + '</span>';
+  header.innerHTML = html;
+}
+
+function renderMessages() {
+  var fan = activeFan();
+  var msgs = state.messages[fan.id] || [];
+  var html = '';
+  msgs.forEach(function (msg) {
+    html += '<div style="display:flex;flex-direction:column;align-self:' +
+      (msg.role === 'fan' ? 'flex-start' : 'flex-end') + ';max-width:80%">';
+    html += '<span style="font-size:10px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:4px">' + msg.role + '</span>';
+    html += '<div style="padding:10px 14px;border-radius:12px;background:' +
+      (msg.role === 'fan' ? 'var(--bg-elevated)' : 'var(--bg-hover)') +
+      ';border:1px solid var(--border-subtle);color:var(--text-primary);font-size:14px;line-height:1.45">';
+    html += '<div style="word-break:normal;overflow-wrap:anywhere">' + esc(msg.content) + '</div>';
+    if (msg.ppv) html += ppvCardHtml(msg.ppv);
+    html += '</div></div>';
+  });
+  var box = document.getElementById('messages');
+  box.innerHTML = html;
+  box.scrollTop = box.scrollHeight;
+}
+
+/* The three suggested reply variants. ' | ' parts render as stacked bubbles
+   exactly like the real suggestion rows. */
+function renderSuggestions() {
+  var fan = activeFan();
+  var list = document.getElementById('suggestionList');
+  if (!fan) { list.innerHTML = ''; return; }
+  var html = '';
+  var items = state.suggestionsLoading ? ['', '', ''] : (state.suggestions[fan.id] || []).slice(0, 3);
+  items.forEach(function (s, i) {
+    html += '<button type="button" data-action="pick-suggestion" data-index="' + i + '"' +
+      ((state.suggestionsLoading || !s.trim()) ? ' disabled' : '') +
+      ' style="width:100%;text-align:left;padding:6px 10px;background:transparent;border:1px solid var(--border-subtle);border-radius:8px;color:' +
+      (state.suggestionsLoading ? 'var(--text-faint)' : 'var(--text-primary)') +
+      ';font-size:14px;cursor:' + (state.suggestionsLoading || !s.trim() ? 'default' : 'pointer') +
+      ';position:relative;display:flex;flex-direction:column;gap:4px">';
+    if (state.suggestionsLoading) {
+      html += '<span style="padding:4px 4px">…</span>';
+    } else if (s) {
+      s.split(' | ').forEach(function (part) {
+        html += '<span style="display:block;padding:5px 10px;background:var(--bg-elevated);border-radius:6px;line-height:1.4">' + esc(part) + '</span>';
+      });
+      html += '<span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--silver);opacity:0">&#8594;</span>';
+    } else {
+      html += '<span style="padding:5px 10px">&nbsp;</span>';
+    }
+    html += '</button>';
+  });
+  list.innerHTML = html;
+
+  document.getElementById('regenerateBtn').disabled = state.suggestionsLoading;
+  document.getElementById('regenerateBtn').style.opacity = state.suggestionsLoading ? 0.5 : 1;
+  document.getElementById('regenerateBtn').style.cursor = state.suggestionsLoading ? 'default' : 'pointer';
+}
+
+function renderQueue() {
+  var row = document.getElementById('queueRow');
+  if (state.queue.length === 0) { row.innerHTML = ''; return; }
+  var html = '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;color:var(--green);padding:2px 8px 8px">';
+  html += '<span>+ ' + state.queue.length + ' message' + (state.queue.length > 1 ? 's' : '') + ' queued</span>';
+  html += '<button type="button" data-action="clear-queue" aria-label="Cancel queued messages" title="Cancel queued messages" style="padding:2px 6px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:10px;cursor:pointer">&times; clear</button>';
+  html += '</div>';
+  row.innerHTML = html;
+}
+
+function renderScriptsPanel() {
+  var panel = document.getElementById('scriptsPanel');
+  if (!state.showScripts) { panel.style.display = 'none'; panel.innerHTML = ''; return; }
+  panel.style.display = 'block';
+  var cats = ['greeting', 'upsell', 'reengagement'];
+  var html = '';
+  cats.forEach(function (cat) {
+    var rows = SCRIPTS.filter(function (s) { return s.category === cat; });
+    if (!rows.length) return;
+    html += '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);padding:8px 12px 4px">' + cat + '</div>';
+    rows.forEach(function (script) {
+      html += '<button type="button" data-action="use-script" data-script="' + esc(script.title) + '" style="width:100%;text-align:left;padding:8px 12px;background:transparent;border:none;border-top:1px solid var(--border-subtle);color:var(--text-primary);font-size:13px;cursor:pointer">' +
+        '<span style="color:var(--text-secondary);margin-right:8px">' + esc(script.title) + '</span>' +
+        '<span style="color:var(--text-muted);font-size:12px">' + esc(script.content.slice(0, 40)) + '…</span></button>';
+    });
+    html += '</div>';
+  });
+  panel.innerHTML = html;
+}
+
+function renderChat() {
+  var fan = activeFan();
+  var empty = document.getElementById('chatEmpty');
+  var wrap = document.getElementById('chatWrap');
+  if (!fan) {
+    empty.style.display = 'flex';
+    wrap.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  wrap.style.display = 'flex';
+
+  renderChatHeader();
+  renderMessages();
+  renderSuggestions();
+  renderQueue();
+  renderScriptsPanel();
+
+  /* Suggestions are hidden while Full Auto owns the conversation — exactly the
+     condition in ConversationView.tsx. */
+  var hideAi = state.globalAutoMode || fan.auto_mode === true;
+  document.getElementById('aiBlock').style.display = hideAi ? 'none' : 'block';
+  document.getElementById('aiPanel').style.display = state.suggestionsOpen ? 'block' : 'none';
+  document.getElementById('aiChevron').style.transform = state.suggestionsOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+  document.getElementById('aiToggle').style.padding = state.suggestionsOpen ? '0 0 10px 0' : '4px 0';
+}
+
+/* --- Interaction handlers -------------------------------------------------- */
+
+function selectFan(fanId) {
+  state.activeFanId = fanId;
+  state.queue = [];
+  state.picked = null;
+  state.showScripts = false;
+  var conv = convById(fanId);
+  if (conv) { conv.unread = false; conv.unread_count = 0; }
+  NOW = Date.now();
+  setPane('chat');
+  renderTabChip();
+  renderSidebar();
+  renderChat();
+  renderFanPanel();
+}
+
+function toggleFanAuto() {
+  var fan = activeFan();
+  if (!fan) return;
+  /* null → true → false → null, as the real per-fan toggle cycles. */
+  var next = fan.auto_mode === null || fan.auto_mode === undefined ? true
+    : fan.auto_mode === true ? false : null;
+  fan.auto_mode = next;
+  renderChatHeader();
+  renderSidebar();
+  renderTabChip();
+  document.getElementById('aiBlock').style.display =
+    (state.globalAutoMode || fan.auto_mode === true) ? 'none' : 'block';
+  toast(next === true ? 'Auto enabled for this fan'
+    : next === false ? 'Auto disabled for this fan' : 'This fan now follows creator Auto');
+}
+
+function regenerateSuggestions() {
+  var fan = activeFan();
+  if (!fan || state.suggestionsLoading) return;
+  state.suggestionsLoading = true;
+  state.picked = null;
+  renderSuggestions();
+  setTimeout(function () {
+    var pool = SUGGESTION_POOL[fan.id] || SUGGESTION_POOL.f1;
+    var idx = ((state.suggestionIndex[fan.id] || 0) + 1) % pool.length;
+    state.suggestionIndex[fan.id] = idx;
+    state.suggestions[fan.id] = pool[idx].slice();
+    state.suggestionsLoading = false;
+    renderSuggestions();
+  }, 1000);
+}
+
+function pickSuggestion(index) {
+  var fan = activeFan();
+  var s = (state.suggestions[fan.id] || [])[index] || '';
+  if (!s.trim()) return;
+  var parts = s.split(' | ').map(function (p) { return p.trim(); }).filter(Boolean);
+  var input = document.getElementById('composerInput');
+  input.value = parts[0];
+  autoGrow(input);
+  state.queue = parts.slice(1);
+  state.picked = { index: index, text: parts[0] };
+  renderQueue();
+  input.focus();
+}
+
+function autoGrow(textarea) {
+  textarea.style.height = 'auto';
+  var maxHeight = 20 * 3;
+  textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px';
+}
+
+function sendMessage() {
+  var fan = activeFan();
+  if (!fan) return;
+  var input = document.getElementById('composerInput');
+  var value = input.value.trim();
+  if (!value || state.replySending) return;
+  state.replySending = true;
+
+  var msgs = state.messages[fan.id];
+  msgs.push({ id: 'm' + (msgs.length + 1) + '-' + Date.now(), role: 'creator', content: value });
+
+  var conv = convById(fan.id);
+  if (conv) {
+    conv.last_message = value;
+    conv.last_message_time = new Date();
+    NOW = Date.now();
+  }
+
+  input.value = '';
+  autoGrow(input);
+  state.picked = null;
+  /* One turn's record redeems one send: the queued follow-up is promoted. */
+  if (state.queue.length > 0) {
+    var next = state.queue.shift();
+    input.value = next;
+    autoGrow(input);
+  }
+  renderMessages();
+  renderQueue();
+  renderSidebar();
+  state.replySending = false;
+
+  /* Canned fake fan reply after a short beat, like a realtime INSERT. */
+  setTimeout(function () {
+    var pool = CANNED_REPLIES[fan.id] || CANNED_REPLIES.f1;
+    var idx = state.replyIdx[fan.id] % pool.length;
+    state.replyIdx[fan.id] = idx + 1;
+    var reply = pool[idx];
+    var thread = state.messages[fan.id];
+    thread.push({ id: 'r' + Date.now(), role: 'fan', content: reply });
+    var c = convById(fan.id);
+    if (c) {
+      c.last_message = reply;
+      c.last_message_time = new Date();
+      NOW = Date.now();
+    }
+    if (state.activeFanId === fan.id) renderMessages();
+    renderSidebar();
+  }, 1400 + Math.floor(Math.random() * 900));
+}
+
+function sendPpv(price, count, title) {
+  var fan = activeFan();
+  if (!fan) return;
+  var msgs = state.messages[fan.id];
+  msgs.push({
+    id: 'p' + Date.now(), role: 'creator', content: title || 'just for you...',
+    ppv: { price: price, count: count, title: title }
+  });
+  var conv = convById(fan.id);
+  if (conv) {
+    conv.last_message = '💎 PPV Sent — $' + price;
+    conv.last_message_time = new Date();
+    NOW = Date.now();
+  }
+  renderMessages();
+  renderSidebar();
+}
+/* ---------------------------------------------------------------------------
+   Fan panel (components/FanPanel.tsx)
+   --------------------------------------------------------------------------- */
+var LABEL_STYLE = 'font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:12px';
+var CARD_STYLE = 'background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:8px;padding:16px';
+
+function collapsibleBlock(opts) {
+  var open = opts.open;
+  var html = '<div style="margin-bottom:' + (open ? 8 : 0) + '">';
+  html += '<button type="button" data-action="' + opts.action + '" style="width:100%;display:flex;justify-content:space-between;align-items:center;background:' + opts.bg +
+    ';border:1px solid ' + opts.border + ';border-radius:8px;padding:8px 12px;cursor:pointer">';
+  html += '<span style="font-size:11px;color:' + opts.color + ';font-weight:600;letter-spacing:0.06em">' + opts.label + '</span>';
+  html += '<span style="font-size:11px;color:var(--text-muted)">' + (open ? '▲ hide' : '▼ show') + '</span>';
+  html += '</button>';
+  if (open) {
+    html += '<div style="' + CARD_STYLE + ';border-color:' + opts.border + ';margin-top:8px">' + opts.body + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderFanPanel() {
+  var fan = activeFan();
+  var panel = document.getElementById('fanPanel');
+  if (!fan) {
+    panel.style.cssText = 'height:100%;width:100%;background:var(--bg-surface);border-left:1px solid var(--border);display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;padding:20px;color:var(--text-muted);font-size:14px;text-align:center';
+    panel.innerHTML = 'Select a conversation.' +
+      '<button type="button" class="cleo-only-compact" data-pane-to="chat" style="padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg-elevated);color:var(--text-secondary);font-size:13px;cursor:pointer">&lsaquo; Back</button>';
+    return;
+  }
+  panel.style.cssText = 'height:100%;width:100%;background:var(--bg-surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden';
+
+  var extra = FAN_EXTRA[fan.id];
+  var auto = extra.auto;
+  var html = '';
+
+  /* Header: FAN PROFILE + spent/tier cards + Load History */
+  html += '<div style="padding:16px 20px 0;flex-shrink:0">';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
+  html += '<button type="button" class="cleo-only-compact" data-pane-to="chat" aria-label="Back to conversation" style="width:34px;height:34px;flex-shrink:0;padding:0;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:8px;background:var(--bg-elevated);color:var(--text-secondary);font-size:17px;line-height:1;cursor:pointer">&lsaquo;</button>';
+  html += '<div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em">FAN PROFILE</div>';
+  html += '</div>';
+  html += '<div style="display:flex;gap:10px;margin-bottom:16px">';
+  html += '<div style="flex:1;' + CARD_STYLE + '"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Total spent</div>' +
+    '<span style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--silver)">$' + fan.total_spent + '</span></div>';
+  html += '<div style="flex:1;' + CARD_STYLE + ';display:flex;flex-direction:column"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Tier</div>' +
+    '<span style="font-size:11px;text-transform:uppercase;letter-spacing:0.04em;padding:3px 8px;border-radius:4px;align-self:flex-start;' + tierBadgeStyle(fan.spend_tier) + '">' + fan.spend_tier + '</span></div>';
+  html += '</div>';
+  html += '<div style="display:flex;justify-content:flex-end;margin-bottom:12px">';
+  html += '<button type="button" data-action="load-history"' + (state.loadingHistoryFan === fan.id ? ' disabled' : '') +
+    ' style="font-size:11px;padding:3px 8px;border-radius:4px;background:transparent;border:1px solid var(--border);color:var(--text-muted);cursor:pointer;opacity:' +
+    (state.loadingHistoryFan === fan.id ? 0.5 : 1) + '">' +
+    (state.loadingHistoryFan === fan.id ? 'Loading...' : '&#8595; Load History') + '</button>';
+  html += '</div>';
+  if (state.historyLines[fan.id]) {
+    html += '<div style="font-size:11px;color:var(--text-muted);text-align:right;margin-top:-8px;margin-bottom:12px">' + esc(state.historyLines[fan.id]) + '</div>';
+  }
+  html += '</div>';
+
+  /* Tabs */
+  html += '<div style="display:flex;border-bottom:1px solid var(--border);padding:0 12px;flex-shrink:0">';
+  var tabs = [
+    { id: 'profile', label: 'Profile', icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' },
+    { id: 'sales', label: 'Sales', icon: '<span style="font-size:12px">$</span>' }
+  ];
+  tabs.forEach(function (t) {
+    var active = state.fanTab === t.id;
+    html += '<button type="button" data-action="fan-tab" data-tab="' + t.id + '" style="flex:1;padding:8px 4px;background:none;border:none;border-bottom:' +
+      (active ? '2px solid var(--silver)' : '2px solid transparent') + ';color:' +
+      (active ? 'var(--text-primary)' : 'var(--text-muted)') + ';font-size:11px;cursor:pointer;text-transform:uppercase;letter-spacing:0.04em;transition:all 0.15s ease">' +
+      '<span style="display:inline-flex;align-items:center;gap:4px">' + t.icon + ' ' + t.label + '</span></button>';
+  });
+  html += '</div>';
+
+  /* Tab content */
+  html += '<div style="flex:1;min-height:0;overflow-y:auto;padding:16px;padding-bottom:48px">';
+
+  if (state.fanTab === 'profile') {
+    /* FULL AUTO card */
+    html += '<div style="margin-bottom:20px">';
+    html += '<div style="' + LABEL_STYLE + '">FULL AUTO</div>';
+    html += '<div style="' + CARD_STYLE + '">';
+    html += '<div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:10px">';
+    html += '<div><div style="font-size:12.5px;font-weight:650;color:var(--text-primary)">' + auto.status.replace(/_/g, ' ') + '</div>';
+    html += '<div style="font-size:11px;color:var(--text-muted);margin-top:2px">Auto ' + (fan.auto_mode === true ? 'on' : 'off') +
+      (auto.paymentState ? ' · ' + auto.paymentState.replace(/_/g, ' ') : '') + '</div></div>';
+    html += '<span style="width:8px;height:8px;border-radius:999px;margin-top:5px;background:' +
+      (fan.auto_mode === true ? 'var(--green)' : 'var(--text-faint)') + '"></span>';
+    html += '</div>';
+    if (auto.pending) {
+      html += '<div style="padding:8px 10px;border-radius:7px;background:rgba(155,143,212,0.08);margin-bottom:8px">';
+      html += '<div style="font-size:11px;color:var(--purple)">Locked PPV awaiting purchase</div>';
+      html += '<div style="font-size:10.5px;color:var(--text-muted);margin-top:3px">$' + auto.pending.price +
+        ' · expires ' + formatOperationalTime(auto.pending.expires) + ' · checked ' + auto.pending.checks + '×</div>';
+      html += '</div>';
+    }
+    if (auto.followup) {
+      html += '<div style="padding:8px 10px;border-radius:7px;background:var(--bg-hover);margin-bottom:8px">';
+      html += '<div style="font-size:11px;color:var(--text-secondary)">' + auto.followup.type.replace(/_/g, ' ') + '</div>';
+      html += '<div style="font-size:10.5px;color:var(--text-muted);margin-top:3px">' + formatOperationalTime(auto.followup.at) + '</div>';
+      html += '<button type="button" data-action="cancel-followup" style="margin-top:7px;padding:0;border:none;background:transparent;color:#e57689;font-size:10.5px;cursor:pointer">Cancel follow-up</button>';
+      html += '</div>';
+    }
+    html += '</div></div>';
+
+    /* NOTES */
+    html += '<div style="' + LABEL_STYLE + '">NOTES</div>';
+    html += '<div style="' + CARD_STYLE + ';color:var(--text-secondary);font-size:13px;line-height:1.5;margin-bottom:12px;min-height:60px">' +
+      (extra.notes.trim() ? esc(extra.notes) : 'No notes yet.') + '</div>';
+
+    /* MEMBER */
+    html += collapsibleBlock({
+      open: state.showMember, action: 'toggle-member',
+      bg: 'rgba(100,160,255,0.06)', border: 'rgba(100,160,255,0.2)', color: 'rgba(100,180,255,0.9)',
+      label: '&#128100; MEMBER',
+      body: extra.memberNote.trim()
+        ? '<pre style="font-size:12px;color:var(--text-secondary);line-height:1.7;margin:0;white-space:pre-wrap;font-family:inherit">' + esc(extra.memberNote) + '</pre>'
+        : '<div style="font-size:12px;color:var(--text-muted);font-style:italic">Not enough conversation yet. Will auto-fill after 10 fan messages.</div>'
+    });
+
+    /* MODEL LEGEND */
+    html += collapsibleBlock({
+      open: state.showModel, action: 'toggle-model',
+      bg: 'rgba(255,180,100,0.06)', border: 'rgba(255,180,100,0.2)', color: 'rgba(255,190,80,0.9)',
+      label: '&#127917; MODEL LEGEND',
+      body: '<pre style="font-size:12px;color:var(--text-secondary);line-height:1.7;margin:0;white-space:pre-wrap;font-family:inherit">' + esc(MODEL_LEGEND) + '</pre>'
+    });
+
+    /* AI FAN ANALYSIS */
+    html += '<div style="margin-bottom:20px">';
+    html += collapsibleBlock({
+      open: state.showAi, action: 'toggle-ai',
+      bg: 'rgba(155,143,212,0.08)', border: 'rgba(155,143,212,0.25)', color: 'var(--purple)',
+      label: '&#10022; AI FAN ANALYSIS',
+      body: (function () {
+        var ai = extra.ai;
+        var body = '<div style="font-size:12px;color:var(--text-secondary);line-height:1.6;margin-bottom:12px">' + esc(ai.summary) + '</div>';
+        body += '<div class="cleo-field-row" style="gap:8px">';
+        [
+          ['Emotional type', ai.emotionalType], ['Spending', ai.spending],
+          ['Location', ai.location], ['Occupation', ai.occupation],
+          ['Payday', ai.payday], ['Relationship', ai.relationship]
+        ].forEach(function (item) {
+          if (!item[1]) return;
+          body += '<div style="background:var(--bg-hover);border-radius:6px;padding:8px 10px">' +
+            '<div style="font-size:10px;color:var(--text-muted);margin-bottom:2px">' + item[0].toUpperCase() + '</div>' +
+            '<div style="font-size:11px;color:var(--text-secondary)">' + esc(item[1]) + '</div></div>';
+        });
+        body += '</div>';
+        if (ai.kinks.length) {
+          body += '<div style="margin-top:10px"><div style="font-size:10px;color:var(--text-muted);margin-bottom:6px">KINKS &amp; PREFERENCES</div>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:4px">';
+          ai.kinks.forEach(function (kink) {
+            body += '<span style="font-size:10px;padding:3px 8px;border-radius:999px;background:rgba(155, 143, 212, 0.15);color:var(--purple);border:1px solid rgba(155, 143, 212, 0.3)">' + esc(kink) + '</span>';
+          });
+          body += '</div></div>';
+        }
+        if (ai.reengagement) {
+          body += '<div style="margin-top:10px;padding:8px 10px;background:rgba(76,175,130,0.08);border-radius:6px;border:1px solid rgba(76,175,130,0.2)">' +
+            '<div style="font-size:10px;color:var(--green);margin-bottom:2px">RE-ENGAGEMENT</div>' +
+            '<div style="font-size:11px;color:var(--text-secondary)">' + esc(ai.reengagement) + '</div></div>';
+        }
+        if (ai.risk && ai.risk !== 'None recorded') {
+          body += '<div style="margin-top:8px;padding:8px 10px;background:rgba(255,80,80,0.08);border-radius:6px;border:1px solid rgba(255,80,80,0.2)">' +
+            '<div style="font-size:10px;color:#ff6b6b;margin-bottom:2px">&#9888; RISK SIGNALS</div>' +
+            '<div style="font-size:11px;color:var(--text-secondary)">' + esc(ai.risk) + '</div></div>';
+        }
+        return body;
+      })()
+    });
+    html += '</div>';
+
+    /* FAN DETAILS */
+    html += '<div style="' + LABEL_STYLE + '">FAN DETAILS</div>';
+    html += '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">';
+    [['Age', 'age'], ['Pay day', 'payday'], ['Hobbies', 'hobbies'], ['Relationship', 'rel']].forEach(function (pair) {
+      html += '<div style="display:flex;align-items:center;gap:8px">' +
+        '<span style="font-size:11px;color:var(--text-muted);width:76px;flex-shrink:0">' + pair[0] + '</span>' +
+        '<input type="text" value="' + esc(extra.details[pair[1]]) + '" placeholder="—" data-detail="' + pair[1] + '"' +
+        ' style="flex:1;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:6px;padding:5px 10px;color:var(--text-primary);font-size:12px;outline:none" /></div>';
+    });
+    html += '</div>';
+
+    /* PREFERENCES */
+    html += '<div style="' + LABEL_STYLE + '">PREFERENCES</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+    if (extra.prefs.length) {
+      extra.prefs.forEach(function (pref) {
+        html += '<span style="font-size:11px;padding:4px 10px;border-radius:999px;background:rgba(155, 143, 212, 0.15);color:var(--purple);border:1px solid rgba(155, 143, 212, 0.3)">' + esc(pref) + '</span>';
+      });
+    } else {
+      html += '<span style="color:var(--text-muted);font-size:13px">None yet.</span>';
+    }
+    html += '</div>';
+  }
+
+  if (state.fanTab === 'sales') {
+    html += '<div style="' + CARD_STYLE + ';margin-bottom:14px">';
+    html += '<div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Current sales state</div>';
+    html += '<div style="font-size:13px;font-weight:650;color:var(--text-primary)">' + auto.status + '</div>';
+    if (auto.pending) {
+      html += '<div style="margin-top:8px;padding:8px 10px;border-radius:6px;background:rgba(224,180,109,0.08);border:1px solid rgba(224,180,109,0.3)">' +
+        '<div style="color:#e0b46d;font-size:11px;font-weight:650">Locked PPV awaiting payment · $' + auto.pending.price + '</div>' +
+        '<div style="color:var(--text-muted);font-size:10px;margin-top:3px">Expires ' + formatOperationalTime(auto.pending.expires) + ' · ' + auto.pending.checks + ' checks</div></div>';
+    }
+    if (auto.followup) {
+      html += '<div style="color:var(--text-muted);font-size:11px;margin-top:7px">Next: ' + auto.followup.type + ' · ' + formatOperationalTime(auto.followup.at) + '</div>';
+    }
+    html += '</div>';
+
+    html += '<div style="padding:9px 10px;margin-bottom:16px;border-radius:7px;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-muted);font-size:11px;line-height:1.45">' +
+      'Build and send locked PPVs from the conversation composer. Sales appear here only after the platform confirms payment; operators cannot manually inflate revenue or bypass purchase reconciliation.</div>';
+
+    html += '<div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Confirmed purchases</div>';
+    if (!extra.sales.length) {
+      html += '<div style="font-size:12px;color:var(--text-muted);margin-bottom:16px">No confirmed purchases yet.</div>';
+    }
+    extra.sales.slice().reverse().forEach(function (sale) {
+      html += '<div style="' + CARD_STYLE + ';margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">' +
+        '<div><div style="font-size:12px;font-weight:600;color:var(--text-primary)">' + esc(sale.item) + '</div>' +
+        '<div style="font-size:11px;color:var(--text-muted);margin-top:2px">' + sale.date + ' · ' + esc(sale.chatter) + '</div></div>' +
+        '<span style="font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--green)">$' + sale.amount + '</span></div></div>';
+    });
+
+    html += '<div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin:18px 0 8px">Abandoned or declined PPVs</div>';
+    if (!extra.notSold.length) {
+      html += '<div style="font-size:12px;color:var(--text-muted)">No abandoned PPVs recorded.</div>';
+    }
+    extra.notSold.slice().reverse().forEach(function (attempt) {
+      html += '<div style="' + CARD_STYLE + ';margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">' +
+        '<div><div style="font-size:12px;font-weight:600;color:var(--text-primary)">' + esc(attempt.item) + '</div>' +
+        '<div style="font-size:11px;color:var(--text-muted);margin-top:2px">' + attempt.date + ' · ' + esc(attempt.chatter) + '</div>' +
+        (attempt.reason ? '<div style="font-size:11px;color:rgba(255,120,120,0.8);margin-top:3px">' + esc(attempt.reason) + '</div>' : '') +
+        '</div><span style="font-family:var(--font-display);font-size:14px;color:var(--text-muted)">$' + attempt.amount + '</span></div></div>';
+    });
+  }
+
+  html += '</div>';
+  panel.innerHTML = html;
+}
+
+function loadHistory() {
+  var fan = activeFan();
+  if (!fan || state.loadingHistoryFan) return;
+  state.loadingHistoryFan = fan.id;
+  renderFanPanel();
+  setTimeout(function () {
+    var h = FAN_EXTRA[fan.id].history;
+    state.historyLines[fan.id] = h.fully
+      ? 'History complete — ' + plural(h.imported, 'message') + ' over ' + plural(h.pages, 'page')
+      : 'History importing — ' + plural(h.imported, 'message') + ' so far over ' + plural(h.pages, 'page');
+    state.loadingHistoryFan = null;
+    renderFanPanel();
+    toast('Imported ' + plural(h.imported, 'message') + ' · ' + plural(h.pages, 'API call') +
+      ', ~2.5 credits · ' + (h.fully ? 'all history imported' : 'more history remains'));
+  }, 1100);
+}
+
+function cancelFollowup() {
+  var fan = activeFan();
+  if (!fan) return;
+  FAN_EXTRA[fan.id].auto.followup = null;
+  FAN_EXTRA[fan.id].auto.status = 'idle';
+  renderFanPanel();
+  toast('Follow-up cancelled');
+}
+/* ---------------------------------------------------------------------------
+   Overview / analytics (app/analytics/page.tsx), fake metrics
+   --------------------------------------------------------------------------- */
+var ANALYTICS = {
+  c1: {
+    stats: { revenue: 12480, fans: 9, buyers: 6, whales: 3, simulated: 1 },
+    preview: { eligible: 5, total: 9 },
+    health: { payment_pending: 2, followups_pending: 4, human_review: 1, failed_actions: 0 },
+    approvals: [
+      { id: 'a1', fan: 'Harper Quinn', price: 35, media: 3, experience: 'girlfriend experience', message: 'just for you... a little something we shot this weekend 🤍' },
+      { id: 'a2', fan: 'Dmitri Kane', price: 60, media: 5, experience: '', message: 'the friday bundle you asked about — had to send it early 💋' }
+    ],
+    attention: [
+      { fan: 'Tessa Bloom', state: 'awaiting_payment · payment_followup', error: '', human: true },
+      { fan: 'Marcus Vale', state: 'session_in_progress · ppv_followup', error: 'followup send timed out (fansly 504)', human: false }
+    ]
+  },
+  c2: {
+    stats: { revenue: 5310, fans: 6, buyers: 4, whales: 1, simulated: 0 },
+    preview: { eligible: 6, total: 6 },
+    health: { payment_pending: 1, followups_pending: 2, human_review: 0, failed_actions: 0 },
+    approvals: [],
+    attention: [
+      { fan: 'Iris Nakamura', state: 'followup_scheduled · payday_reengagement', error: '', human: false }
+    ]
+  }
+};
+
+function metricHtml(label, value, alert) {
+  return '<div style="background:' + (alert ? 'rgba(229,118,137,0.08)' : 'var(--bg-surface)') +
+    ';border:1px solid ' + (alert ? 'rgba(229,118,137,0.5)' : 'var(--border)') +
+    ';border-radius:12px;padding:14px"><div style="color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;font-size:10px;overflow-wrap:anywhere">' +
+    label + '</div><div style="font-family:var(--font-display);font-size:23px;margin-top:5px;color:' +
+    (alert ? '#e57689' : 'var(--text-primary)') + '">' + value + '</div></div>';
+}
+
+function sectionTitle(title, subtitle) {
+  return '<div style="margin-bottom:13px"><div style="font-size:15px;font-weight:700">' + title +
+    '</div><div style="color:var(--text-muted);font-size:11px;margin-top:3px">' + subtitle + '</div></div>';
+}
+
+function renderAnalytics() {
+  var creator = null;
+  CREATORS.forEach(function (c) { if (c.id === state.analyticsCreator) creator = c; });
+  var data = ANALYTICS[state.analyticsCreator];
+  var approvals = data.approvals.filter(function (a) { return !state.approvalsResolved[a.id]; });
+  var attention = data.health.failed_actions + data.health.human_review + approvals.length;
+
+  var html = '<div class="cleo-page-inner" style="max-width:1080px;margin:0 auto">';
+
+  /* Page head */
+  html += '<div class="cleo-page-head" style="margin-bottom:24px"><div>';
+  html += '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted)">Agency operations</div>';
+  html += '<h1 style="margin:5px 0 6px;font-family:var(--font-display);font-size:28px">Overview</h1>';
+  html += '<div style="color:var(--text-muted);font-size:13px">The current state of Full Auto, revenue, approvals, and exceptions.</div>';
+  html += '</div><div class="cleo-page-head-actions">';
+  html += '<select data-action="analytics-creator" style="min-width:0;padding:8px 10px;border-radius:7px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-primary)">';
+  CREATORS.forEach(function (c) {
+    html += '<option value="' + c.id + '"' + (c.id === state.analyticsCreator ? ' selected' : '') + '>' + esc(c.name) + '</option>';
+  });
+  html += '</select>';
+  html += '<button type="button" data-action="analytics-refresh"' + (state.analyticsLoading ? ' disabled' : '') +
+    ' style="padding:8px 12px;border-radius:7px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;white-space:nowrap">' +
+    (state.analyticsLoading ? 'Refreshing…' : 'Refresh') + '</button>';
+  html += '</div></div>';
+
+  var card = 'background:var(--bg-surface);border:1px solid var(--border);border-radius:12px;padding:18px';
+
+  /* Status card */
+  html += '<div style="' + card + ';margin-bottom:14px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px">';
+  html += '<div style="min-width:0"><div style="font-size:14px;font-weight:700">' + esc(creator.name) + '</div>';
+  html += '<div style="color:var(--text-muted);font-size:12px;margin-top:3px">Full Auto ' +
+    (creator.autoMode ? 'is on' : 'is off') + ' · ' + data.preview.eligible + ' of ' + data.preview.total + ' current fans eligible</div></div>';
+  html += '<div style="min-width:0;margin-left:auto;text-align:right">';
+  html += '<div style="color:' + (attention ? '#e57689' : 'var(--green)') + ';font-weight:700;font-size:13px">' +
+    (attention ? attention + ' need attention' : 'Healthy') + '</div>';
+  html += '<div style="color:var(--text-muted);font-size:10px;margin-top:3px">Chats reconciled ' + esc(creator.reconciled) + '</div>';
+  html += '</div></div>';
+
+  /* Metrics row 1 */
+  html += '<div class="cleo-grid-metrics" style="margin-bottom:18px">';
+  html += metricHtml('Confirmed revenue', '$' + data.stats.revenue, false);
+  html += metricHtml('Fans', data.stats.total, false);
+  html += metricHtml('Buyers', data.stats.buyers, false);
+  html += metricHtml('Whales', data.stats.whales, false);
+  html += metricHtml('Auto eligible', data.preview.eligible, false);
+  html += '</div>';
+
+  if (data.stats.simulated > 0) {
+    html += '<div style="font-size:11px;color:var(--text-muted);margin-bottom:18px">' + data.stats.simulated +
+      ' simulation fan excluded from these figures. Their state is kept, and the Simulator shows it.</div>';
+  }
+
+  /* Metrics row 2 */
+  html += '<div class="cleo-grid-metrics" style="margin-bottom:18px">';
+  html += metricHtml('Payment pending', data.health.payment_pending, false);
+  html += metricHtml('Follow-ups due', data.health.followups_pending, false);
+  html += metricHtml('PPV approvals', approvals.length, approvals.length > 0);
+  html += metricHtml('Needs human', data.health.human_review, data.health.human_review > 0);
+  html += metricHtml('Failed actions', data.health.failed_actions, data.health.failed_actions > 0);
+  html += '</div>';
+
+  /* Approvals */
+  if (approvals.length > 0) {
+    html += '<section style="' + card + ';margin-bottom:16px">';
+    html += sectionTitle('PPV approvals', 'Exact prepared sends waiting for an operator.');
+    html += '<div style="display:flex;flex-direction:column;gap:8px">';
+    approvals.forEach(function (a) {
+      html += '<div style="padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-elevated);display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px">';
+      html += '<div style="min-width:180px;flex:1"><div style="font-size:13px;font-weight:650">' + esc(a.fan) + ' · $' + a.price + '</div>';
+      html += '<div style="color:var(--text-muted);font-size:11px;margin-top:3px">' + a.media + ' media' + (a.experience ? ' · ' + esc(a.experience) : '') + '</div>';
+      html += '<div style="color:var(--text-secondary);font-size:12px;margin-top:6px">' + esc(a.message) + '</div></div>';
+      html += '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">';
+      html += '<button type="button" data-action="approval" data-approve="0" data-id="' + a.id + '" style="padding:7px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-secondary)">Reject</button>';
+      html += '<button type="button" data-action="approval" data-approve="1" data-id="' + a.id + '" style="padding:7px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--silver);background:var(--silver);color:#111">Approve &amp; send</button>';
+      html += '</div></div>';
+    });
+    html += '</div></section>';
+  }
+
+  /* Needs attention */
+  html += '<section style="' + card + '">';
+  html += sectionTitle('Needs attention', 'Only actionable states are shown here.');
+  if (!data.attention.length) {
+    html += '<div style="padding:22px 0;color:var(--text-muted);font-size:13px">No payment holds, failed actions, due follow-ups, or human-review flags.</div>';
+  } else {
+    html += '<div style="display:flex;flex-direction:column;gap:8px">';
+    data.attention.forEach(function (row) {
+      html += '<a href="#/" style="text-decoration:none;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-elevated);display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px">';
+      html += '<div style="min-width:0;flex:1"><div style="color:var(--text-primary);font-size:13px;font-weight:650">' + esc(row.fan) + '</div>';
+      html += '<div style="color:var(--text-muted);font-size:11px;margin-top:3px">' + esc(row.state) + '</div>';
+      if (row.error) html += '<div style="color:#e57689;font-size:11px;margin-top:5px">' + esc(row.error) + '</div>';
+      html += '</div>';
+      html += '<div style="color:' + (row.human || row.error ? '#e57689' : 'var(--text-secondary)') + ';font-size:11px;white-space:nowrap;align-self:center">Open chat →</div>';
+      html += '</a>';
+    });
+    html += '</div>';
+  }
+  html += '</section></div>';
+
+  document.getElementById('view-analytics').innerHTML = html;
+}
+
+function refreshAnalytics() {
+  if (state.analyticsLoading) return;
+  state.analyticsLoading = true;
+  renderAnalytics();
+  setTimeout(function () {
+    state.analyticsLoading = false;
+    renderAnalytics();
+    toast('Overview refreshed');
+  }, 800);
+}
+
+/* ---------------------------------------------------------------------------
+   Placeholder routes (Sets / Vault / Monetization / Settings)
+   --------------------------------------------------------------------------- */
+function renderPlaceholder() {
+  var meta = PLACEHOLDERS[state.route] || { title: 'Cleopatra', sub: '' };
+  var card = 'background:var(--bg-surface);border:1px solid var(--border);border-radius:12px;padding:18px';
+  var html = '<div class="cleo-page-inner" style="max-width:1080px;margin:0 auto">';
+  html += '<div class="cleo-page-head" style="margin-bottom:24px"><div>';
+  html += '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted)">Cleopatra AI</div>';
+  html += '<h1 style="margin:5px 0 6px;font-family:var(--font-display);font-size:28px">' + esc(meta.title) + '</h1>';
+  html += '<div style="color:var(--text-muted);font-size:13px">' + esc(meta.sub) + '</div>';
+  html += '</div></div>';
+  html += '<div style="' + card + ';display:flex;flex-direction:column;gap:10px;align-items:flex-start">';
+  html += '<div style="font-size:14px;font-weight:700">Nothing here in this demo.</div>';
+  html += '<div style="color:var(--text-muted);font-size:13px;line-height:1.55;max-width:560px">This portfolio replica recreates the Chats workspace and the Overview screen only. ' +
+    'The ' + esc(meta.title) + ' screen exists in the real product but is deliberately not copied here.</div>';
+  html += '<a href="#/" style="margin-top:4px;font-size:12px;padding:7px 12px;border-radius:7px;border:1px solid var(--border);background:var(--bg-elevated);color:var(--text-secondary);text-decoration:none">← Back to Chats</a>';
+  html += '</div></div>';
+  document.getElementById('view-placeholder').innerHTML = html;
+}
+
+/* ---------------------------------------------------------------------------
+   Modals: Manage Lists, New/Edit List, PPV composer
+   --------------------------------------------------------------------------- */
+function closeModal() {
+  var existing = document.getElementById('modalRoot');
+  if (existing) existing.parentNode.removeChild(existing);
+}
+
+function openModal(innerHtml, width) {
+  closeModal();
+  var root = document.createElement('div');
+  root.id = 'modalRoot';
+  root.className = 'cleo-modal';
+  root.style.zIndex = 200;
+  root.style.background = 'rgba(0,0,0,0.6)';
+  root.addEventListener('click', function (e) {
+    if (e.target === root) closeModal();
+  });
+  root.innerHTML = '<div class="cleo-modal-card" style="max-width:' + width +
+    'px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:12px;padding:24px" data-modal-card>' + innerHtml + '</div>';
+  document.body.appendChild(root);
+}
+
+function openManageLists() {
+  var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">';
+  html += '<div style="font-size:14px;font-weight:600;color:var(--text-primary)">Manage Lists</div>';
+  html += '<div style="display:flex;align-items:center;gap:8px">';
+  html += '<button type="button" data-action="new-list" style="font-size:11px;padding:5px 12px;border-radius:6px;cursor:pointer;background:var(--bg-hover);border:1px solid var(--border);color:var(--text-primary)">+ New List</button>';
+  html += '<button type="button" data-action="close-modal" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:18px;line-height:1;padding:0 4px">&times;</button>';
+  html += '</div></div>';
+  if (!FAN_LISTS.length) {
+    html += '<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:20px">No lists yet. Create one above.</div>';
+  }
+  FAN_LISTS.forEach(function (list) {
+    html += '<div data-action="edit-list" data-list="' + list.id + '" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer">';
+    html += '<div style="width:10px;height:10px;border-radius:50%;background:' + list.color + ';flex-shrink:0"></div>';
+    html += '<div style="flex:1;font-size:13px;color:var(--text-primary)">' + esc(list.name) + '</div>';
+    html += '<span style="font-size:11px;color:var(--text-muted)">' + list.members.length + ' fans</span>';
+    if (list.excludeFromAuto) {
+      html += '<span style="font-size:9px;padding:2px 6px;border-radius:999px;background:rgba(255,80,80,0.1);color:#ff6b6b;border:1px solid rgba(255,80,80,0.2)">AUTO EXCLUDED</span>';
+    }
+    html += '<span style="font-size:11px;color:var(--text-muted)">→</span></div>';
+  });
+  openModal(html, 420);
+}
+
+var listModalState = null;
+
+function openListModal(mode, listId) {
+  var list = null;
+  FAN_LISTS.forEach(function (l) { if (l.id === listId) list = l; });
+  listModalState = {
+    mode: mode,
+    listId: listId || null,
+    name: list ? list.name : '',
+    color: list ? list.color : '#9b8fd4',
+    excludeFromAuto: list ? list.excludeFromAuto : false
+  };
+  renderListModal();
+}
+
+function renderListModal() {
+  var m = listModalState;
+  if (!m) return;
+  var html = '<div style="font-size:14px;font-weight:600;margin-bottom:16px;color:var(--text-primary)">' +
+    (m.mode === 'create' ? 'New List' : 'Edit List') + '</div>';
+  html += '<input id="listNameInput" value="' + esc(m.name) + '" placeholder="List name" style="width:100%;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text-primary);font-size:13px;margin-bottom:16px;outline:none" />';
+  html += '<div style="margin-bottom:16px"><div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">COLOR</div><div style="display:flex;gap:8px">';
+  LIST_COLORS.forEach(function (color) {
+    html += '<div data-action="pick-color" data-color="' + color + '" style="width:24px;height:24px;border-radius:50%;background:' + color +
+      ';cursor:pointer;border:' + (m.color === color ? '2px solid white' : '2px solid transparent') + ';flex-shrink:0"></div>';
+  });
+  html += '</div></div>';
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:10px 12px;background:var(--bg-surface);border-radius:8px">';
+  html += '<div><div style="font-size:12px;color:var(--text-primary)">Exclude from Auto Mode</div>' +
+    '<div style="font-size:10px;color:var(--text-muted)">AI won\'t auto-reply to fans in this list</div></div>';
+  html += '<div data-action="toggle-exclude" style="width:36px;height:20px;border-radius:999px;cursor:pointer;background:' +
+    (m.excludeFromAuto ? 'var(--green)' : 'var(--bg-hover)') + ';border:1px solid var(--border);position:relative;transition:background 0.2s;flex-shrink:0">' +
+    '<div style="position:absolute;top:2px;left:' + (m.excludeFromAuto ? 18 : 2) + 'px;width:14px;height:14px;border-radius:50%;background:white;transition:left 0.2s"></div></div>';
+  html += '</div>';
+  html += '<div style="display:flex;gap:8px">';
+  if (m.mode === 'edit') {
+    html += '<button type="button" data-action="delete-list" style="padding:8px 14px;border-radius:8px;cursor:pointer;background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.3);color:#ff6b6b;font-size:12px">Delete</button>';
+  }
+  html += '<button type="button" data-action="close-modal" style="flex:1;padding:8px 14px;border-radius:8px;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:12px">Cancel</button>';
+  html += '<button type="button" data-action="save-list" style="flex:1;padding:8px 14px;border-radius:8px;cursor:pointer;background:var(--silver);border:none;color:#000;font-size:12px;font-weight:600">Save</button>';
+  html += '</div>';
+  openModal(html, 340);
+  var nameInput = document.getElementById('listNameInput');
+  if (nameInput) {
+    nameInput.addEventListener('input', function () { listModalState.name = nameInput.value; });
+    nameInput.focus();
+  }
+}
+
+function saveList() {
+  var m = listModalState;
+  if (!m || !m.name.trim()) return;
+  if (m.mode === 'create') {
+    FAN_LISTS.push({ id: 'l' + Date.now(), name: m.name.trim(), color: m.color, excludeFromAuto: m.excludeFromAuto, members: [] });
+  } else {
+    FAN_LISTS.forEach(function (l) {
+      if (l.id === m.listId) { l.name = m.name.trim(); l.color = m.color; l.excludeFromAuto = m.excludeFromAuto; }
+    });
+  }
+  listModalState = null;
+  closeModal();
+  renderSidebar();
+}
+
+function deleteList() {
+  var m = listModalState;
+  if (!m || m.mode !== 'edit') return;
+  FAN_LISTS = FAN_LISTS.filter(function (l) { return l.id !== m.listId; });
+  if (state.activeListId === m.listId) state.activeListId = null;
+  listModalState = null;
+  closeModal();
+  renderSidebar();
+}
+
+/* --- PPV composer --------------------------------------------------------- */
+var PPV_MEDIA = [
+  { id: 'media-01', album: 'Golden Hour', status: 'unused', tile: 1 },
+  { id: 'media-02', album: 'Golden Hour', status: 'sold', tile: 2 },
+  { id: 'media-03', album: 'Golden Hour', status: 'unused', tile: 3 },
+  { id: 'media-04', album: 'Golden Hour', status: 'sent', tile: 4 },
+  { id: 'media-05', album: 'Golden Hour', status: 'payment_pending', tile: 1 },
+  { id: 'media-06', album: 'Late Night', status: 'unused', tile: 2 },
+  { id: 'media-07', album: 'Late Night', status: 'not_sold', tile: 3 },
+  { id: 'media-08', album: 'Late Night', status: 'unused', tile: 4 },
+  { id: 'media-09', album: 'Late Night', status: 'sold', tile: 1 },
+  { id: 'media-10', album: 'Behind the Scenes', status: 'not_sold', tile: 2 },
+  { id: 'media-11', album: 'Behind the Scenes', status: 'unused', tile: 3 },
+  { id: 'media-12', album: 'Behind the Scenes', status: 'payment_pending', tile: 4 }
+];
+
+var PPV_SETS = [
+  { id: 's1', title: 'Summer Nights Vol. 2', description: 'Golden-hour rooftop set with a behind-the-scenes clip.', media: 6, price: 45, allowed: '$35–$65' },
+  { id: 's2', title: 'Late Shift', description: 'Office-after-dark theme: 4 stills and 1 clip.', media: 5, price: 55, allowed: '$40–$80' }
+];
+
+var ppvState = null;
+
+function openPpvComposer(mode) {
+  ppvState = { mode: mode, selected: [], selectedSet: null, price: '', message: 'just for you...', album: 'all', status: 'all' };
+  renderPpvComposer();
+}
+
+function renderPpvComposer() {
+  var fan = activeFan();
+  var p = ppvState;
+  var html = '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px">';
+  html += '<div><div style="font-size:17px;font-weight:700">' + (p.mode === 'set' ? 'Choose a set' : 'Build locked PPV') + '</div>';
+  html += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px">' +
+    (p.mode === 'set'
+      ? 'Review every item in an approved set before sending it to ' + esc(fan.display_name) + '.'
+      : 'Build a custom bundle by album and sale history. Status is specific to ' + esc(fan.display_name) + '.') +
+    '</div></div>';
+  html += '<button type="button" data-action="close-modal" style="border:0;background:transparent;color:var(--text-muted);font-size:20px;cursor:pointer">&times;</button></div>';
+
+  if (p.mode === 'set') {
+    html += '<div style="display:flex;flex-direction:column;gap:12px;max-height:420px;overflow-y:auto;padding-right:4px">';
+    PPV_SETS.forEach(function (set) {
+      var active = p.selectedSet === set.id;
+      html += '<div style="padding:14px;border-radius:10px;border:1px solid ' + (active ? 'var(--purple)' : 'var(--border)') +
+        ';background:' + (active ? 'rgba(155,143,212,0.09)' : 'var(--bg-elevated)') + '">';
+      html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="min-width:0;flex:1">';
+      html += '<div style="font-size:14px;font-weight:650">' + esc(set.title) + '</div>';
+      html += '<div style="font-size:11px;color:var(--text-secondary);line-height:1.4;margin-top:5px">' + esc(set.description) + '</div>';
+      html += '<div style="font-size:10px;color:var(--text-muted);margin-top:3px">' + set.media + ' media · default $' + set.price + ' · allowed ' + set.allowed + '</div>';
+      html += '</div>';
+      html += '<button type="button" data-action="select-set" data-set="' + set.id + '" style="padding:7px 12px;border-radius:7px;cursor:pointer;font-size:12px;border:1px solid ' +
+        (active ? 'var(--purple)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--purple)' : 'var(--bg-surface)') +
+        ';color:' + (active ? '#111' : 'var(--text-secondary)') + '">' + (active ? 'Selected' : 'Select set') + '</button>';
+      html += '</div>';
+      html += '<div style="display:flex;flex-wrap:wrap;gap:7px">';
+      for (var i = 0; i < set.media; i++) {
+        html += '<div class="ppv-tile ppv-tile-' + ((i % 4) + 1) + '" style="position:relative;width:84px;height:108px;overflow:hidden;border-radius:7px;border:1px solid var(--border)">' +
+          '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.25);color:var(--text-muted);font-size:18px">&#128274;</div>' +
+          '<span style="position:absolute;left:4px;bottom:4px;padding:2px 5px;border-radius:999px;background:rgba(0,0,0,0.76);color:var(--text-muted);font-size:8px;text-transform:uppercase;letter-spacing:0.03em">unused</span></div>';
+      }
+      html += '</div></div>';
+    });
+    html += '</div>';
+  } else {
+    /* Manual mode: sale-history chips + album cards + media grid */
+    var statuses = ['all', 'unused', 'payment_pending', 'not_sold', 'sold'];
+    var counts = {
+      all: PPV_MEDIA.length,
+      unused: PPV_MEDIA.filter(function (m) { return m.status === 'unused'; }).length,
+      payment_pending: PPV_MEDIA.filter(function (m) { return m.status === 'payment_pending'; }).length,
+      not_sold: PPV_MEDIA.filter(function (m) { return m.status === 'not_sold'; }).length,
+      sold: PPV_MEDIA.filter(function (m) { return m.status === 'sold'; }).length
+    };
+    html += '<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:14px">';
+    html += '<span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-right:3px">Sale history</span>';
+    statuses.forEach(function (status) {
+      var active = p.status === status;
+      var label = status === 'not_sold' ? 'Not sold' : status === 'payment_pending' ? 'Pending' : status[0].toUpperCase() + status.slice(1);
+      html += '<button type="button" data-action="ppv-status" data-status="' + status + '" style="padding:5px 10px;border-radius:999px;cursor:pointer;font-size:11px;border:1px solid ' +
+        (active ? 'var(--purple)' : 'var(--border)') + ';background:' + (active ? 'rgba(155,143,212,0.13)' : 'transparent') +
+        ';color:' + (active ? 'var(--purple)' : 'var(--text-muted)') + '">' + label + ' (' + counts[status] + ')</button>';
+    });
+    html += '</div>';
+
+    html += '<div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Choose an album</div>';
+    html += '<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:4px">';
+    var albums = [{ value: 'all', label: 'All media', count: PPV_MEDIA.length }];
+    ['Golden Hour', 'Late Night', 'Behind the Scenes'].forEach(function (album) {
+      albums.push({ value: album, label: album, count: PPV_MEDIA.filter(function (m) { return m.album === album; }).length });
+    });
+    albums.forEach(function (album) {
+      var active = p.album === album.value;
+      html += '<button type="button" data-action="ppv-album" data-album="' + esc(album.value) + '" style="flex:0 0 126px;min-height:76px;padding:10px 9px;border-radius:8px;cursor:pointer;border:1px solid ' +
+        (active ? 'var(--purple)' : 'var(--border)') + ';background:' + (active ? 'rgba(155,143,212,0.11)' : 'var(--bg-elevated)') +
+        ';color:' + (active ? 'var(--text-primary)' : 'var(--text-secondary)') + ';text-align:center">' +
+        '<div style="font-size:20px;line-height:1">&#128193;</div>' +
+        '<div style="font-size:11px;font-weight:600;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(album.label) + '</div>' +
+        '<div style="font-size:9px;color:var(--text-muted);margin-top:3px">' + album.count + ' items</div></button>';
+    });
+    html += '</div>';
+
+    var visible = PPV_MEDIA.filter(function (m) {
+      var inAlbum = p.album === 'all' || m.album === p.album;
+      var inStatus = p.status === 'all' ||
+        (p.status === 'unused' && m.status === 'unused') ||
+        m.status === p.status;
+      return inAlbum && inStatus;
+    });
+
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0">';
+    html += '<div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em">Individual media</div>';
+    html += '<div style="font-size:10px;color:var(--text-faint)">' + visible.length + ' shown</div></div>';
+
+    if (!visible.length) {
+      html += '<div style="padding:24px;border-radius:8px;border:1px dashed var(--border);color:var(--text-muted);text-align:center;font-size:12px">No media matches this album and sale-history filter.</div>';
+    } else {
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;max-height:300px;overflow:auto;padding-right:4px">';
+      visible.forEach(function (media) {
+        var active = p.selected.indexOf(media.id) !== -1;
+        var statusColor = media.status === 'sold' ? 'var(--green)'
+          : media.status === 'payment_pending' ? '#e0b46d'
+          : media.status === 'sent' ? 'var(--purple)'
+          : 'var(--text-muted)';
+        html += '<div role="checkbox" aria-checked="' + active + '" tabindex="0" data-action="toggle-ppv-media" data-media="' + media.id + '" style="overflow:hidden;border-radius:8px;cursor:pointer;text-align:left;position:relative;border:' +
+          (active ? '2px solid var(--purple)' : '1px solid var(--border)') + ';background:var(--bg-elevated);color:var(--text-primary)">';
+        html += '<div class="ppv-tile ppv-tile-' + media.tile + '" style="aspect-ratio:1/1;overflow:hidden;position:relative">' +
+          '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.25);color:var(--text-muted);font-size:20px">&#128274;</div>';
+        if (active) {
+          html += '<div style="position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:#111;font-size:12px;font-weight:800">&#10003;</div>';
+        }
+        html += '</div><div style="padding:7px 8px">';
+        html += '<div style="font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + media.id + '_img.jpg</div>';
+        html += '<div style="font-size:9px;color:' + statusColor + ';margin-top:3px;text-transform:uppercase">' + media.status.replace('_', ' ') + '</div>';
+        html += '</div></div>';
+      });
+      html += '</div>';
+    }
+  }
+
+  /* Footer: message + price + send */
+  html += '<div class="cleo-field-row" style="grid-template-columns:minmax(0, 1fr) 160px;margin-top:18px">';
+  html += '<div><label style="display:block;font-size:11px;color:var(--text-muted);margin-bottom:5px">Message</label>' +
+    '<input id="ppvMessageInput" value="' + esc(p.message) + '" style="width:100%;box-sizing:border-box;padding:9px 10px;border-radius:7px;border:1px solid var(--border);background:var(--bg-base);color:var(--text-primary)" /></div>';
+  html += '<div><label style="display:block;font-size:11px;color:var(--text-muted);margin-bottom:5px">Price</label>' +
+    '<div style="position:relative"><span style="position:absolute;left:10px;top:9px;color:var(--text-muted)">$</span>' +
+    '<input id="ppvPriceInput" type="number" min="1" value="' + esc(p.price) + '" style="width:100%;box-sizing:border-box;padding:9px 10px 9px 24px;border-radius:7px;border:1px solid var(--border);background:var(--bg-base);color:var(--text-primary)" /></div></div>';
+  html += '</div>';
+  var attachedCount = p.selectedSet
+    ? (PPV_SETS.filter(function (s) { return s.id === p.selectedSet; })[0] || { media: 0 }).media
+    : p.selected.length;
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px">';
+  html += '<div style="color:var(--text-muted);font-size:11px">' + attachedCount + ' media selected</div>';
+  html += '<button type="button" data-action="send-ppv"' + (attachedCount ? '' : ' disabled') + ' style="padding:9px 16px;border-radius:8px;font-weight:700;border:1px solid var(--silver);background:var(--silver);color:#111;cursor:pointer;opacity:' +
+    (attachedCount ? 1 : 0.5) + '">Send locked PPV</button>';
+  html += '</div>';
+
+  openModal(html, 1000);
+
+  var msgInput = document.getElementById('ppvMessageInput');
+  if (msgInput) msgInput.addEventListener('input', function () { ppvState.message = msgInput.value; });
+  var priceInput = document.getElementById('ppvPriceInput');
+  if (priceInput) priceInput.addEventListener('input', function () { ppvState.price = priceInput.value; });
+}
+/* ---------------------------------------------------------------------------
+   Global event delegation
+   --------------------------------------------------------------------------- */
+document.addEventListener('click', function (event) {
+  var paneTo = event.target.closest ? event.target.closest('[data-pane-to]') : null;
+  if (paneTo) {
+    setPane(paneTo.getAttribute('data-pane-to'));
+    return;
+  }
+
+  var el = event.target.closest ? event.target.closest('[data-action]') : null;
+  if (!el) {
+    /* Clicking outside closes the per-row list dropdown. */
+    if (state.listDropdownFanId) { state.listDropdownFanId = null; renderSidebar(); }
+    return;
+  }
+  var action = el.getAttribute('data-action');
+  var fanId = el.getAttribute('data-fan');
+  var listId = el.getAttribute('data-list');
+
+  switch (action) {
+    case 'toggle-auto':
+      state.globalAutoMode = !state.globalAutoMode;
+      renderSidebar();
+      renderTabChip();
+      renderChat();
+      toast(state.globalAutoMode ? 'Full Auto enabled for this creator' : 'Full Auto disabled for this creator');
+      break;
+
+    case 'sync-chats':
+      if (state.syncingChats) break;
+      state.syncingChats = true;
+      renderSidebar();
+      setTimeout(function () {
+        state.syncingChats = false;
+        renderSidebar();
+        toast('Synced with Fansly · no new messages');
+      }, 900);
+      break;
+
+    case 'mark-all-read':
+      state.conversations.forEach(function (c) { c.unread = false; c.unread_count = 0; });
+      NOW = Date.now();
+      renderSidebar();
+      break;
+
+    case 'select-list':
+      state.activeListId = listId || null;
+      renderSidebar();
+      break;
+
+    case 'manage-lists':
+      openManageLists();
+      break;
+
+    case 'new-list':
+      openListModal('create', null);
+      break;
+
+    case 'edit-list':
+      openListModal('edit', listId);
+      break;
+
+    case 'pick-color':
+      if (listModalState) { listModalState.color = el.getAttribute('data-color'); renderListModal(); }
+      break;
+
+    case 'toggle-exclude':
+      if (listModalState) { listModalState.excludeFromAuto = !listModalState.excludeFromAuto; renderListModal(); }
+      break;
+
+    case 'save-list':
+      saveList();
+      break;
+
+    case 'delete-list':
+      deleteList();
+      break;
+
+    case 'set-filter':
+      state.activeFilter = el.getAttribute('data-filter');
+      renderSidebar();
+      break;
+
+    case 'select-fan':
+      selectFan(fanId);
+      break;
+
+    case 'list-dropdown':
+      state.listDropdownFanId = state.listDropdownFanId === fanId ? null : fanId;
+      renderSidebar();
+      event.stopPropagation();
+      break;
+
+    case 'toggle-list-member':
+      FAN_LISTS.forEach(function (list) {
+        if (list.id !== listId) return;
+        var idx = list.members.indexOf(fanId);
+        if (idx === -1) list.members.push(fanId);
+        else list.members.splice(idx, 1);
+      });
+      state.listDropdownFanId = null;
+      renderSidebar();
+      break;
+
+    case 'toggle-fan-auto':
+      toggleFanAuto();
+      break;
+
+    case 'pick-suggestion':
+      pickSuggestion(parseInt(el.getAttribute('data-index'), 10));
+      break;
+
+    case 'clear-queue':
+      state.queue = [];
+      renderQueue();
+      break;
+
+    case 'use-script':
+      var title = el.getAttribute('data-script');
+      SCRIPTS.forEach(function (script) {
+        if (script.title === title) {
+          var input = document.getElementById('composerInput');
+          input.value = script.content;
+          autoGrow(input);
+          input.focus();
+        }
+      });
+      state.showScripts = false;
+      renderScriptsPanel();
+      break;
+
+    case 'fan-tab':
+      state.fanTab = el.getAttribute('data-tab');
+      renderFanPanel();
+      break;
+
+    case 'toggle-member':
+      state.showMember = !state.showMember;
+      renderFanPanel();
+      break;
+
+    case 'toggle-model':
+      state.showModel = !state.showModel;
+      renderFanPanel();
+      break;
+
+    case 'toggle-ai':
+      state.showAi = !state.showAi;
+      renderFanPanel();
+      break;
+
+    case 'cancel-followup':
+      cancelFollowup();
+      break;
+
+    case 'analytics-refresh':
+      refreshAnalytics();
+      break;
+
+    case 'approval':
+      var approvalId = el.getAttribute('data-id');
+      var approved = el.getAttribute('data-approve') === '1';
+      state.approvalsResolved[approvalId] = true;
+      renderAnalytics();
+      toast(approved ? 'PPV approved and sent' : 'PPV rejected');
+      break;
+
+    case 'close-modal':
+      closeModal();
+      listModalState = null;
+      ppvState = null;
+      break;
+
+    /* PPV composer */
+    case 'select-set':
+      var setId = el.getAttribute('data-set');
+      ppvState.selectedSet = setId;
+      ppvState.selected = [];
+      PPV_SETS.forEach(function (set) {
+        if (set.id === setId) ppvState.price = String(set.price);
+      });
+      /* A set carries its media bundle; reflect it in the selection count. */
+      PPV_SETS.forEach(function (set) {
+        if (set.id === setId) ppvState.selected = ['set:' + set.id];
+      });
+      renderPpvComposer();
+      break;
+
+    case 'ppv-status':
+      ppvState.status = el.getAttribute('data-status');
+      renderPpvComposer();
+      break;
+
+    case 'ppv-album':
+      ppvState.album = el.getAttribute('data-album');
+      renderPpvComposer();
+      break;
+
+    case 'toggle-ppv-media':
+      var mediaId = el.getAttribute('data-media');
+      ppvState.selectedSet = null;
+      var selIdx = ppvState.selected.indexOf(mediaId);
+      if (selIdx === -1) ppvState.selected.push(mediaId);
+      else ppvState.selected.splice(selIdx, 1);
+      renderPpvComposer();
+      break;
+
+    case 'send-ppv':
+      var price = parseInt(ppvState.price, 10);
+      var count = ppvState.selectedSet
+        ? (PPV_SETS.filter(function (s) { return s.id === ppvState.selectedSet; })[0] || { media: 1 }).media
+        : ppvState.selected.length;
+      if (!count || !price || price <= 0) { toast('Select media and enter a valid price.'); break; }
+      var title = ppvState.mode === 'set' && ppvState.selectedSet
+        ? (PPV_SETS.filter(function (s) { return s.id === ppvState.selectedSet; })[0] || {}).title
+        : 'Custom bundle';
+      closeModal();
+      ppvState = null;
+      sendPpv(price, count, title);
+      toast('Locked PPV sent — awaiting payment');
+      break;
+
+    default:
+      break;
+  }
+});
+
+/* Change events (selects, fan detail inputs) */
+document.addEventListener('change', function (event) {
+  var el = event.target;
+  if (el && el.getAttribute && el.getAttribute('data-action') === 'analytics-creator') {
+    state.analyticsCreator = el.value;
+    renderAnalytics();
+  }
+});
+
+document.addEventListener('input', function (event) {
+  var el = event.target;
+  if (el && el.getAttribute && el.getAttribute('data-detail')) {
+    var fan = activeFan();
+    if (fan) FAN_EXTRA[fan.id].details[el.getAttribute('data-detail')] = el.value;
+  }
+});
+
+/* Composer keyboard: Enter sends (Shift+Enter is left to the browser). */
+document.getElementById('composerInput').addEventListener('keydown', function (event) {
+  if (event.key !== 'Enter' || event.shiftKey) return;
+  event.preventDefault();
+  sendMessage();
+});
+document.getElementById('composerInput').addEventListener('input', function () {
+  autoGrow(this);
+});
+
+/* Composer buttons */
+document.getElementById('regenerateBtn').addEventListener('click', regenerateSuggestions);
+document.getElementById('scriptsBtn').addEventListener('click', function () {
+  state.showScripts = !state.showScripts;
+  renderScriptsPanel();
+});
+document.getElementById('chooseSetBtn').addEventListener('click', function () { openPpvComposer('set'); });
+document.getElementById('buildPpvBtn').addEventListener('click', function () { openPpvComposer('manual'); });
+document.getElementById('aiToggle').addEventListener('click', function () {
+  state.suggestionsOpen = !state.suggestionsOpen;
+  document.getElementById('aiPanel').style.display = state.suggestionsOpen ? 'block' : 'none';
+  document.getElementById('aiChevron').style.transform = state.suggestionsOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+  document.getElementById('aiToggle').style.padding = state.suggestionsOpen ? '0 0 10px 0' : '4px 0';
+});
+
+/* Rail + drawer */
+document.getElementById('navHamburger').addEventListener('click', function () {
+  setNavExpanded(!state.navExpanded);
+});
+document.getElementById('topbarMenu').addEventListener('click', function () {
+  state.drawerOpen = true;
+  document.getElementById('nav').setAttribute('data-open', 'true');
+  document.getElementById('navScrim').setAttribute('data-open', 'true');
+});
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+document.getElementById('navScrim').addEventListener('click', closeDrawer);
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape') closeDrawer();
+});
+document.getElementById('signOutBtn').addEventListener('click', function () {
+  toast('This is a demo build — sign-out is disabled.');
+});
+
+/* New-tab dropdown: with one creator open, the real app shows "All creators
+   are open". */
+document.getElementById('newTabBtn').addEventListener('click', function () {
+  toast('All creators are open');
+});
+
+/* Hash routing */
+window.addEventListener('hashchange', applyRoute);
+
+/* ---------------------------------------------------------------------------
+   Boot
+   --------------------------------------------------------------------------- */
+(function init() {
+  try {
+    if (localStorage.getItem('nav-expanded') === 'true') setNavExpanded(true);
+  } catch (e) { /* ignore */ }
+  applyRoute();
+  renderTabChip();
+  renderSidebar();
+  renderChat();
+  renderFanPanel();
+  setPane('list');
+})();
+</script>
+</body>
+</html>
