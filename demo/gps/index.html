@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ГПС / Ассистент — демо</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── реальный style.css приложения (static/style.css), без изменений ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font: 'Inter', sans-serif;
+  --radius: 10px;
+  --sidebar-w: 248px;
+  --transition: 0.15s ease;
+}
+
+/* Dark theme */
+body.dark {
+  --bg: #0d0d0d;
+  --bg2: #141414;
+  --bg3: #1c1c1c;
+  --bg4: #242424;
+  --text: #e8e8e8;
+  --text2: #666;
+  --text3: #444;
+  --border: #222;
+  --accent: #fff;
+  --accent2: #3d7eff;
+  --danger: #ff4444;
+}
+
+/* Light theme */
+body.light {
+  --bg: #ffffff;
+  --bg2: #f7f7f5;
+  --bg3: #efefed;
+  --bg4: #e8e8e6;
+  --text: #111;
+  --text2: #888;
+  --text3: #bbb;
+  --border: #e5e5e3;
+  --accent: #111;
+  --accent2: #2563eb;
+  --danger: #ef4444;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Layout ── */
+.layout {
+  display: flex;
+  height: 100vh;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 0.75rem;
+  gap: 0.5rem;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.25rem;
+}
+.logo {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+.logo-sub {
+  font-size: 0.8rem;
+  color: var(--text2);
+  font-weight: 400;
+}
+
+.btn-new-chat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+}
+.btn-new-chat:hover { background: var(--bg4); }
+
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0 -0.25rem;
+  padding: 0 0.25rem;
+}
+.chat-list::-webkit-scrollbar { width: 3px; }
+.chat-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.chat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid transparent;
+}
+.chat-item:hover { background: var(--bg3); }
+.chat-item.active { background: var(--bg3); border-color: var(--border); }
+.chat-item-title {
+  flex: 1;
+  font-size: 0.78rem;
+  color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: var(--transition);
+}
+.chat-item.active .chat-item-title,
+.chat-item:hover .chat-item-title { color: var(--text); }
+.chat-item-del {
+  opacity: 0;
+  background: none;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  transition: var(--transition);
+  line-height: 1;
+}
+.chat-item:hover .chat-item-del { opacity: 1; }
+.chat-item-del:hover { color: var(--danger); }
+
+.sidebar-footer {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+.btn-settings, .btn-theme {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text2);
+  font-size: 0.78rem;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-settings { flex: 1; }
+.btn-settings:hover, .btn-theme:hover { color: var(--text); border-color: var(--text3); }
+
+/* ── Main ── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.page { display: flex; flex-direction: column; height: 100%; }
+.page.hidden { display: none; }
+
+/* ── Empty state ── */
+.chat-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+.empty-icon {
+  width: 52px; height: 52px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text2);
+  margin-bottom: 0.25rem;
+}
+.chat-empty h2 { font-size: 1.3rem; font-weight: 600; color: var(--text); }
+.chat-empty p { font-size: 0.85rem; color: var(--text2); max-width: 320px; line-height: 1.6; }
+.btn-start {
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.5rem;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: var(--font);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-start:hover { opacity: 0.85; }
+
+/* ── Messages ── */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.messages::-webkit-scrollbar { width: 4px; }
+.messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.message {
+  padding: 1.25rem 2.5rem;
+  display: flex;
+  gap: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; } }
+
+.message-avatar {
+  width: 28px; height: 28px; min-width: 28px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 600;
+  margin-top: 2px;
+}
+.message.user .message-avatar { background: var(--bg4); color: var(--text2); }
+.message.assistant .message-avatar { background: var(--accent2); color: #fff; }
+
+.message-body { flex: 1; min-width: 0; }
+.message-role {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text2);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.message-text {
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--text);
+}
+.message-text ul, .message-text ol {
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+}
+.message-text li { margin-bottom: 0.25rem; }
+.message-text strong { font-weight: 500; }
+.message-text p { margin-bottom: 0.5rem; }
+.message-text p:last-child { margin-bottom: 0; }
+
+/* Sources */
+.sources {
+  margin-top: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.sources-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text2);
+  font-size: 0.72rem;
+  font-family: var(--font);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.sources-toggle:hover { color: var(--text); }
+.sources-toggle svg { transition: var(--transition); }
+.sources-toggle.open svg { transform: rotate(90deg); }
+.sources-list { display: none; border-top: 1px solid var(--border); }
+.sources-list.open { display: block; }
+.source-item {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.72rem;
+}
+.source-item:last-child { border-bottom: none; }
+.source-name { color: var(--text2); font-weight: 500; margin-bottom: 0.2rem; }
+.source-text { color: var(--text3); line-height: 1.5; }
+
+/* Typing indicator */
+.typing .message-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+}
+.dot {
+  width: 5px; height: 5px;
+  background: var(--text2);
+  border-radius: 50%;
+  animation: bounce 1.2s infinite;
+}
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%,80%,100%{transform:scale(0.6);opacity:0.4} 40%{transform:scale(1);opacity:1} }
+
+/* ── Input ── */
+.input-area {
+  padding: 0.75rem 2rem 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.5rem 0.5rem 0.5rem 0.9rem;
+  transition: var(--transition);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+textarea {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  resize: none;
+  height: 20px;
+  max-height: 160px;
+  overflow-y: hidden;
+  padding: 0;
+}
+textarea::placeholder { color: var(--text3); }
+
+.btn-send {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  background: var(--text);
+  border: none;
+  border-radius: 6px;
+  color: var(--bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.btn-send svg { width: 12px; height: 12px; }
+.btn-send:hover { opacity: 0.8; }
+.btn-send:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ── Settings ── */
+.settings-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2.5rem 3rem;
+  max-width: 680px;
+}
+.settings-wrap h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 2rem; color: var(--text); }
+
+.settings-section { margin-bottom: 2rem; }
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+
+.doc-list { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.75rem; }
+.doc-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 0.78rem;
+  color: var(--text2);
+}
+.doc-item svg { color: var(--text3); min-width: 14px; }
+
+.upload-area {
+  border: 1.5px dashed var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.upload-area:hover { border-color: var(--text3); }
+.upload-area input { display: none; }
+.upload-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text2);
+}
+.upload-link {
+  color: var(--accent2);
+  cursor: pointer;
+  text-decoration: none;
+}
+.upload-link:hover { text-decoration: underline; }
+
+.upload-status {
+  margin-top: 0.75rem;
+  font-size: 0.78rem;
+  color: var(--text2);
+  min-height: 20px;
+}
+.upload-status.success { color: #22c55e; }
+.upload-status.error { color: var(--danger); }
+
+.auth-input {
+  padding: 0.65rem 0.9rem;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  outline: none;
+  transition: var(--transition);
+  width: 100%;
+}
+.auth-input:focus { border-color: var(--text3); }
+.auth-submit {
+  padding: 0.65rem;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: 0.25rem;
+}
+.auth-submit:hover { opacity: 0.85; }
+
+.hidden { display: none !important; }
+
+.create-user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 0.78rem;
+  color: var(--text2);
+}
+
+.user-item-role {
+  font-size: 0.7rem;
+  color: var(--accent2);
+  font-weight: 500;
+}
+
+.password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.password-wrap .auth-input {
+  width: 100%;
+  padding-right: 2.5rem;
+}
+.eye-btn {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text2);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: var(--transition);
+}
+.eye-btn:hover { color: var(--text); }
+.eye-icon { width: 16px; height: 16px; }
+
+/* ── additions for the demo (не меняют вид приложения) ── */
+.demo-badge {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 200;
+  font-size: 0.62rem;
+  font-family: var(--font);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 10px;
+  pointer-events: none;
+}
+
+.demo-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.78rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 210;
+}
+.demo-toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── мобильная адаптация (добавлено для демо; в оригинале приложения её нет) ──
+   На десктопе интерфейс не меняется вовсе. На узких экранах появляется
+   шапка с меню, сайдбар превращается в выдвижную шторку. */
+.mobile-bar { display: none; }
+.drawer-scrim { display: none; }
+
+@media (max-width: 720px) {
+  body { height: 100dvh; }
+  .layout { flex-direction: column; height: 100dvh; }
+
+  .mobile-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    padding-top: calc(10px + env(safe-area-inset-top));
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .mobile-bar .mb-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 8px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .mobile-bar .mb-btn:hover { background: var(--bg4); }
+  .mobile-bar .mb-title { flex: 1; font-size: 0.95rem; font-weight: 600; color: var(--text); }
+  .mobile-bar .mb-title span { color: var(--text2); font-weight: 400; font-size: 0.8rem; }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 60;
+    transform: translateX(-102%);
+    transition: transform 0.22s ease;
+    box-shadow: 8px 0 24px rgba(0, 0, 0, 0.4);
+    padding-top: calc(1.25rem + env(safe-area-inset-top));
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  }
+  .sidebar.open { transform: none; }
+
+  .drawer-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+  .drawer-scrim.on { opacity: 1; pointer-events: auto; }
+
+  .messages { padding: 1.2rem 0; }
+  .message { padding: 1.1rem 1.15rem; }
+  .input-area { padding: 0.7rem 0.8rem calc(0.9rem + env(safe-area-inset-bottom)); }
+  .settings-wrap { padding: 1.5rem 1.1rem; }
+  .chat-empty { padding: 1.5rem; }
+
+  .demo-badge { top: calc(60px + env(safe-area-inset-top)); bottom: auto; right: 10px; }
+
+  /* iOS Safari: убрать двойной тап-зум на кнопках и элементах списка */
+  button, a, label, .chat-item, .upload-area, .sidebar-header { touch-action: manipulation; }
+  /* iOS Safari: поле ввода мельче 16px заставляет браузер зумить страницу
+     при фокусе (например, после «Начать чат») */
+  textarea, .auth-input { font-size: 16px; }
+}
+</style>
+</head>
+<body class="dark">
+
+<div class="layout" id="appLayout">
+
+  <!-- мобильная шапка (только на узких экранах) -->
+  <header class="mobile-bar">
+    <button class="mb-btn" id="menuBtn" aria-label="Меню">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect y="2" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+        <rect y="7.25" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+        <rect y="12.5" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+      </svg>
+    </button>
+    <span class="mb-title">ГПС <span>Ассистент</span></span>
+    <button class="mb-btn" id="newChatBtn" aria-label="Новый чат">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </header>
+
+  <aside class="sidebar">
+    <div class="sidebar-header" onclick="showHome()" style="cursor:pointer">
+      <span class="logo">ГПС</span>
+      <span class="logo-sub">Ассистент</span>
+    </div>
+
+    <button class="btn-new-chat" onclick="newChat()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Новый чат
+    </button>
+
+    <div class="chat-list" id="chatList"></div>
+
+    <div class="sidebar-footer">
+      <button class="btn-settings" id="btnSettings" onclick="showPage('settings')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        Настройки
+      </button>
+      <button class="btn-theme" onclick="toggleTheme()" title="Тема">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+      <button class="btn-logout" onclick="demoToast('Демо-реплика: выход недоступен')" title="Выйти">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+        </svg>
+      </button>
+    </div>
+  </aside>
+  <div class="drawer-scrim" id="drawerScrim"></div>
+
+  <main class="main">
+    <!-- Home page -->
+    <div class="page" id="page-home">
+      <div class="chat-empty">
+        <div class="empty-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h2>ГПС / Ассистент</h2>
+        <p id="welcomeText">Задавайте вопросы по нормативным документам и регламентам</p>
+        <button class="btn-start" onclick="newChat()">Начать чат</button>
+      </div>
+    </div>
+
+    <!-- Chat page -->
+    <div class="page hidden" id="page-chat">
+      <div class="messages" id="messages"></div>
+      <div class="input-area">
+        <div class="input-wrap">
+          <textarea id="questionInput" placeholder="Задайте вопрос по документам..."
+            onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+          <button class="btn-send" onclick="sendQuestion()" id="sendBtn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings page -->
+    <div class="page hidden" id="page-settings">
+      <div class="settings-wrap">
+        <h2>Настройки</h2>
+
+        <div class="settings-section">
+          <div class="section-label">Аккаунт</div>
+          <div class="account-info" id="accountInfo"></div>
+        </div>
+
+        <!-- База знаний (admin) -->
+        <div class="settings-section" id="docsSection">
+          <div class="section-label">База знаний организации</div>
+          <div class="doc-list" id="docList"></div>
+          <div class="upload-area" onclick="demoToast('Демо-реплика: загрузка документов отключена')">
+            <div class="upload-hint">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+              </svg>
+              <span>Только PDF — <span class="upload-link">выбрать файл</span></span>
+            </div>
+            <div style="font-size:0.7rem;color:var(--text3);margin-top:0.4rem">
+              Поддерживается только .pdf · Word документы конвертируйте перед загрузкой
+            </div>
+          </div>
+          <div class="upload-status" id="uploadStatus"></div>
+        </div>
+
+        <!-- Личные документы -->
+        <div class="settings-section" id="personalDocsSection">
+          <div class="section-label">Мои документы</div>
+          <div class="doc-list" id="personalDocList"></div>
+          <div class="upload-area" onclick="demoToast('Демо-реплика: загрузка документов отключена')">
+            <div class="upload-hint">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+              </svg>
+              <span>Только PDF — <span class="upload-link">выбрать файл</span></span>
+            </div>
+            <div style="font-size:0.7rem;color:var(--text3);margin-top:0.4rem">
+              Поддерживается только .pdf · Word документы конвертируйте перед загрузкой
+            </div>
+          </div>
+          <div class="upload-status" id="personalUploadStatus"></div>
+        </div>
+
+        <!-- Пользователи (admin) -->
+        <div class="settings-section" id="usersSection">
+          <div class="section-label">Пользователи</div>
+          <div class="user-list" id="userList"></div>
+          <div class="create-user-form">
+            <input class="auth-input" type="text" id="newUserName" placeholder="Имя пользователя">
+            <input class="auth-input" type="email" id="newUserEmail" placeholder="Email">
+            <div class="password-wrap">
+              <input class="auth-input" type="password" id="newUserPassword" placeholder="Пароль">
+              <button class="eye-btn" onclick="togglePassword('newUserPassword', this)" tabindex="-1">
+                <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <button class="auth-submit" onclick="createUser()">Создать пользователя</button>
+            <div class="upload-status" id="createUserStatus"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="demo-badge">demo · данные вымышленные</div>
+<div class="demo-toast" id="demoToast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════════════
+   Демо-реплика ГПС-ассистента. Вместо бэкенда — заscriptedанные ответы
+   по вымышленным регламентам. Интерфейс — как в реальном приложении.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+let currentChatId = null;
+const currentUser = { name: 'Диспетчер смены', role: 'admin', email: 'dispatcher@gps.local' };
+
+/* ── fake “database” ── */
+let chatSeq = 3;
+const chats = [
+  {
+    id: 'c1',
+    title: 'Порядок пуска ГПС после останова',
+    messages: [
+      { role: 'user', content: 'Каков порядок пуска ГПС после планового останова?' },
+      { role: 'assistant', content:
+`Порядок пуска ГПС после планового останова регламентирован **Регламентом ГПС-5, раздел 4.2**:
+
+1. Проверить герметичность фланцевых соединений обвязки и отсутствие утечек газа по данным системы контроля.
+2. Убедиться в исправности датчиков верхнего и нижнего пределов срабатывания (ВЗК и НЗК).
+3. Подать сигнал диспетчера на продувку факельного линейного участка азотом в течение не менее 15 минут.
+4. После подтверждения инертности атмосферы произвести розжиг факельной горелки с дистанционного пульта.
+5. Поочерёдно включить технологические линии, начиная с №1, с интервалом не менее 10 минут и зафиксировать показания в журнале диспетчера.
+
+**Важно:** пуск без продувки азотом запрещён — п. 4.2.3 требует подтверждения инертности отдельным датчиком O₂ ниже 1%.`,
+        sources: [
+          { source: 'Регламент ГПС-5', page: 42, text: '4.2. Перед пуском ГПС после планового останова обязательна продувка факельного участка азотом не менее 15 мин. Категорически запуск без подтверждения инертности' },
+          { source: 'Регламент ГПС-5', page: 43, text: '4.2.3. Подтверждение инертности осуществляется датчиком O₂: показание ниже 1% объёмной доли является обязательным условием розжига' },
+          { source: 'Инструкция КД-3', page: 11, text: 'При поочерёдном включении технологических линий интервал между линиями составляет не менее 10 минут, показания фиксируются в журнале диспетчера' },
+        ] },
+    ],
+  },
+  {
+    id: 'c2',
+    title: 'Контроль температуры на выходе сепаратора',
+    messages: [
+      { role: 'user', content: 'Какая допустимая температура на выходе сепаратора?' },
+      { role: 'assistant', content:
+`Согласно **Регламенту ГПС-5, п. 3.7**, допустимая температура газа на выходе сепаратора — **от 15 до 45 °C**.
+
+При выходе за верхний предел необходимо:
+- снизить нагрузку установки на 20% и сообщить старшему смены;
+- проверить работу охлаждающего контура и состояние теплообменника Т-201.
+
+Превышение **выше 55 °C более 30 минут** расценивается как основание для аварийной остановки по п. 3.7.4.`,
+        sources: [
+          { source: 'Регламент ГПС-5', page: 28, text: '3.7. Нормальный температурный режим на выходе сепаратора С-101 составляет 15–45 °C. Отклонения фиксируются автоматически' },
+          { source: 'Регламент ГПС-5', page: 29, text: '3.7.4. Сохранение температуры выше 55 °C в течение 30 и более минут является основанием для аварийной остановки' },
+        ] },
+    ],
+  },
+];
+
+/* ── знания: вопросы → ответы с источниками ── */
+const QA = [
+  {
+    keys: ['пуск', 'запуск', 'после останов', 'останов'],
+    q: 'Каков порядок пуска ГПС после останова?',
+    answer:
+`Порядок пуска ГПС после останова регламентирован **Регламентом ГПС-5, раздел 4.2**:
+
+1. Проверить герметичность фланцевых соединений обвязки.
+2. Убедиться в исправности датчиков ВЗК и НЗК.
+3. Продуть факельный линейный участок азотом не менее 15 минут.
+4. Произвести розжиг факельной горелки после подтверждения инертности (O₂ < 1%).
+5. Поочерёдно включить линии с интервалом не менее 10 минут, зафиксировать показания в журнале.`,
+    sources: [
+      { source: 'Регламент ГПС-5', page: 42, text: '4.2. Перед пуском ГПС после планового останова обязательна продувка факельного участка азотом не менее 15 мин' },
+      { source: 'Регламент ГПС-5', page: 43, text: '4.2.3. Подтверждение инертности: показание датчика O₂ ниже 1% объёмной доли — обязательное условие розжига' },
+    ],
+  },
+  {
+    keys: ['температур', 'сепаратор', 'нагрев', 'охлажд'],
+    q: 'Какая допустимая температура на выходе сепаратора?',
+    answer:
+`По **п. 3.7 Регламента ГПС-5** допустимая температура на выходе сепаратора — **от 15 до 45 °C**.
+
+При превышении:
+- снизить нагрузку установки на 20% и уведомить старшего смены;
+- проверить охлаждающий контур и теплообменник Т-201.
+
+Превышение **выше 55 °C дольше 30 минут** — основание для аварийной остановки (п. 3.7.4).`,
+    sources: [
+      { source: 'Регламент ГПС-5', page: 28, text: '3.7. Нормальный температурный режим на выходе сепаратора С-101 составляет 15–45 °C' },
+      { source: 'Регламент ГПС-5', page: 29, text: '3.7.4. Температура выше 55 °C в течение 30+ минут — основание для аварийной остановки' },
+    ],
+  },
+  {
+    keys: ['утеч', 'газоанализ', 'герметичн'],
+    q: 'Как действовать при обнаружении утечки газа?',
+    answer:
+`При обнаружении утечки газа действуйте по **Инструкции КД-3, раздел 6**:
+
+1. Немедленно сообщить диспетчеру и старшему смены, указать участок и результаты газоанализа.
+2. Ограничить доступ к зоне утечки на радиусе 50 м, организовать ветровую бдительность.
+3. Снизить давление в повреждённом участке до минимально допустимого.
+4. При концентрации газа **выше 20% НКПР** — инициировать аварийную остановку по п. 6.4.
+
+Устранение утечки допускается только после анализа воздушной среды и наряда-допуска.`,
+    sources: [
+      { source: 'Инструкция КД-3', page: 64, text: '6.1. При обнаружении утечки газа диспетчер уведомляется немедленно; зона ограничивается в радиусе 50 м с организацией ветровой бдительности' },
+      { source: 'Инструкция КД-3', page: 66, text: '6.4. Концентрация газа свыше 20% НКПР является основанием для аварийной остановки соответствующего участка' },
+    ],
+  },
+  {
+    keys: ['авари', 'останов', 'стоп', 'отключ'],
+    q: 'По каким основаниям выполняется аварийная остановка?',
+    answer:
+`Аварийная остановка ГПС выполняется по основаниям **Регламента ГПС-5, п. 3.7.4 и Инструкции КД-3, п. 6.4**:
+
+- концентрация газа в зоне утечки выше 20% НКПР;
+- температура на выходе сепаратора выше 55 °C более 30 минут;
+- срабатывание двух и более датчиков ВЗК одновременно;
+- потеря питания системы управления более чем на 5 минут.
+
+После остановки — продувка азотом и фиксация событий в журнале диспетчера; повторный пуск только по распоряжению старшего смены.`,
+    sources: [
+      { source: 'Регламент ГПС-5', page: 29, text: '3.7.4. Температура выше 55 °C (30+ мин) — основание для аварийной остановки' },
+      { source: 'Инструкция КД-3', page: 66, text: '6.4. Аварийная остановка при 20%+ НКПР, одновременном срабатывании двух ВЗК, потере питания управления 5+ мин' },
+    ],
+  },
+  {
+    keys: ['продув', 'азот', 'инерт'],
+    q: 'Как выполняется продувка азотом?',
+    answer:
+`Продувка азотом выполняется по **п. 4.2.3 Регламента ГПС-5**:
+
+1. Подать азот из азотной станции в факельный линейный участок.
+2. Продувка продолжается **не менее 15 минут**.
+3. Контролировать остаточный кислород датчиком O₂ — значение должно опуститься ниже 1%.
+
+Продувка фиксируется в журнале диспетчера: время начала, время окончания, показание O₂.`,
+    sources: [
+      { source: 'Регламент ГПС-5', page: 43, text: '4.2.3. Продувка азотом не менее 15 минут; O₂ ниже 1% объёмной доли подтверждает инертность' },
+    ],
+  },
+];
+
+const FALLBACK = {
+  answer:
+`В демо-реплике база знаний содержит только выдержки из регламентов — полный документ в реальной системе.
+
+Попробуйте спросить о:
+- **порядке пуска** ГПС после останова;
+- **температурном режиме** сепаратора;
+- **утечке газа** и действиях персонала;
+- **аварийной остановке**;
+- **продувке азотом**.`,
+  sources: [],
+};
+
+/* ── утилиты ── */
+const $ = id => document.getElementById(id);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function demoToast(text) {
+  const t = $('demoToast');
+  t.textContent = text;
+  t.classList.add('on');
+  clearTimeout(demoToast._t);
+  demoToast._t = setTimeout(() => t.classList.remove('on'), 2600);
+}
+window.demoToast = demoToast;
+
+function togglePassword(inputId, btn) {
+  const input = $(inputId);
+  const isPassword = input.type === 'password';
+  input.type = isPassword ? 'text' : 'password';
+  const icon = btn.querySelector('.eye-icon');
+  if (icon) icon.style.opacity = isPassword ? '0.4' : '1';
+}
+
+function toggleTheme() {
+  document.body.className = document.body.classList.contains('dark') ? 'light' : 'dark';
+}
+
+/* ── страницы ── */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  $('page-' + name).classList.remove('hidden');
+  if (name === 'settings') renderSettings();
+  setDrawer(false); // мобильная шторка закрывается при любой навигации
+}
+
+function showHome() {
+  showPage('home');
+  currentChatId = null;
+  renderChatList();
+}
+
+/* ── чаты ── */
+function renderChatList() {
+  const list = $('chatList');
+  list.innerHTML = '';
+  chats.forEach(chat => {
+    const item = document.createElement('div');
+    item.className = 'chat-item' + (chat.id === currentChatId ? ' active' : '');
+    item.innerHTML = `
+      <span class="chat-item-title"></span>
+      <button class="chat-item-del" title="Удалить">✕</button>`;
+    item.querySelector('.chat-item-title').textContent = chat.title;
+    item.querySelector('.chat-item-del').addEventListener('click', e => {
+      e.stopPropagation();
+      deleteChat(chat.id);
+    });
+    item.addEventListener('click', () => openChat(chat.id));
+    list.appendChild(item);
+  });
+}
+
+function deleteChat(id) {
+  const idx = chats.findIndex(c => c.id === id);
+  if (idx === -1) return;
+  chats.splice(idx, 1);
+  if (currentChatId === id) showHome();
+  renderChatList();
+}
+
+function newChat() {
+  const chat = { id: 'c' + (chatSeq++), title: 'Новый чат', messages: [] };
+  chats.unshift(chat);
+  openChat(chat.id);
+  $('questionInput').focus();
+}
+
+function openChat(id) {
+  showPage('chat');
+  currentChatId = id;
+  const chat = chats.find(c => c.id === id);
+  clearMessages();
+  chat.messages.forEach(m => renderMessage(m.role, m.content, m.sources || []));
+  renderChatList();
+  scrollToBottom();
+}
+
+/* ── сообщения ── */
+function clearMessages() { $('messages').innerHTML = ''; }
+
+function formatText(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^(\d+)\. /gm, '<br>$1. ')
+    .replace(/^- /gm, '<br>• ')
+    .replace(/\n/g, '<br>');
+}
+
+function renderMessage(role, content, sources = []) {
+  const container = $('messages');
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+
+  let sourcesHtml = '';
+  if (sources.length > 0) {
+    const items = sources.map(s => `
+      <div class="source-item">
+        <div class="source-name">${s.source} · стр. ${s.page}</div>
+        <div class="source-text">${s.text}...</div>
+      </div>`).join('');
+    sourcesHtml = `
+      <div class="sources">
+        <button class="sources-toggle" onclick="toggleSources(this)">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 1l4 4-4 4"/>
+          </svg>
+          Источники (${sources.length})
+        </button>
+        <div class="sources-list">${items}</div>
+      </div>`;
+  }
+
+  div.innerHTML = `
+    <div class="message-avatar">${role === 'user' ? 'Вы' : 'AI'}</div>
+    <div class="message-body">
+      <div class="message-role">${role === 'user' ? 'Вы' : 'Ассистент'}</div>
+      <div class="message-text">${formatText(content)}</div>
+      ${sourcesHtml}
+    </div>`;
+  container.appendChild(div);
+  return div;
+}
+
+function toggleSources(btn) {
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+}
+window.toggleSources = toggleSources;
+
+function scrollToBottom() {
+  const m = $('messages');
+  m.scrollTop = m.scrollHeight;
+}
+
+/* ── отправка вопроса: typing → ответ, как в реальном приложении ── */
+function pickAnswer(question) {
+  const q = question.toLowerCase();
+  let best = null, bestHits = 0;
+  for (const entry of QA) {
+    const hits = entry.keys.filter(k => q.includes(k)).length;
+    if (hits > bestHits) { best = entry; bestHits = hits; }
+  }
+  return best || FALLBACK;
+}
+
+async function sendQuestion(preset) {
+  const input = $('questionInput');
+  const question = (preset ?? input.value).trim();
+  if (!question || !currentChatId) return;
+
+  input.value = '';
+  autoResize(input);
+  $('sendBtn').disabled = true;
+
+  const chat = chats.find(c => c.id === currentChatId);
+  chat.messages.push({ role: 'user', content: question });
+  if (chat.title === 'Новый чат') {
+    chat.title = question.length > 38 ? question.slice(0, 38) + '…' : question;
+    renderChatList();
+  }
+  renderMessage('user', question);
+
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'message assistant typing';
+  typingDiv.innerHTML = `
+    <div class="message-avatar">AI</div>
+    <div class="message-body">
+      <div class="message-role">Ассистент</div>
+      <div class="message-text">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>`;
+  $('messages').appendChild(typingDiv);
+  scrollToBottom();
+
+  const picked = pickAnswer(question);
+  await new Promise(r => setTimeout(r, 1400)); // ответ «приходит с сервера»
+
+  typingDiv.remove();
+  renderMessage('assistant', picked.answer, picked.sources);
+  chat.messages.push({ role: 'assistant', content: picked.answer, sources: picked.sources });
+  $('sendBtn').disabled = false;
+  scrollToBottom();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendQuestion(); }
+}
+
+function autoResize(el) {
+  el.style.height = '20px';
+  if (el.scrollHeight > 20) {
+    el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+    el.style.overflowY = el.scrollHeight > 160 ? 'auto' : 'hidden';
+  }
+}
+
+/* ── настройки (fake) ── */
+const sharedDocs = [
+  'Регламент ГПС-5_2024.pdf',
+  'Инструкция по эксплуатации КД-3.pdf',
+  'План мероприятий по предупреждению аварий.pdf',
+];
+const personalDocs = [];
+const users = [
+  { user_id: 'u1', name: 'Иван Сменов', email: 'ivan.s@gps.local', role: 'user' },
+  { user_id: 'u2', name: 'А. Диспетчер', email: 'admin.s@gps.local', role: 'admin' },
+  { user_id: 'u3', name: 'М. Контролёр', email: 'm.kontrol@gps.local', role: 'user' },
+];
+
+const docSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+  <polyline points="14 2 14 8 20 8"/>
+</svg>`;
+
+function renderDocList(el, docs, onDelete) {
+  el.innerHTML = docs.map(d => `
+    <div class="doc-item">
+      ${docSvg}
+      <span style="flex:1">${d}</span>
+      <button style="background:none;border:none;color:var(--text3);cursor:pointer;padding:2px 6px;font-size:0.7rem;">✕</button>
+    </div>`).join('') || `<div style="font-size:0.78rem;color:var(--text3)">${docs === sharedDocs ? 'Документов нет' : 'Нет личных документов'}</div>`;
+  el.querySelectorAll('.doc-item button').forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      if (onDelete) onDelete(docs[i]);
+      else demoToast('Демо-реплика: удаление документов отключено');
+    });
+  });
+}
+
+function renderSettings() {
+  $('accountInfo').innerHTML = `
+    Имя: <span>${currentUser.name}</span><br>
+    Роль: <span>Администратор</span>`;
+  renderDocList($('docList'), sharedDocs);
+  renderDocList($('personalDocList'), personalDocs);
+  $('userList').innerHTML = users.map(u => `
+    <div class="user-item">
+      <div>
+        <div style="font-size:0.82rem;color:var(--text)">${u.name}</div>
+        <div style="font-size:0.72rem;color:var(--text2);margin-top:2px">${u.email}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <span class="user-item-role">${u.role === 'admin' ? 'Администратор' : 'Пользователь'}</span>
+        ${u.role !== 'admin' ? `<button style="background:none;border:1px solid var(--border);border-radius:5px;color:var(--text3);cursor:pointer;padding:2px 6px;font-size:0.7rem;">удалить</button>` : ''}
+      </div>
+    </div>`).join('');
+  $('userList').querySelectorAll('.user-item button').forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      const target = users.filter(u => u.role !== 'admin')[i];
+      const idx = users.indexOf(target);
+      if (idx !== -1) users.splice(idx, 1);
+      renderSettings();
+      demoToast(`Пользователь ${target.email} удалён (только в демо)`);
+    });
+  });
+}
+
+function createUser() {
+  const name = $('newUserName').value.trim();
+  const email = $('newUserEmail').value.trim();
+  const password = $('newUserPassword').value;
+  const status = $('createUserStatus');
+  if (!name || !email || !password) {
+    status.className = 'upload-status error';
+    status.textContent = 'Заполните все поля';
+    return;
+  }
+  users.push({ user_id: 'u' + (users.length + 1), name, email, role: 'user' });
+  $('newUserName').value = '';
+  $('newUserEmail').value = '';
+  $('newUserPassword').value = '';
+  status.className = 'upload-status success';
+  status.textContent = `✓ Пользователь ${email} создан (в демо)`;
+  renderSettings();
+}
+
+/* ── мобильная шторка сайдбара (добавлено для демо) ── */
+const sidebarEl = document.querySelector('.sidebar');
+const scrimEl = $('drawerScrim');
+function setDrawer(open) {
+  sidebarEl.classList.toggle('open', open);
+  scrimEl.classList.toggle('on', open);
+}
+$('menuBtn').addEventListener('click', () => setDrawer(!sidebarEl.classList.contains('open')));
+scrimEl.addEventListener('click', () => setDrawer(false));
+$('newChatBtn').addEventListener('click', () => { setDrawer(false); newChat(); });
+addEventListener('keydown', e => { if (e.key === 'Escape') setDrawer(false); });
+
+/* ── init ── */
+renderChatList();
+showHome();
+</script>
+</body>
+</html>
