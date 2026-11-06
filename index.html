@@ -661,7 +661,18 @@ document.getElementById('plist-items').addEventListener('click',e=>{ const b=e.t
 document.getElementById('plist-close').addEventListener('click',()=>plist.close());
 document.querySelectorAll('#as-list,[data-open-list]').forEach(b=>b.addEventListener('click',()=>plist.showModal()));
 // прямая ссылка на список проектов: jericho2k.github.io/#list
-if(location.hash==='#list') plist.showModal();
+// плавно доезжаем до стола и открываем список поверх сцены
+if(location.hash==='#list'){
+  const go=()=>setTimeout(()=>{
+    const open=()=>{ if(!plist.open) plist.showModal(); };
+    document.getElementById('projects').scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
+    if(reduced) return open();
+    let done=false; const fin=()=>{ if(!done){ done=true; open(); } };
+    addEventListener('scrollend',fin,{once:true});
+    setTimeout(fin,1600);
+  },400);
+  document.readyState==='complete' ? go() : addEventListener('load',go,{once:true});
+}
 
 /* ---------- case dialog ---------- */
 const dlg=document.getElementById('case'), side=document.getElementById('sheet-side'), body=document.getElementById('sheet-body');
