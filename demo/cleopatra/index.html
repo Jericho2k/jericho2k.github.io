@@ -851,7 +851,7 @@ input::placeholder {
                       <button type="button" id="chooseSetBtn"
                               style="padding:6px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border-strong);background:var(--bg-elevated);color:var(--text-secondary);font-size:12px">Choose a set</button>
                       <button type="button" id="buildPpvBtn"
-                              style="padding:6px 10px;border-radius:6px;cursor:pointer;border:1px solid rgba(155,143,212,0.4);background:rgba(155,143,212,0.1);color:var(--purple);font-size:12px">Build locked PPV</button>
+                              style="padding:6px 10px;border-radius:6px;cursor:pointer;border:1px solid rgba(155,143,212,0.4);background:rgba(155,143,212,0.1);color:var(--purple);font-size:12px">Build locked set</button>
                     </div>
                   </div>
                   <div id="scriptsPanel" style="display:none;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;overflow:hidden"></div>
@@ -901,40 +901,40 @@ var CREATOR_ID = 'c1';
 var MODEL_LEGEND =
   'Name: Aurora Vale\n' +
   'From: Reykjavík, Iceland\n' +
-  'Age: 26\n' +
-  'Job: Photographer\n' +
-  'Background: Digital artist turned full-time creator. Loves night skies, thunderstorms and terrible puns. Fluent in English, passable Icelandic.\n' +
-  'Other: Cat mom to a grey tabby named Odin; always awake at 2am.';
+  'Craft: Landscape and portrait photographer\n' +
+  'Background: Digital artist turned full-time creator. Shoots night skies, thunderstorms and city rooftops. Loves terrible puns.\n' +
+  'Voice: Warm, curious, short messages, light emoji use\n' +
+  'Other: Has a grey tabby named Odin who appears in behind-the-scenes clips.';
 
 var SCRIPTS = [
-  { category: 'greeting', title: 'Warm welcome', content: 'hi sweetheart!! so happy you finally made it here 💕 what was it that finally brought you over?' },
-  { category: 'greeting', title: 'New sub check-in', content: 'hey you! thanks for subscribing 🖤 let me know if there is anything you want to see first...' },
-  { category: 'upsell', title: 'Tease the vault', content: 'you have no idea what i just finished shooting 😈 want a tiny sneak peek before anyone else?' },
-  { category: 'upsell', title: 'PPV nudge', content: 'sooo i put together something really special for you... should i send it? it is 🔒 but totally worth it' },
-  { category: 'reengagement', title: 'Miss you ping', content: 'i noticed you have been quiet lately 🥺 did i do something? i saved something for you...' },
-  { category: 'reengagement', title: 'Payday nudge', content: 'hope work has been treating you well 🖤 a little something is waiting whenever you are ready...' }
+  { category: 'greeting', title: 'Warm welcome', content: 'hi and welcome!! so happy you are here ✨ what made you subscribe in the end?' },
+  { category: 'greeting', title: 'New sub check-in', content: 'hey, thanks for subscribing 📸 tell me what you would like to see first: landscapes, city or behind the scenes?' },
+  { category: 'upsell', title: 'Preview the new set', content: 'just finished editing a new aurora series 🌌 want a sneak peek before it goes live?' },
+  { category: 'upsell', title: 'Paid set offer', content: 'i put together a full set from that shoot: 12 frames plus the RAW of my favourite. want me to send it over?' },
+  { category: 'reengagement', title: 'Check-in', content: 'hey, it has been a while 🙂 no pressure at all, just wanted to share a frame i think you would like' },
+  { category: 'reengagement', title: 'New season', content: 'winter season is starting here ❄️ first northern lights set drops friday, i will save you a spot' }
 ];
 
-/* Fans. `minutesAgo` seeds last_message_time so relative times read naturally. */
+/* Subscribers. `minutesAgo` seeds last_message_time so relative times read naturally. */
 var FANS = [
-  { id: 'f1', name: 'Ruby Sinclair', spent: 4820, tier: 'whale', minutesAgo: 5, unread: 3, auto: null,
-    preview: 'omg the new set is unreal 😍 do you have more?' },
+  { id: 'f1', name: 'Ruby Sinclair', spent: 4820, tier: 'vip', minutesAgo: 5, unread: 3, auto: null,
+    preview: 'the new aurora set is unreal 😍 do you have more from that night?' },
   { id: 'f2', name: 'Marcus Vale', spent: 1340, tier: 'active', minutesAgo: 22, unread: 0, auto: true,
     preview: 'thanks for last nights drop, worth every cent' },
-  { id: 'f3', name: 'Tessa Bloom', spent: 6120, tier: 'whale', minutesAgo: 64, unread: 1, auto: true,
-    preview: 'can we do the couples theme next weekend?' },
+  { id: 'f3', name: 'Tessa Bloom', spent: 6120, tier: 'vip', minutesAgo: 64, unread: 1, auto: true,
+    preview: 'can we plan the glacier series for next weekend?' },
   { id: 'f4', name: 'Dmitri Kane', spent: 410, tier: 'casual', minutesAgo: 190, unread: 0, auto: false,
     preview: 'hey, is the friday bundle still available?' },
   { id: 'f5', name: 'Harper Quinn', spent: 2180, tier: 'active', minutesAgo: 245, unread: 2, auto: null,
     preview: 'i told my friend about you, she subscribed!' },
   { id: 'f6', name: 'Jonah Pierce', spent: 45, tier: 'cold', minutesAgo: 2880, unread: 0, auto: false,
     preview: 'sorry, been buried at work. back next week' },
-  { id: 'f7', name: 'Celeste Moreau', spent: 7450, tier: 'whale', minutesAgo: 310, unread: 0, auto: true,
-    preview: 'just tipped, check your notifications 💌' },
+  { id: 'f7', name: 'Celeste Moreau', spent: 7450, tier: 'vip', minutesAgo: 310, unread: 0, auto: true,
+    preview: 'just ordered the large print, check your notifications 💌' },
   { id: 'f8', name: "Finn O'Leary", spent: 320, tier: 'casual', minutesAgo: 1500, unread: 1, auto: null,
-    preview: 'any chance of a custom vid?' },
+    preview: 'any chance of a custom print of my hometown?' },
   { id: 'f9', name: 'Nadia Frost', spent: 1905, tier: 'active', minutesAgo: 4320, unread: 0, auto: false,
-    preview: 'payday friday, save me something good 😈' }
+    preview: 'friday is my treat day, save me something good ✨' }
 ];
 
 var FAN_LISTS = [
@@ -944,56 +944,56 @@ var FAN_LISTS = [
 
 var LIST_COLORS = ['#9b8fd4', '#4caf82', '#ff6b6b', '#f0a500', '#4fc3f7', '#f48fb1', '#aaa', '#fff'];
 
-/* Fake message threads. role: 'fan' | 'creator'. PPV cards via media_context. */
+/* Fake message threads. role: 'fan' (subscriber) | 'creator'. Paid sets via media_context. */
 var THREADS = {
   f1: [
-    { id: 'm1', role: 'fan', content: 'hi!! just subscribed, i have been lurking for weeks 😅' },
-    { id: 'm2', role: 'creator', content: 'welcome!! so happy you are finally here 💕 what brought you over in the end?' },
-    { id: 'm3', role: 'fan', content: 'the rooftop teaser reel. i was done for immediately' },
-    { id: 'm4', role: 'creator', content: 'a girl of taste 😌 that shoot was so much fun, the light was perfect' },
-    { id: 'm5', role: 'fan', content: 'ugh you are killing me. is the full set out??' },
-    { id: 'm6', role: 'creator', content: 'just for you...', ppv: { price: 45, count: 4, title: 'Rooftop Set' } },
-    { id: 'm7', role: 'fan', content: 'omg the new set is unreal 😍 do you have more?' }
+    { id: 'm1', role: 'fan', content: 'hi!! just subscribed, i have been following your work for weeks 😅' },
+    { id: 'm2', role: 'creator', content: 'welcome!! so happy you are finally here ✨ what brought you over in the end?' },
+    { id: 'm3', role: 'fan', content: 'the rooftop timelapse reel. i was hooked immediately' },
+    { id: 'm4', role: 'creator', content: 'that one was so much fun to shoot, the light was perfect that evening 📸' },
+    { id: 'm5', role: 'fan', content: 'is the full aurora series out yet??' },
+    { id: 'm6', role: 'creator', content: 'just finished it, here you go', ppv: { price: 45, count: 4, title: 'Aurora Nights Set' } },
+    { id: 'm7', role: 'fan', content: 'the new aurora set is unreal 😍 do you have more from that night?' }
   ],
   f2: [
     { id: 'm1', role: 'fan', content: 'hey Aurora, just woke up to your message haha' },
-    { id: 'm2', role: 'creator', content: 'morning! or 3am, knowing you 😌 did you see what i sent last night?' },
+    { id: 'm2', role: 'creator', content: 'morning! or 3am, knowing you 😄 did you see the set i posted last night?' },
     { id: 'm3', role: 'fan', content: 'i did. buying it right now' },
     { id: 'm4', role: 'fan', content: 'thanks for last nights drop, worth every cent' }
   ],
   f3: [
-    { id: 'm1', role: 'creator', content: 'good morning gorgeous 🌤️ how is your week going?' },
+    { id: 'm1', role: 'creator', content: 'good morning 🌤️ how is your week going?' },
     { id: 'm2', role: 'fan', content: 'hectic but good! counting down to the weekend' },
-    { id: 'm3', role: 'creator', content: 'same here, i have something planned for saturday that you are going to love...' },
-    { id: 'm4', role: 'fan', content: 'can we do the couples theme next weekend?' }
+    { id: 'm3', role: 'creator', content: 'same here, i am heading to the glacier on saturday if the weather holds...' },
+    { id: 'm4', role: 'fan', content: 'can we plan the glacier series for next weekend?' }
   ],
   f4: [
     { id: 'm1', role: 'fan', content: 'hey, is the friday bundle still available?' },
-    { id: 'm2', role: 'creator', content: 'it is! i can hold a copy for you until tonight if you want 💜' },
-    { id: 'm3', role: 'fan', content: 'please do, payday is tomorrow' }
+    { id: 'm2', role: 'creator', content: 'it is! i can hold a copy for you until tonight if you want 💙' },
+    { id: 'm3', role: 'fan', content: 'please do, will grab it tomorrow' }
   ],
   f5: [
     { id: 'm1', role: 'fan', content: 'i told my friend about you, she subscribed!' },
-    { id: 'm2', role: 'creator', content: 'omg stop!! that is so sweet of you 🥺 tell her i said hi' },
+    { id: 'm2', role: 'creator', content: 'no way!! that is so kind of you 🥹 tell her i said hi' },
     { id: 'm3', role: 'fan', content: 'she says hi back 😂 she already bought the beach set' },
-    { id: 'm4', role: 'creator', content: 'a woman of culture 🖤 thank you both, this genuinely makes my day' }
+    { id: 'm4', role: 'creator', content: 'great taste runs in the group 🙌 thank you both, this genuinely makes my day' }
   ],
   f6: [
     { id: 'm1', role: 'fan', content: 'sorry, been buried at work. back next week' },
-    { id: 'm2', role: 'creator', content: 'no apologies ever 💙 work comes first, i will be right here' }
+    { id: 'm2', role: 'creator', content: 'no apologies ever 💙 work comes first, the photos will be right here' }
   ],
   f7: [
-    { id: 'm1', role: 'fan', content: 'just tipped, check your notifications 💌' },
-    { id: 'm2', role: 'creator', content: 'seen 😌 you spoil me, Celeste. what did you want to see tonight?' },
-    { id: 'm3', role: 'fan', content: 'whatever you want to send. i trust you' }
+    { id: 'm1', role: 'fan', content: 'just ordered the large print, check your notifications 💌' },
+    { id: 'm2', role: 'creator', content: 'seen, thank you Celeste! 🙏 anything you would like me to shoot next?' },
+    { id: 'm3', role: 'fan', content: 'whatever inspires you. i trust your eye' }
   ],
   f8: [
-    { id: 'm1', role: 'fan', content: 'any chance of a custom vid?' },
-    { id: 'm2', role: 'creator', content: 'always 💜 tell me the theme and i will quote you a price' }
+    { id: 'm1', role: 'fan', content: 'any chance of a custom print of my hometown?' },
+    { id: 'm2', role: 'creator', content: 'always 💙 tell me the place and the mood and i will quote you a price' }
   ],
   f9: [
-    { id: 'm1', role: 'fan', content: 'payday friday, save me something good 😈' },
-    { id: 'm2', role: 'creator', content: 'already setting something aside for you 🔥 see you friday' }
+    { id: 'm1', role: 'fan', content: 'friday is my treat day, save me something good ✨' },
+    { id: 'm2', role: 'creator', content: 'already setting something aside for you 🌌 see you friday' }
   ]
 };
 
@@ -1002,112 +1002,112 @@ var THREADS = {
    have cached; Regenerate cycles through the pool. */
 var SUGGESTION_POOL = {
   f1: [
-    ['omg right?? the rooftop set was just the teaser 😈 | want the extended cut?',
-     'i knew you would love it 😌 there is a whole vault waiting tbh',
-     'say less 🖤 i put together something exclusive for my top fans...'],
-    ['a girl of taste AND patience 😏 the full version is three times longer',
-     'i was hoping you would ask 💕 it just went live, go look',
-     'careful, i do love an enthusiastic one 😈 guess i get to spoil you']
+    ['right?? that night was magic 🌌 | want the extended series with the timelapse?',
+     'i knew you would love it ✨ there are about twenty more frames from that night',
+     'i put together a small collectors set for my regulars, want a look?'],
+    ['thank you!! the full version has the timelapse too',
+     'i was hoping you would ask 😄 it just went live, go look',
+     'that made my day, i will send you a behind-the-scenes clip as a thank you']
   ],
   f2: [
-    ['that is what i like to hear 😌 you have been so good this month',
+    ['that is what i like to hear 😄 thanks for always being here',
      'new drop lands friday, want a sneak peek before anyone else? 👀',
-     'and it is only getting better, trust me 🖤'],
-    ['you always say the sweetest things 🥺 sending you a little bonus tonight',
+     'and it only gets better from here, trust me 📸'],
+    ['you always say the nicest things 🙏 sending you a little bonus tonight',
      'the extended cut is uploading as we speak...',
-     'how about i make tonight extra special for my favorite night owl?']
+     'want first look at the next one, my favorite night owl?']
   ],
   f3: [
-    ['couples theme?? say no more 😈 i have the perfect outfits picked already',
-     'saturday works great, i will block the evening out for us 🖤',
-     'want me to send a mood board first so you can veto anything?'],
-    ['i love where your head is at 😌 saturday is going to be very fun',
-     'i already have three setups shot for it, no pressure though!',
-     'dress code: whatever makes you feel most confident 💜']
+    ['glacier series?? yes, i already have the spots scouted 🧊',
+     'saturday works great, i will share the shot list with you before i go',
+     'want me to send a mood board first so you can pick the frames you care about?'],
+    ['love that idea 😄 saturday is going to be a good one',
+     'i already have three locations lined up, no pressure though!',
+     'tell me which light you like best: blue hour or golden hour?']
   ],
   f4: [
-    ['it is still available 💜 want me to hold one for you until tonight?',
-     'no rush at all, payday timing is completely understood 😌',
-     'if you want, i can send a 30 second preview first?'],
-    ['of course! it has been our most popular bundle this month 😌',
-     'i can do a small discount if you take it before midnight 🖤',
+    ['it is still available 💙 want me to hold one for you until tonight?',
+     'no rush at all, grab it whenever it suits you 🙂',
+     'if you want, i can send a few preview frames first?'],
+    ['of course! it has been the most popular bundle this month',
+     'i can do a small discount if you take it before midnight',
      'just say the word and it is yours']
   ],
   f5: [
-    ['omg stop!! that is so sweet of you 🥺 tell her i said hi',
-     'you two are going to enable each other 😂🖤',
-     'sending you both a little something later as a thank you 💜'],
-    ['this genuinely made my day 🥺 you are the best',
-     'new set this weekend by the way, do not say i never warn you 😌',
-     'friends who shop together stay together 😇']
+    ['no way!! that is so kind of you 🥹 tell her i said hi',
+     'you two are going to fill your walls with prints 😂',
+     'sending you both a little something later as a thank you 💙'],
+    ['this genuinely made my day 🥹 you are the best',
+     'new set this weekend by the way, consider yourself warned 😄',
+     'friends who collect together stay together 🙌']
   ],
   f6: [
-    ['no apologies ever 💙 work comes first, i will be right here',
-     'i will save the good stuff for your comeback week 😌',
-     'go crush it, then come tell me all about it 🖤'],
-    ['missed you around here 🥺 but genuinely, no pressure at all',
+    ['no apologies ever 💙 work comes first, the photos will be right here',
+     'i will save the best frames for your comeback week 🙂',
+     'go crush it, then come tell me all about it'],
+    ['missed you around here! but genuinely, no pressure at all',
      'there is a little something waiting in your inbox when you are back',
-     'rest up and i will see you soon 💜']
+     'rest up and see you soon 💙']
   ],
   f7: [
-    ['seen 😌 you spoil me, Celeste. what did you want to see tonight?',
-     'i have a brand new set that has your name written all over it 🖤',
-     'or i can just surprise you, you always like those best 😏'],
-    ['your tip just made my whole evening 🥺 let me return the favor',
-     'sending you something from this morning shoot, it is unreal',
-     'beach or rooftop tonight? your call 💜']
+    ['seen, thank you Celeste! 🙏 anything you would like me to shoot next?',
+     'i have a brand new series that feels very you 🌌',
+     'or i can surprise you, you always like those best 😄'],
+    ['your order just made my whole evening 🥹 thank you',
+     'sending you a frame from this morning shoot, the light was unreal',
+     'beach or rooftop next? your call 💙']
   ],
   f8: [
-    ['always 💜 tell me the theme and i will quote you a price',
-     'customs start at $120 and i include two outfit changes 😌',
-     'no idea is too silly, i have shot some very creative ones 😇'],
-    ['love a custom request 😏 what are you thinking?',
+    ['always 💙 tell me the place and the mood and i will quote you a price',
+     'custom prints start at $120, including two rounds of edits 🙂',
+     'no idea is too unusual, i have done some very creative ones'],
+    ['love a custom request 😄 what are you thinking?',
      'give me a week and i will make it extra special for you',
-     'i will even send behind the scenes clips as a bonus 🖤']
+     'i will even send behind-the-scenes clips of the process 📸']
   ],
   f9: [
-    ['already setting something aside for you 🔥 see you friday',
-     'no rush though, it will keep until your payday lands 😌',
-     'want it themed or should i surprise you? 😈'],
-    ['friday cannot come fast enough 🖤 i have three things shortlisted for you',
-     'i will send the menu thursday so you can pick in advance 😏',
-     'payday you say? say less 😇']
+    ['already setting something aside for you 🌌 see you friday',
+     'no rush though, it will keep until friday 🙂',
+     'want it themed or should i surprise you?'],
+    ['friday cannot come fast enough, i have three sets shortlisted for you',
+     'i will send the list thursday so you can pick in advance',
+     'treat day it is ✨']
   ]
 };
 
 var CANNED_REPLIES = {
-  f1: ['ok ok i am looking RIGHT now 😍', 'you are going to bankrupt me lol', 'sent you a tip as thanks 🖤'],
-  f2: ['appreciate you fr 🖤', 'haha you know me too well', 'see you tonight'],
-  f3: ['yesss saturday it is 😍', 'omg a mood board, of course', 'you always get me'],
-  f4: ['hold one for me please 🙏', 'payday tomorrow, i promise', 'preview would be great actually'],
-  f5: ['told you she would love you 😇', 'a thank you?? stop it 🥺', 'see you both this weekend'],
-  f6: ['back next week for real, i promise 🖤', 'missed you too 🥺', 'see you soon'],
-  f7: ['surprise me 😏', 'you are the sweetest 🥺', 'rooftop tonight then 🔥'],
-  f8: ['thinking something winter themed?', '120 works for me 🖤', 'you are a legend, thank you'],
-  f9: ['thursday works 😍', 'surprise me obviously 😈', 'friday cannot come soon enough']
+  f1: ['ok ok i am looking RIGHT now 😍', 'you are going to empty my wallet lol', 'that clip would be amazing'],
+  f2: ['appreciate you fr', 'haha you know me too well', 'see you tonight'],
+  f3: ['yesss saturday it is 😍', 'a mood board, of course', 'blue hour for sure'],
+  f4: ['hold one for me please 🙏', 'tomorrow, i promise', 'preview would be great actually'],
+  f5: ['told you she would love it 😇', 'a thank you?? stop it 🥹', 'see you both this weekend'],
+  f6: ['back next week for real, i promise', 'missed you too', 'see you soon'],
+  f7: ['surprise me 😄', 'you are the best', 'rooftop next then ✨'],
+  f8: ['thinking a foggy harbour at dawn?', '120 works for me', 'you are a legend, thank you'],
+  f9: ['thursday works 😍', 'surprise me obviously', 'friday cannot come soon enough']
 };
-/* Per-fan FanPanel data: notes, AI summary, sales, full-auto state. */
+/* Per-subscriber panel data: notes, AI summary, sales, full-auto state. */
 var FAN_EXTRA = {
   f1: {
-    notes: 'VIP since day one. Loves rooftop/editorial sets, hates being rushed. Tip twice already this month.',
-    memberNote: 'Tier: whale since June 2026\nAlways tips before buying\nPrefers voice notes over text\nBest reach: 10pm-1am local\nGifts: birthday Oct 24',
+    notes: 'VIP since day one. Loves night-sky and rooftop sets, hates being rushed. Bought two prints this month.',
+    memberNote: 'Tier: VIP since June 2026\nUsually buys within an hour of a preview\nPrefers voice notes over text\nBest reach: 10pm-1am local\nBirthday: Oct 24',
     ai: {
-      summary: 'Long-time lurker turned whale. Responds strongly to exclusivity and early access, and usually purchases within twenty minutes of a tease. Night owl — most spending happens after 11pm.',
-      emotionalType: 'Validation-seeking romantic',
+      summary: 'Long-time follower turned top collector. Responds strongly to early access and behind-the-scenes material, usually purchases within twenty minutes of a preview. Most active after 11pm.',
+      emotionalType: 'Enthusiastic collector',
       spending: 'Impulse buyer, high ceiling',
       location: 'Portland, OR (self-reported)',
       occupation: 'Nurse (self-reported)',
-      payday: 'Every other Friday',
-      relationship: 'Single',
-      kinks: ['Cosplay', 'Roleplay', 'Slow burn'],
-      reengagement: 'Payday mentions and new set drops',
+      payday: 'Late evenings',
+      relationship: '',
+      kinks: ['Night skies', 'Timelapses', 'Behind the scenes'],
+      reengagement: 'New series announcements and early access',
       risk: 'None recorded'
     },
-    prefs: ['rooftop sets', 'voice notes', 'slow burn', 'behind the scenes'],
-    details: { age: '27', payday: 'Every other Friday', hobbies: 'Hiking, film photography', rel: 'Single' },
+    prefs: ['night-sky sets', 'voice notes', 'timelapses', 'behind the scenes'],
+    details: { age: '27', payday: 'Late evenings', hobbies: 'Hiking, film photography', rel: 'UTC−8' },
     sales: [
-      { date: '10/08/2026', item: 'Rooftop Set', amount: 45, chatter: 'Aurora' },
-      { date: '09/28/2026', item: 'Custom Greeting Clip', amount: 120, chatter: 'Aurora' },
+      { date: '10/08/2026', item: 'Aurora Nights Set', amount: 45, chatter: 'Aurora' },
+      { date: '09/28/2026', item: 'Custom Print (A3)', amount: 120, chatter: 'Aurora' },
       { date: '09/14/2026', item: 'VIP Monthly', amount: 60, chatter: 'Auto' }
     ],
     notSold: [
@@ -1117,74 +1117,74 @@ var FAN_EXTRA = {
     history: { pages: 3, imported: 41, fully: true }
   },
   f2: {
-    notes: 'Reliable buyer, works nights. Confirmed purchase on every PPV since August.',
-    memberNote: 'Tier: active\nWorks night shifts, awake 8pm-6am\nNever negotiates prices\nPrefers video over photo sets',
+    notes: 'Reliable buyer, works nights. Confirmed purchase on every set since August.',
+    memberNote: 'Tier: active\nWorks night shifts, awake 8pm-6am\nNever negotiates prices\nPrefers timelapses over stills',
     ai: {
       summary: 'Steady, low-friction buyer who purchases on first offer. Values consistency over novelty and replies fastest to direct, no-fluff messages.',
       emotionalType: 'Loyal regular',
       spending: 'Steady, price-insensitive',
       location: 'Chicago, IL (self-reported)',
       occupation: 'Warehouse supervisor',
-      payday: '1st and 15th',
-      relationship: 'Married (openly)',
-      kinks: ['Video', 'Cosplay'],
-      reengagement: 'Direct mentions of new videos',
+      payday: 'Night owl, after 8pm',
+      relationship: '',
+      kinks: ['Timelapses', 'City at night'],
+      reengagement: 'Direct mentions of new timelapses',
       risk: 'None recorded'
     },
-    prefs: ['video sets', 'direct messages'],
-    details: { age: '34', payday: '1st and 15th', hobbies: 'Basketball, grilling', rel: 'Married' },
+    prefs: ['timelapses', 'direct messages'],
+    details: { age: '34', payday: 'After 8pm', hobbies: 'Basketball, grilling', rel: 'UTC−6' },
     sales: [
       { date: '10/12/2026', item: 'Late Night Drop', amount: 35, chatter: 'Auto' },
-      { date: '09/30/2026', item: 'Office Theme Set', amount: 55, chatter: 'Aurora' }
+      { date: '09/30/2026', item: 'City Lights Set', amount: 55, chatter: 'Aurora' }
     ],
     notSold: [],
     auto: { status: 'awaiting_payment', paymentState: 'payment_pending', pending: { price: 35, expires: '2026-10-15T18:00:00', checks: 3 }, followup: null },
     history: { pages: 2, imported: 18, fully: true }
   },
   f3: {
-    notes: 'Highest lifetime spend this quarter. Plans themed shoots in advance — always books Saturdays.',
-    memberNote: 'Tier: whale\nBooks themed sessions 1-2 weeks ahead\nLoves couples/fantasy themes\nAnniversary: Feb 14',
+    notes: 'Highest lifetime spend this quarter. Plans themed series in advance — always picks Saturday drops.',
+    memberNote: 'Tier: VIP\nPlans series 1-2 weeks ahead\nLoves glaciers and long exposures\nAnniversary of subscription: Feb 14',
     ai: {
-      summary: 'Planner rather than impulse buyer. Discusses purchases days ahead and pays promptly once the theme is agreed. Treats the creator-fan relationship as an ongoing story.',
-      emotionalType: 'Committed storyteller',
+      summary: 'Planner rather than impulse buyer. Discusses purchases days ahead and pays promptly once the theme is agreed. Treats the collection as an ongoing project.',
+      emotionalType: 'Committed planner',
       spending: 'Planned, high value',
       location: 'Austin, TX (self-reported)',
       occupation: 'Graphic designer',
-      payday: 'Last day of month',
-      relationship: 'Single',
-      kinks: ['Fantasy', 'Couples theme', 'Lingerie'],
+      payday: 'Weekends',
+      relationship: '',
+      kinks: ['Glaciers', 'Long exposure', 'Series'],
       reengagement: 'Theme announcements',
       risk: 'None recorded'
     },
-    prefs: ['themed shoots', 'saturday sessions', 'fantasy'],
-    details: { age: '29', payday: 'Last day of month', hobbies: 'Dungeons & Dragons, ceramics', rel: 'Single' },
+    prefs: ['themed series', 'saturday drops', 'long exposure'],
+    details: { age: '29', payday: 'Weekends', hobbies: 'Board games, ceramics', rel: 'UTC−6' },
     sales: [
-      { date: '10/05/2026', item: 'Fantasy Set Vol. 1', amount: 65, chatter: 'Aurora' },
+      { date: '10/05/2026', item: 'Ice & Light Vol. 1', amount: 65, chatter: 'Aurora' },
       { date: '09/12/2026', item: 'VIP Monthly', amount: 60, chatter: 'Auto' }
     ],
     notSold: [
-      { date: '09/18/2026', item: 'Custom Roleplay Clip', amount: 150, chatter: 'Aurora', reason: 'Price declined — countered $90' }
+      { date: '09/18/2026', item: 'Custom Location Shoot', amount: 150, chatter: 'Aurora', reason: 'Price declined — countered $90' }
     ],
     auto: { status: 'followup_scheduled', paymentState: '', pending: null, followup: { type: 'theme_confirmation', at: '2026-10-14T17:00:00' } },
     history: { pages: 4, imported: 63, fully: true }
   },
   f4: {
     notes: 'Budget-conscious but consistent. Always asks for previews before buying.',
-    memberNote: 'Tier: casual\nAlways asks for a preview\nPayday: 14th\nPrefers bundles over singles',
+    memberNote: 'Tier: casual\nAlways asks for a preview\nPrefers bundles over single sets',
     ai: {
       summary: 'Price-sensitive but repeat buyer. Purchases after previews and responds well to small, time-limited discounts rather than full-price offers.',
       emotionalType: 'Cautious value-seeker',
       spending: 'Deal-driven',
       location: 'Denver, CO (self-reported)',
       occupation: 'Grad student',
-      payday: '14th of month',
-      relationship: 'Single',
+      payday: 'Mid-month',
+      relationship: '',
       kinks: ['Bundles', 'Previews'],
       reengagement: 'Discounts and bundle deals',
       risk: 'None recorded'
     },
     prefs: ['bundles', 'previews', 'discounts'],
-    details: { age: '24', payday: '14th of month', hobbies: 'Rock climbing, gaming', rel: 'Single' },
+    details: { age: '24', payday: 'Mid-month', hobbies: 'Rock climbing, gaming', rel: 'UTC−7' },
     sales: [
       { date: '09/14/2026', item: 'Friday Bundle', amount: 40, chatter: 'Aurora' }
     ],
@@ -1195,22 +1195,22 @@ var FAN_EXTRA = {
     history: { pages: 1, imported: 9, fully: true }
   },
   f5: {
-    notes: 'Referred a new subscriber in October. Very social — boosts every announcement post.',
-    memberNote: 'Tier: active\nReferrer (1 confirmed sub)\nLoves beach/nature sets\nFast responder, daytime',
+    notes: 'Referred a new subscriber in October. Very social — shares every announcement post.',
+    memberNote: 'Tier: active\nReferrer (1 confirmed sub)\nLoves beach and nature sets\nFast responder, daytime',
     ai: {
-      summary: 'Social amplifier: engages with every post and brings referrals. Spending is moderate but influence on new-sub acquisition is high. Reward with early access rather than discounts.',
+      summary: 'Social amplifier: engages with every post and brings referrals. Spending is moderate but influence on new-subscriber acquisition is high. Reward with early access rather than discounts.',
       emotionalType: 'Community builder',
       spending: 'Moderate, consistent',
       location: 'Miami, FL (self-reported)',
       occupation: 'Elementary teacher',
-      payday: 'Monthly, 20th',
-      relationship: 'Engaged',
+      payday: 'Daytime',
+      relationship: '',
       kinks: ['Beach sets', 'Nature'],
       reengagement: 'Shoutouts and early access',
       risk: 'None recorded'
     },
     prefs: ['beach sets', 'early access', 'shoutouts'],
-    details: { age: '31', payday: 'Monthly, 20th', hobbies: 'Surfing, watercolor', rel: 'Engaged' },
+    details: { age: '31', payday: 'Daytime', hobbies: 'Surfing, watercolor', rel: 'UTC−5' },
     sales: [
       { date: '10/01/2026', item: 'Beach Set', amount: 45, chatter: 'Aurora' },
       { date: '09/22/2026', item: 'VIP Monthly', amount: 60, chatter: 'Auto' }
@@ -1220,16 +1220,16 @@ var FAN_EXTRA = {
     history: { pages: 2, imported: 22, fully: true }
   },
   f6: {
-    notes: 'Went quiet after an August purchase. Keep for monthly re-engagement only.',
+    notes: 'Went quiet after an August purchase. Keep for monthly check-ins only.',
     memberNote: '',
     ai: {
-      summary: 'Previously casual buyer, currently dormant due to work. Single purchase to date. Re-engage once monthly with low-pressure check-ins; do not send offers while inactive.',
+      summary: 'Previously casual buyer, currently dormant due to work. Single purchase to date. Check in once a month with low-pressure messages; do not send offers while inactive.',
       emotionalType: 'Reserved',
       spending: 'Dormant',
       location: 'Unknown (not self-reported)',
       occupation: 'Unknown (mentions long work hours)',
       payday: '',
-      relationship: 'Unknown',
+      relationship: '',
       kinks: [],
       reengagement: 'Low-key personal check-ins only',
       risk: 'None recorded'
@@ -1244,22 +1244,22 @@ var FAN_EXTRA = {
     history: { pages: 1, imported: 6, fully: true }
   },
   f7: {
-    notes: 'Top spender this quarter. Tips between purchases — treat as VIP-plus.',
-    memberNote: 'Tier: whale\nTips before purchases\nAvailable most evenings after 9pm\nLoves rooftop + beach mixes',
+    notes: 'Top buyer this quarter. Orders large-format prints between sets — treat as VIP-plus.',
+    memberNote: 'Tier: VIP\nOrders prints regularly\nAvailable most evenings after 9pm\nLoves rooftop + beach mixes',
     ai: {
-      summary: 'Highest lifetime value in the current roster. Tipping behaviour before purchases indicates strong trust; pricing sensitivity is effectively zero. Prefers being surprised over choosing.',
+      summary: 'Highest lifetime value in the current roster. Regular print orders indicate strong trust; price sensitivity is low. Prefers being surprised over choosing.',
       emotionalType: 'Devoted patron',
-      spending: 'Ultra high, unresistant',
+      spending: 'Very high, low price sensitivity',
       location: 'Montréal, QC (self-reported)',
       occupation: 'Restaurant owner',
-      payday: 'Weekly (Thursday)',
-      relationship: 'Single',
-      kinks: ['Surprises', 'Rooftop', 'Lingerie'],
+      payday: 'Evenings after 9pm',
+      relationship: '',
+      kinks: ['Surprises', 'Rooftop', 'Large prints'],
       reengagement: 'Surprise drops',
       risk: 'None recorded'
     },
-    prefs: ['surprise drops', 'rooftop', 'lingerie'],
-    details: { age: '33', payday: 'Weekly (Thursday)', hobbies: 'Wine tasting, sailing', rel: 'Single' },
+    prefs: ['surprise drops', 'rooftop', 'large prints'],
+    details: { age: '33', payday: 'After 9pm', hobbies: 'Wine tasting, sailing', rel: 'UTC−5' },
     sales: [
       { date: '10/12/2026', item: 'Golden Hour Set', amount: 75, chatter: 'Auto' },
       { date: '10/03/2026', item: 'Rooftop Set', amount: 45, chatter: 'Aurora' },
@@ -1270,56 +1270,56 @@ var FAN_EXTRA = {
     history: { pages: 5, imported: 88, fully: true }
   },
   f8: {
-    notes: 'Asked twice about customs. Potential upsell if quoted clearly.',
+    notes: 'Asked twice about custom prints. Potential upsell if quoted clearly.',
     memberNote: '',
     ai: {
-      summary: 'Curious about customs but has never purchased one. Quoted price was acknowledged positively. Send one clear offer with a deadline rather than repeated nudges.',
+      summary: 'Curious about custom work but has never ordered one. Quoted price was acknowledged positively. Send one clear offer with a deadline rather than repeated nudges.',
       emotionalType: 'Hesitant explorer',
-      spending: 'Low, customs-curious',
+      spending: 'Low, custom-curious',
       location: 'Dublin, Ireland (self-reported)',
       occupation: 'Barista',
-      payday: 'Every Friday',
-      relationship: 'Single',
-      kinks: ['Customs', 'Winter themes'],
+      payday: 'Weekends',
+      relationship: '',
+      kinks: ['Custom prints', 'Winter themes'],
       reengagement: 'Clear, single-offer quotes',
       risk: 'None recorded'
     },
-    prefs: ['customs', 'winter themes'],
-    details: { age: '25', payday: 'Every Friday', hobbies: 'Guitar, running', rel: 'Single' },
+    prefs: ['custom prints', 'winter themes'],
+    details: { age: '25', payday: 'Weekends', hobbies: 'Guitar, running', rel: 'UTC+0' },
     sales: [
       { date: '09/05/2026', item: 'Starter Set', amount: 20, chatter: 'Aurora' }
     ],
     notSold: [
-      { date: '09/27/2026', item: 'Winter Custom Clip', amount: 120, chatter: 'Aurora', reason: 'No response after quote' }
+      { date: '09/27/2026', item: 'Winter Custom Print', amount: 120, chatter: 'Aurora', reason: 'No response after quote' }
     ],
     auto: { status: 'idle', paymentState: '', pending: null, followup: null },
     history: { pages: 1, imported: 8, fully: true }
   },
   f9: {
-    notes: 'Payday buyer — converts every other Friday. Never buys outside payday window.',
-    memberNote: 'Tier: active\nPayday: every other Friday\nNever buys outside payday window\nLoves themed surprises',
+    notes: 'Friday buyer — converts on Friday evenings. Rarely buys mid-week.',
+    memberNote: 'Tier: active\nBuys on Friday evenings\nIgnores mid-week offers\nLoves themed surprises',
     ai: {
-      summary: 'Highly predictable payday buyer. Converts on Friday evenings and ignores mid-week offers entirely. Time all sends to her stated payday rhythm.',
-      emotionalType: 'Ritual spender',
-      spending: 'Payday-clustered',
+      summary: 'Highly predictable Friday buyer. Converts on Friday evenings and ignores mid-week offers entirely. Time all sends to her stated weekly rhythm.',
+      emotionalType: 'Weekly ritual',
+      spending: 'Friday-clustered',
       location: 'Seattle, WA (self-reported)',
       occupation: 'Bookkeeper',
-      payday: 'Alternate Fridays',
-      relationship: 'Single',
-      kinks: ['Themed surprises', 'Nightwear'],
-      reengagement: 'Payday-timed sends only',
+      payday: 'Friday evenings',
+      relationship: '',
+      kinks: ['Themed surprises', 'Autumn colours'],
+      reengagement: 'Friday-timed sends only',
       risk: 'None recorded'
     },
-    prefs: ['payday drops', 'nightwear', 'themed surprises'],
-    details: { age: '30', payday: 'Alternate Fridays', hobbies: 'Baking, true crime podcasts', rel: 'Single' },
+    prefs: ['friday drops', 'autumn colours', 'themed surprises'],
+    details: { age: '30', payday: 'Friday evenings', hobbies: 'Baking, true crime podcasts', rel: 'UTC−8' },
     sales: [
       { date: '10/02/2026', item: 'Autumn Set', amount: 50, chatter: 'Auto' },
-      { date: '09/18/2026', item: 'Nightwear Set', amount: 40, chatter: 'Aurora' }
+      { date: '09/18/2026', item: 'Foggy Mornings Set', amount: 40, chatter: 'Aurora' }
     ],
     notSold: [
-      { date: '09/25/2026', item: 'Deluxe Bundle', amount: 90, chatter: 'Auto', reason: 'Sent outside payday window — no response' }
+      { date: '09/25/2026', item: 'Deluxe Bundle', amount: 90, chatter: 'Auto', reason: 'Sent mid-week — no response' }
     ],
-    auto: { status: 'followup_scheduled', paymentState: '', pending: null, followup: { type: 'payday_reengagement', at: '2026-10-16T18:00:00' } },
+    auto: { status: 'followup_scheduled', paymentState: '', pending: null, followup: { type: 'friday_reengagement', at: '2026-10-16T18:00:00' } },
     history: { pages: 2, imported: 25, fully: true }
   }
 };
@@ -1336,7 +1336,7 @@ var state = {
   globalAutoMode: false,
   syncingChats: false,
   activeFanId: 'f1',
-  activeFilter: 'all',          // all | unread | whale | active | casual | cold | auto_on | auto_off
+  activeFilter: 'all',          // all | unread | vip | active | casual | cold | auto_on | auto_off
   activeListId: null,
   conversations: [],
   messages: {},                 // fanId -> [message]
@@ -1445,7 +1445,7 @@ function activeFan() {
 }
 
 function tierBadgeStyle(tier) {
-  if (tier === 'whale') return 'border:1px solid var(--silver);color:var(--silver)';
+  if (tier === 'vip') return 'border:1px solid var(--silver);color:var(--silver)';
   if (tier === 'active') return 'border:1px solid var(--green);color:var(--green)';
   if (tier === 'casual') return 'border:1px solid var(--purple);color:var(--purple)';
   return 'border:1px solid var(--text-faint);color:var(--text-faint)';
@@ -1475,7 +1475,7 @@ var ROUTE_VIEWS = {
 
 var PLACEHOLDERS = {
   '#/scripts': { title: 'Sets', sub: 'Approved content sets and their pricing.' },
-  '#/vault': { title: 'Vault', sub: 'Media library, albums, and locked PPV inventory.' },
+  '#/vault': { title: 'Vault', sub: 'Media library, albums, and locked set inventory.' },
   '#/monetization': { title: 'Monetization', sub: 'Auto-audience rules, pricing policy, and follow-ups.' },
   '#/settings': { title: 'Settings', sub: 'Creator profile, team access, and automation policy.' }
 };
@@ -1549,7 +1549,7 @@ function renderTabChip() {
 var FILTER_OPTIONS = [
   { id: 'all', label: 'all' },
   { id: 'unread', label: 'unread' },
-  { id: 'whale', label: 'whale' },
+  { id: 'vip', label: 'vip' },
   { id: 'active', label: 'active' },
   { id: 'casual', label: 'casual' },
   { id: 'cold', label: 'cold' },
@@ -1707,7 +1707,7 @@ function ppvCardHtml(pbv) {
   }
   return '<div style="margin-top:8px;background:rgba(155,143,212,0.1);border:1px solid rgba(155,143,212,0.3);border-radius:8px;overflow:hidden">' +
     '<div style="display:flex;flex-wrap:wrap;gap:2px;line-height:0">' + tiles + '</div>' +
-    '<div style="padding:8px 12px"><div style="font-size:12px;color:var(--purple);font-weight:600">&#128142; PPV Sent — $' + ppv.price +
+    '<div style="padding:8px 12px"><div style="font-size:12px;color:var(--purple);font-weight:600">&#128142; Set sent — $' + ppv.price +
     (ppv.count > 1 ? ' · ' + ppv.count + ' pcs' : '') + '</div></div></div>';
 }
 
@@ -1728,13 +1728,13 @@ function renderChatHeader() {
   html += '<button type="button" class="cleo-only-compact" data-pane-to="fan" style="margin-left:auto;flex-shrink:0;align-items:center;justify-content:center;min-height:34px;padding:0 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-elevated);color:var(--text-secondary);font-size:12px;cursor:pointer">Profile &rsaquo;</button>';
   html += '</div>';
   html += '<div class="cleo-chat-auto" style="display:flex;align-items:center;gap:8px;flex-shrink:0">';
-  html += '<span class="cleo-hide-compact" style="font-size:11px;color:var(--text-muted)">Auto mode for this fan</span>';
-  var autoTitle = fan.auto_mode === false ? 'Cycles Auto: off → on → inherit' : 'Toggle auto mode for this fan';
+  html += '<span class="cleo-hide-compact" style="font-size:11px;color:var(--text-muted)">Auto mode for this subscriber</span>';
+  var autoTitle = fan.auto_mode === false ? 'Cycles Auto: off → on → inherit' : 'Toggle auto mode for this subscriber';
   html += '<button type="button" data-action="toggle-fan-auto" title="' + autoTitle +
     '" style="font-size:11px;padding:4px 10px;border-radius:4px;cursor:pointer;background:' + buttonBg + ';color:' + buttonColor +
     ';border:' + buttonBorder + ';letter-spacing:0.04em;text-transform:uppercase">' + buttonLabel + '</button>';
   html += '</div>';
-  var stage = auto.status === 'idle' ? 'READY' : auto.status === 'awaiting_payment' ? 'MONITORING PPV' : 'READY';
+  var stage = auto.status === 'idle' ? 'READY' : auto.status === 'awaiting_payment' ? 'MONITORING SALE' : 'READY';
   html += '<span style="font-size:11px;text-transform:uppercase;letter-spacing:0.04em;padding:4px 10px;border-radius:4px;flex-shrink:0;background:rgba(76, 175, 130, 0.15);color:var(--green);border:1px solid rgba(76, 175, 130, 0.3)">' + stage + '</span>';
   header.innerHTML = html;
 }
@@ -1746,7 +1746,7 @@ function renderMessages() {
   msgs.forEach(function (msg) {
     html += '<div style="display:flex;flex-direction:column;align-self:' +
       (msg.role === 'fan' ? 'flex-start' : 'flex-end') + ';max-width:80%">';
-    html += '<span style="font-size:10px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:4px">' + msg.role + '</span>';
+    html += '<span style="font-size:10px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:4px">' + (msg.role === 'fan' ? 'subscriber' : msg.role) + '</span>';
     html += '<div style="padding:10px 14px;border-radius:12px;background:' +
       (msg.role === 'fan' ? 'var(--bg-elevated)' : 'var(--bg-hover)') +
       ';border:1px solid var(--border-subtle);color:var(--text-primary);font-size:14px;line-height:1.45">';
@@ -1879,8 +1879,8 @@ function toggleFanAuto() {
   renderTabChip();
   document.getElementById('aiBlock').style.display =
     (state.globalAutoMode || fan.auto_mode === true) ? 'none' : 'block';
-  toast(next === true ? 'Auto enabled for this fan'
-    : next === false ? 'Auto disabled for this fan' : 'This fan now follows creator Auto');
+  toast(next === true ? 'Auto enabled for this subscriber'
+    : next === false ? 'Auto disabled for this subscriber' : 'This subscriber now follows creator Auto');
 }
 
 function regenerateSuggestions() {
@@ -1980,7 +1980,7 @@ function sendPpv(price, count, title) {
   });
   var conv = convById(fan.id);
   if (conv) {
-    conv.last_message = '💎 PPV Sent — $' + price;
+    conv.last_message = '💎 Set sent — $' + price;
     conv.last_message_time = new Date();
     NOW = Date.now();
   }
@@ -2023,11 +2023,11 @@ function renderFanPanel() {
   var auto = extra.auto;
   var html = '';
 
-  /* Header: FAN PROFILE + spent/tier cards + Load History */
+  /* Header: SUBSCRIBER PROFILE + spent/tier cards + Load History */
   html += '<div style="padding:16px 20px 0;flex-shrink:0">';
   html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
   html += '<button type="button" class="cleo-only-compact" data-pane-to="chat" aria-label="Back to conversation" style="width:34px;height:34px;flex-shrink:0;padding:0;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:8px;background:var(--bg-elevated);color:var(--text-secondary);font-size:17px;line-height:1;cursor:pointer">&lsaquo;</button>';
-  html += '<div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em">FAN PROFILE</div>';
+  html += '<div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em">SUBSCRIBER PROFILE</div>';
   html += '</div>';
   html += '<div style="display:flex;gap:10px;margin-bottom:16px">';
   html += '<div style="flex:1;' + CARD_STYLE + '"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Total spent</div>' +
@@ -2078,7 +2078,7 @@ function renderFanPanel() {
     html += '</div>';
     if (auto.pending) {
       html += '<div style="padding:8px 10px;border-radius:7px;background:rgba(155,143,212,0.08);margin-bottom:8px">';
-      html += '<div style="font-size:11px;color:var(--purple)">Locked PPV awaiting purchase</div>';
+      html += '<div style="font-size:11px;color:var(--purple)">Locked set awaiting purchase</div>';
       html += '<div style="font-size:10.5px;color:var(--text-muted);margin-top:3px">$' + auto.pending.price +
         ' · expires ' + formatOperationalTime(auto.pending.expires) + ' · checked ' + auto.pending.checks + '×</div>';
       html += '</div>';
@@ -2104,31 +2104,31 @@ function renderFanPanel() {
       label: '&#128100; MEMBER',
       body: extra.memberNote.trim()
         ? '<pre style="font-size:12px;color:var(--text-secondary);line-height:1.7;margin:0;white-space:pre-wrap;font-family:inherit">' + esc(extra.memberNote) + '</pre>'
-        : '<div style="font-size:12px;color:var(--text-muted);font-style:italic">Not enough conversation yet. Will auto-fill after 10 fan messages.</div>'
+        : '<div style="font-size:12px;color:var(--text-muted);font-style:italic">Not enough conversation yet. Will auto-fill after 10 subscriber messages.</div>'
     });
 
     /* MODEL LEGEND */
     html += collapsibleBlock({
       open: state.showModel, action: 'toggle-model',
       bg: 'rgba(255,180,100,0.06)', border: 'rgba(255,180,100,0.2)', color: 'rgba(255,190,80,0.9)',
-      label: '&#127917; MODEL LEGEND',
+      label: '&#127917; CREATOR PROFILE',
       body: '<pre style="font-size:12px;color:var(--text-secondary);line-height:1.7;margin:0;white-space:pre-wrap;font-family:inherit">' + esc(MODEL_LEGEND) + '</pre>'
     });
 
-    /* AI FAN ANALYSIS */
+    /* AI SUBSCRIBER ANALYSIS */
     html += '<div style="margin-bottom:20px">';
     html += collapsibleBlock({
       open: state.showAi, action: 'toggle-ai',
       bg: 'rgba(155,143,212,0.08)', border: 'rgba(155,143,212,0.25)', color: 'var(--purple)',
-      label: '&#10022; AI FAN ANALYSIS',
+      label: '&#10022; AI SUBSCRIBER ANALYSIS',
       body: (function () {
         var ai = extra.ai;
         var body = '<div style="font-size:12px;color:var(--text-secondary);line-height:1.6;margin-bottom:12px">' + esc(ai.summary) + '</div>';
         body += '<div class="cleo-field-row" style="gap:8px">';
         [
-          ['Emotional type', ai.emotionalType], ['Spending', ai.spending],
+          ['Engagement style', ai.emotionalType], ['Spending', ai.spending],
           ['Location', ai.location], ['Occupation', ai.occupation],
-          ['Payday', ai.payday], ['Relationship', ai.relationship]
+          ['Most active', ai.payday], ['Relationship', ai.relationship]
         ].forEach(function (item) {
           if (!item[1]) return;
           body += '<div style="background:var(--bg-hover);border-radius:6px;padding:8px 10px">' +
@@ -2137,7 +2137,7 @@ function renderFanPanel() {
         });
         body += '</div>';
         if (ai.kinks.length) {
-          body += '<div style="margin-top:10px"><div style="font-size:10px;color:var(--text-muted);margin-bottom:6px">KINKS &amp; PREFERENCES</div>' +
+          body += '<div style="margin-top:10px"><div style="font-size:10px;color:var(--text-muted);margin-bottom:6px">INTERESTS</div>' +
             '<div style="display:flex;flex-wrap:wrap;gap:4px">';
           ai.kinks.forEach(function (kink) {
             body += '<span style="font-size:10px;padding:3px 8px;border-radius:999px;background:rgba(155, 143, 212, 0.15);color:var(--purple);border:1px solid rgba(155, 143, 212, 0.3)">' + esc(kink) + '</span>';
@@ -2159,10 +2159,10 @@ function renderFanPanel() {
     });
     html += '</div>';
 
-    /* FAN DETAILS */
-    html += '<div style="' + LABEL_STYLE + '">FAN DETAILS</div>';
+    /* SUBSCRIBER DETAILS */
+    html += '<div style="' + LABEL_STYLE + '">SUBSCRIBER DETAILS</div>';
     html += '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">';
-    [['Age', 'age'], ['Pay day', 'payday'], ['Hobbies', 'hobbies'], ['Relationship', 'rel']].forEach(function (pair) {
+    [['Age', 'age'], ['Most active', 'payday'], ['Hobbies', 'hobbies'], ['Timezone', 'rel']].forEach(function (pair) {
       html += '<div style="display:flex;align-items:center;gap:8px">' +
         '<span style="font-size:11px;color:var(--text-muted);width:76px;flex-shrink:0">' + pair[0] + '</span>' +
         '<input type="text" value="' + esc(extra.details[pair[1]]) + '" placeholder="—" data-detail="' + pair[1] + '"' +
@@ -2189,7 +2189,7 @@ function renderFanPanel() {
     html += '<div style="font-size:13px;font-weight:650;color:var(--text-primary)">' + auto.status + '</div>';
     if (auto.pending) {
       html += '<div style="margin-top:8px;padding:8px 10px;border-radius:6px;background:rgba(224,180,109,0.08);border:1px solid rgba(224,180,109,0.3)">' +
-        '<div style="color:#e0b46d;font-size:11px;font-weight:650">Locked PPV awaiting payment · $' + auto.pending.price + '</div>' +
+        '<div style="color:#e0b46d;font-size:11px;font-weight:650">Locked set awaiting payment · $' + auto.pending.price + '</div>' +
         '<div style="color:var(--text-muted);font-size:10px;margin-top:3px">Expires ' + formatOperationalTime(auto.pending.expires) + ' · ' + auto.pending.checks + ' checks</div></div>';
     }
     if (auto.followup) {
@@ -2198,7 +2198,7 @@ function renderFanPanel() {
     html += '</div>';
 
     html += '<div style="padding:9px 10px;margin-bottom:16px;border-radius:7px;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-muted);font-size:11px;line-height:1.45">' +
-      'Build and send locked PPVs from the conversation composer. Sales appear here only after the platform confirms payment; operators cannot manually inflate revenue or bypass purchase reconciliation.</div>';
+      'Build and send locked sets from the conversation composer. Sales appear here only after the platform confirms payment; operators cannot manually inflate revenue or bypass purchase reconciliation.</div>';
 
     html += '<div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Confirmed purchases</div>';
     if (!extra.sales.length) {
@@ -2262,12 +2262,12 @@ var ANALYTICS = {
     preview: { eligible: 5, total: 9 },
     health: { payment_pending: 2, followups_pending: 4, human_review: 1, failed_actions: 0 },
     approvals: [
-      { id: 'a1', fan: 'Harper Quinn', price: 35, media: 3, experience: 'girlfriend experience', message: 'just for you... a little something we shot this weekend 🤍' },
-      { id: 'a2', fan: 'Dmitri Kane', price: 60, media: 5, experience: '', message: 'the friday bundle you asked about — had to send it early 💋' }
+      { id: 'a1', fan: 'Harper Quinn', price: 35, media: 3, experience: 'beach series', message: 'a few frames from this weekend shoot, thought of you 🌊' },
+      { id: 'a2', fan: 'Dmitri Kane', price: 60, media: 5, experience: '', message: 'the friday bundle you asked about, sending it a bit early 🙂' }
     ],
     attention: [
       { fan: 'Tessa Bloom', state: 'awaiting_payment · payment_followup', error: '', human: true },
-      { fan: 'Marcus Vale', state: 'session_in_progress · ppv_followup', error: 'followup send timed out (fansly 504)', human: false }
+      { fan: 'Marcus Vale', state: 'session_in_progress · sale_followup', error: 'followup send timed out (platform 504)', human: false }
     ]
   },
   c2: {
@@ -2276,7 +2276,7 @@ var ANALYTICS = {
     health: { payment_pending: 1, followups_pending: 2, human_review: 0, failed_actions: 0 },
     approvals: [],
     attention: [
-      { fan: 'Iris Nakamura', state: 'followup_scheduled · payday_reengagement', error: '', human: false }
+      { fan: 'Iris Nakamura', state: 'followup_scheduled · monthly_checkin', error: '', human: false }
     ]
   }
 };
@@ -2325,7 +2325,7 @@ function renderAnalytics() {
   html += '<div style="' + card + ';margin-bottom:14px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px">';
   html += '<div style="min-width:0"><div style="font-size:14px;font-weight:700">' + esc(creator.name) + '</div>';
   html += '<div style="color:var(--text-muted);font-size:12px;margin-top:3px">Full Auto ' +
-    (creator.autoMode ? 'is on' : 'is off') + ' · ' + data.preview.eligible + ' of ' + data.preview.total + ' current fans eligible</div></div>';
+    (creator.autoMode ? 'is on' : 'is off') + ' · ' + data.preview.eligible + ' of ' + data.preview.total + ' current subscribers eligible</div></div>';
   html += '<div style="min-width:0;margin-left:auto;text-align:right">';
   html += '<div style="color:' + (attention ? '#e57689' : 'var(--green)') + ';font-weight:700;font-size:13px">' +
     (attention ? attention + ' need attention' : 'Healthy') + '</div>';
@@ -2335,22 +2335,22 @@ function renderAnalytics() {
   /* Metrics row 1 */
   html += '<div class="cleo-grid-metrics" style="margin-bottom:18px">';
   html += metricHtml('Confirmed revenue', '$' + data.stats.revenue, false);
-  html += metricHtml('Fans', data.stats.total, false);
+  html += metricHtml('Subscribers', data.stats.total, false);
   html += metricHtml('Buyers', data.stats.buyers, false);
-  html += metricHtml('Whales', data.stats.whales, false);
+  html += metricHtml('VIPs', data.stats.whales, false);
   html += metricHtml('Auto eligible', data.preview.eligible, false);
   html += '</div>';
 
   if (data.stats.simulated > 0) {
     html += '<div style="font-size:11px;color:var(--text-muted);margin-bottom:18px">' + data.stats.simulated +
-      ' simulation fan excluded from these figures. Their state is kept, and the Simulator shows it.</div>';
+      ' simulation subscriber excluded from these figures. Their state is kept, and the Simulator shows it.</div>';
   }
 
   /* Metrics row 2 */
   html += '<div class="cleo-grid-metrics" style="margin-bottom:18px">';
   html += metricHtml('Payment pending', data.health.payment_pending, false);
   html += metricHtml('Follow-ups due', data.health.followups_pending, false);
-  html += metricHtml('PPV approvals', approvals.length, approvals.length > 0);
+  html += metricHtml('Sale approvals', approvals.length, approvals.length > 0);
   html += metricHtml('Needs human', data.health.human_review, data.health.human_review > 0);
   html += metricHtml('Failed actions', data.health.failed_actions, data.health.failed_actions > 0);
   html += '</div>';
@@ -2358,7 +2358,7 @@ function renderAnalytics() {
   /* Approvals */
   if (approvals.length > 0) {
     html += '<section style="' + card + ';margin-bottom:16px">';
-    html += sectionTitle('PPV approvals', 'Exact prepared sends waiting for an operator.');
+    html += sectionTitle('Sale approvals', 'Exact prepared sends waiting for an operator.');
     html += '<div style="display:flex;flex-direction:column;gap:8px">';
     approvals.forEach(function (a) {
       html += '<div style="padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-elevated);display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px">';
@@ -2465,7 +2465,7 @@ function openManageLists() {
     html += '<div data-action="edit-list" data-list="' + list.id + '" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer">';
     html += '<div style="width:10px;height:10px;border-radius:50%;background:' + list.color + ';flex-shrink:0"></div>';
     html += '<div style="flex:1;font-size:13px;color:var(--text-primary)">' + esc(list.name) + '</div>';
-    html += '<span style="font-size:11px;color:var(--text-muted)">' + list.members.length + ' fans</span>';
+    html += '<span style="font-size:11px;color:var(--text-muted)">' + list.members.length + ' subscribers</span>';
     if (list.excludeFromAuto) {
       html += '<span style="font-size:9px;padding:2px 6px;border-radius:999px;background:rgba(255,80,80,0.1);color:#ff6b6b;border:1px solid rgba(255,80,80,0.2)">AUTO EXCLUDED</span>';
     }
@@ -2503,7 +2503,7 @@ function renderListModal() {
   html += '</div></div>';
   html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:10px 12px;background:var(--bg-surface);border-radius:8px">';
   html += '<div><div style="font-size:12px;color:var(--text-primary)">Exclude from Auto Mode</div>' +
-    '<div style="font-size:10px;color:var(--text-muted)">AI won\'t auto-reply to fans in this list</div></div>';
+    '<div style="font-size:10px;color:var(--text-muted)">AI won\'t auto-reply to subscribers in this list</div></div>';
   html += '<div data-action="toggle-exclude" style="width:36px;height:20px;border-radius:999px;cursor:pointer;background:' +
     (m.excludeFromAuto ? 'var(--green)' : 'var(--bg-hover)') + ';border:1px solid var(--border);position:relative;transition:background 0.2s;flex-shrink:0">' +
     '<div style="position:absolute;top:2px;left:' + (m.excludeFromAuto ? 18 : 2) + 'px;width:14px;height:14px;border-radius:50%;background:white;transition:left 0.2s"></div></div>';
@@ -2566,13 +2566,13 @@ var PPV_MEDIA = [
 
 var PPV_SETS = [
   { id: 's1', title: 'Summer Nights Vol. 2', description: 'Golden-hour rooftop set with a behind-the-scenes clip.', media: 6, price: 45, allowed: '$35–$65' },
-  { id: 's2', title: 'Late Shift', description: 'Office-after-dark theme: 4 stills and 1 clip.', media: 5, price: 55, allowed: '$40–$80' }
+  { id: 's2', title: 'Night City', description: 'City-after-dark theme: 4 stills and 1 timelapse.', media: 5, price: 55, allowed: '$40–$80' }
 ];
 
 var ppvState = null;
 
 function openPpvComposer(mode) {
-  ppvState = { mode: mode, selected: [], selectedSet: null, price: '', message: 'just for you...', album: 'all', status: 'all' };
+  ppvState = { mode: mode, selected: [], selectedSet: null, price: '', message: 'fresh from the latest shoot...', album: 'all', status: 'all' };
   renderPpvComposer();
 }
 
@@ -2580,7 +2580,7 @@ function renderPpvComposer() {
   var fan = activeFan();
   var p = ppvState;
   var html = '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px">';
-  html += '<div><div style="font-size:17px;font-weight:700">' + (p.mode === 'set' ? 'Choose a set' : 'Build locked PPV') + '</div>';
+  html += '<div><div style="font-size:17px;font-weight:700">' + (p.mode === 'set' ? 'Choose a set' : 'Build locked set') + '</div>';
   html += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px">' +
     (p.mode === 'set'
       ? 'Review every item in an approved set before sending it to ' + esc(fan.display_name) + '.'
@@ -2702,7 +2702,7 @@ function renderPpvComposer() {
   html += '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px">';
   html += '<div style="color:var(--text-muted);font-size:11px">' + attachedCount + ' media selected</div>';
   html += '<button type="button" data-action="send-ppv"' + (attachedCount ? '' : ' disabled') + ' style="padding:9px 16px;border-radius:8px;font-weight:700;border:1px solid var(--silver);background:var(--silver);color:#111;cursor:pointer;opacity:' +
-    (attachedCount ? 1 : 0.5) + '">Send locked PPV</button>';
+    (attachedCount ? 1 : 0.5) + '">Send locked set</button>';
   html += '</div>';
 
   openModal(html, 1000);
@@ -2748,7 +2748,7 @@ document.addEventListener('click', function (event) {
       setTimeout(function () {
         state.syncingChats = false;
         renderSidebar();
-        toast('Synced with Fansly · no new messages');
+        toast('Synced with platform · no new messages');
       }, 900);
       break;
 
@@ -2877,7 +2877,7 @@ document.addEventListener('click', function (event) {
       var approved = el.getAttribute('data-approve') === '1';
       state.approvalsResolved[approvalId] = true;
       renderAnalytics();
-      toast(approved ? 'PPV approved and sent' : 'PPV rejected');
+      toast(approved ? 'Set approved and sent' : 'Set rejected');
       break;
 
     case 'close-modal':
@@ -2932,7 +2932,7 @@ document.addEventListener('click', function (event) {
       closeModal();
       ppvState = null;
       sendPpv(price, count, title);
-      toast('Locked PPV sent — awaiting payment');
+      toast('Locked set sent — awaiting payment');
       break;
 
     default:

@@ -660,6 +660,8 @@ paintSuits(plist);
 document.getElementById('plist-items').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; plist.close(); openCase(+b.dataset.i); });
 document.getElementById('plist-close').addEventListener('click',()=>plist.close());
 document.querySelectorAll('#as-list,[data-open-list]').forEach(b=>b.addEventListener('click',()=>plist.showModal()));
+// прямая ссылка на список проектов: jericho2k.github.io/#list
+if(location.hash==='#list') plist.showModal();
 
 /* ---------- case dialog ---------- */
 const dlg=document.getElementById('case'), side=document.getElementById('sheet-side'), body=document.getElementById('sheet-body');
